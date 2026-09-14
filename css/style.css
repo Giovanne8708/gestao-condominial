@@ -1,6 +1,6 @@
 /* VARIÁVEIS DE SISTEMA E CORES */
 :root {
-    --primary-color: #2563eb; /* Azul padrão corporativo */
+    --primary-color: #2563eb; 
     --primary-hover: #1d4ed8;
     --bg-color: #f8fafc;
     --sidebar-bg: #1e293b;
@@ -198,7 +198,7 @@ body {
     padding: 24px;
     border-radius: 8px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 1px 3px rgba(0,0,0,0.05); /* Sombra bem discreta, regra 3 */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
 }
 
 .card h3 {
@@ -256,15 +256,114 @@ body {
 
 .form-control {
     width: 100%;
-    max-width: 400px;
+    max-width: 100%;
     padding: 10px 12px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
     outline: none;
+    font-family: inherit;
 }
 
 .form-control:focus {
     border-color: var(--primary-color);
+}
+
+/* TABELAS */
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.table th, .table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.table th {
+    background-color: var(--bg-color);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+}
+
+.table td {
+    font-size: 14px;
+    vertical-align: middle;
+}
+
+/* BADGES DE STATUS/PRIORIDADE */
+.badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.badge-status-novo { background-color: #e0f2fe; color: #0369a1; }
+.badge-status-analise { background-color: #fef08a; color: #854d0e; }
+.badge-status-aprovado { background-color: #dcfce7; color: #15803d; }
+.badge-prio-normal { background-color: #f1f5f9; color: #475569; }
+.badge-prio-alta { background-color: #ffedd5; color: #c2410c; }
+.badge-prio-urgente { background-color: #fee2e2; color: #b91c1c; }
+
+/* MODAL / SOBREPOSIÇÃO */
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+}
+
+.modal-overlay.hidden {
+    display: none;
+}
+
+.modal-content {
+    background-color: var(--card-bg);
+    width: 90%;
+    max-width: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header {
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 { font-size: 18px; }
+
+.btn-close-modal { 
+    background: none; 
+    border: none; 
+    cursor: pointer; 
+    font-size: 24px; 
+    color: var(--text-muted); 
+}
+
+.modal-body { padding: 24px; }
+
+.modal-footer {
+    padding: 16px 24px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
 }
 
 /* RESPONSIVIDADE (Regra 32) */

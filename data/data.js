@@ -1,4 +1,3 @@
-// Dados iniciais de demonstração (Seeder)
 const mockData = {
     settings: {
         companyName: "Manutenção Pro",

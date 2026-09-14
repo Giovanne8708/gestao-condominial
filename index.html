@@ -4,9 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manutenção Pro</title>
-    <!-- Fonte Inter (Profissional e limpa) -->
+    <!-- Fonte Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Ícones Profissionais (Material Symbols Outlined) -->
+    <!-- Ícones Profissionais -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -85,11 +85,28 @@
             <!-- TELA: CHAMADOS -->
             <section id="page-chamados" class="page-view hidden">
                 <div class="page-header-actions">
-                    <p>Lista de solicitações e problemas reportados.</p>
-                    <button class="btn btn-primary">Novo Chamado</button>
+                    <div>
+                        <p>Lista de solicitações e problemas reportados.</p>
+                    </div>
+                    <button class="btn btn-primary" id="btn-abrir-modal-chamado">Novo Chamado</button>
                 </div>
-                <div class="card">
-                    <p class="empty-state">O módulo de chamados será construído aqui.</p>
+
+                <div class="card table-responsive">
+                    <table class="table" id="tabela-chamados">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Condomínio</th>
+                                <th>Problema</th>
+                                <th>Prioridade</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- O JavaScript vai injetar as linhas aqui -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
@@ -119,10 +136,46 @@
                     <button id="btn-save-settings" class="btn btn-primary">Salvar Configurações</button>
                 </div>
             </section>
+
+            <!-- MODAL: NOVO CHAMADO (Fica oculto por padrão) -->
+            <div class="modal-overlay hidden" id="modal-novo-chamado">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Abrir Novo Chamado</h2>
+                        <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-chamado">close</button>
+                    </div>
+                    <div class="modal-body">
+                        <form id="form-novo-chamado">
+                            <div class="form-group">
+                                <label>Condomínio</label>
+                                <input type="text" id="input-chamado-condominio" class="form-control" required placeholder="Ex: Residencial Solar">
+                            </div>
+                            <div class="form-group">
+                                <label>Problema Relatado</label>
+                                <textarea id="input-chamado-problema" class="form-control" required rows="3" placeholder="Descreva o que aconteceu..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Prioridade</label>
+                                <select id="input-chamado-prioridade" class="form-control">
+                                    <option value="Normal">Normal</option>
+                                    <option value="Alta">Alta</option>
+                                    <option value="Urgente">Urgente</option>
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" id="btn-cancelar-chamado">Cancelar</button>
+                        <!-- O atributo form conecta este botão ao formulário -->
+                        <button class="btn btn-primary" type="submit" form="form-novo-chamado">Salvar Chamado</button>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
-    <!-- Scripts: Primeiro os dados, depois a lógica -->
+    <!-- Scripts -->
     <script src="data/data.js"></script>
     <script src="js/app.js"></script>
 </body>
