@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manutenção Pro</title>
+    <!-- Fonte Inter (Profissional e limpa) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Ícones Profissionais (Material Symbols Outlined) -->
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- Menu Lateral -->
+    <aside id="sidebar">
+        <div class="sidebar-header">
+            <div id="company-logo-placeholder">MP</div>
+            <h2 id="company-name-display">Manutenção Pro</h2>
+        </div>
+
+        <nav class="sidebar-nav">
+            <span class="nav-section">VISÃO GERAL</span>
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <span class="material-symbols-outlined">dashboard</span>
+                Dashboard
+            </a>
+
+            <span class="nav-section">MANUTENÇÃO</span>
+            <a href="#" class="nav-item" data-page="chamados">
+                <span class="material-symbols-outlined">confirmation_number</span>
+                Chamados
+            </a>
+            <a href="#" class="nav-item" data-page="os">
+                <span class="material-symbols-outlined">build</span>
+                Ordens de Serviço
+            </a>
+
+            <span class="nav-section">GESTÃO</span>
+            <a href="#" class="nav-item" data-page="configuracoes">
+                <span class="material-symbols-outlined">settings</span>
+                Configurações
+            </a>
+        </nav>
+    </aside>
+
+    <!-- Área Principal -->
+    <div class="main-wrapper">
+        <header id="top-header">
+            <div class="header-left">
+                <button id="mobile-menu-btn" class="material-symbols-outlined">menu</button>
+                <h1 id="page-title">Dashboard</h1>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <span class="material-symbols-outlined">search</span>
+                    <input type="text" placeholder="Buscar...">
+                </div>
+                <button class="icon-btn"><span class="material-symbols-outlined">notifications</span></button>
+                <div class="user-profile">
+                    <div class="avatar">GS</div>
+                </div>
+            </div>
+        </header>
+
+        <main id="content">
+            <!-- TELA: DASHBOARD -->
+            <section id="page-dashboard" class="page-view active">
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <h3>OS Abertas</h3>
+                        <p class="card-value" id="count-os">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Em Andamento</h3>
+                        <p class="card-value" id="count-andamento">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Atrasadas</h3>
+                        <p class="card-value text-danger" id="count-atrasadas">0</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TELA: CHAMADOS -->
+            <section id="page-chamados" class="page-view hidden">
+                <div class="page-header-actions">
+                    <p>Lista de solicitações e problemas reportados.</p>
+                    <button class="btn btn-primary">Novo Chamado</button>
+                </div>
+                <div class="card">
+                    <p class="empty-state">O módulo de chamados será construído aqui.</p>
+                </div>
+            </section>
+
+            <!-- TELA: ORDENS DE SERVIÇO -->
+            <section id="page-os" class="page-view hidden">
+                <div class="page-header-actions">
+                    <p>Controle de execuções de manutenção.</p>
+                    <button class="btn btn-primary">Nova OS</button>
+                </div>
+                <div class="card">
+                    <p class="empty-state">O módulo de Ordens de Serviço será construído aqui.</p>
+                </div>
+            </section>
+
+            <!-- TELA: CONFIGURAÇÕES -->
+            <section id="page-configuracoes" class="page-view hidden">
+                <div class="card">
+                    <h3>Personalização da Empresa</h3>
+                    <div class="form-group">
+                        <label>Nome da Empresa</label>
+                        <input type="text" id="input-company-name" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>Cor Principal do Sistema</label>
+                        <input type="color" id="input-primary-color" class="form-control" style="height: 40px; padding: 2px;">
+                    </div>
+                    <button id="btn-save-settings" class="btn btn-primary">Salvar Configurações</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Scripts: Primeiro os dados, depois a lógica -->
+    <script src="data/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
