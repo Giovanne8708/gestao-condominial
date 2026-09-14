@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manutenção Pro</title>
-    <!-- Fonte Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Ícones Profissionais -->
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
     <link rel="stylesheet" href="css/style.css">
 </head>
@@ -49,12 +47,11 @@
         <header id="top-header">
             <div class="header-left">
                 <button id="mobile-menu-btn" class="material-symbols-outlined">menu</button>
-                <h1 id="page-title">Dashboard</h1>
             </div>
             <div class="header-right">
                 <div class="search-box">
                     <span class="material-symbols-outlined">search</span>
-                    <input type="text" placeholder="Buscar...">
+                    <input type="text" placeholder="Pesquisar no sistema...">
                 </div>
                 <button class="icon-btn"><span class="material-symbols-outlined">notifications</span></button>
                 <div class="user-profile">
@@ -64,8 +61,18 @@
         </header>
 
         <main id="content">
+            
+            <!-- ===================================== -->
             <!-- TELA: DASHBOARD -->
+            <!-- ===================================== -->
             <section id="page-dashboard" class="page-view active">
+                <div class="section-header">
+                    <div>
+                        <h2>Dashboard</h2>
+                        <p class="text-muted">Visão geral da operação no dia de hoje.</p>
+                    </div>
+                </div>
+
                 <div class="dashboard-cards">
                     <div class="card">
                         <h3>OS Abertas</h3>
@@ -75,20 +82,26 @@
                         <h3>Em Andamento</h3>
                         <p class="card-value" id="count-andamento">0</p>
                     </div>
-                    <div class="card">
+                    <div class="card border-danger">
                         <h3>Atrasadas</h3>
                         <p class="card-value text-danger" id="count-atrasadas">0</p>
                     </div>
                 </div>
             </section>
 
+            <!-- ===================================== -->
             <!-- TELA: CHAMADOS -->
+            <!-- ===================================== -->
             <section id="page-chamados" class="page-view hidden">
-                <div class="page-header-actions">
+                <div class="section-header">
                     <div>
-                        <p>Lista de solicitações e problemas reportados.</p>
+                        <h2>Chamados</h2>
+                        <p class="text-muted">Lista de solicitações e problemas reportados pelos condomínios.</p>
                     </div>
-                    <button class="btn btn-primary" id="btn-abrir-modal-chamado">Novo Chamado</button>
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-chamado">
+                        <span class="material-symbols-outlined">add</span> 
+                        Novo Chamado
+                    </button>
                 </div>
 
                 <div class="card table-responsive">
@@ -110,69 +123,95 @@
                 </div>
             </section>
 
+            <!-- ===================================== -->
             <!-- TELA: ORDENS DE SERVIÇO -->
+            <!-- ===================================== -->
             <section id="page-os" class="page-view hidden">
-                <div class="page-header-actions">
-                    <p>Controle de execuções de manutenção.</p>
-                    <button class="btn btn-primary">Nova OS</button>
+                <div class="section-header">
+                    <div>
+                        <h2>Ordens de Serviço (OS)</h2>
+                        <p class="text-muted">Controle de execuções de manutenção e serviços.</p>
+                    </div>
+                    <button class="btn btn-primary btn-icon">
+                        <span class="material-symbols-outlined">add</span> 
+                        Nova OS
+                    </button>
                 </div>
+
                 <div class="card">
-                    <p class="empty-state">O módulo de Ordens de Serviço será construído aqui.</p>
+                    <p class="empty-state">O módulo de Ordens de Serviço será construído na próxima etapa.</p>
                 </div>
             </section>
 
+            <!-- ===================================== -->
             <!-- TELA: CONFIGURAÇÕES -->
+            <!-- ===================================== -->
             <section id="page-configuracoes" class="page-view hidden">
-                <div class="card">
-                    <h3>Personalização da Empresa</h3>
+                <div class="section-header">
+                    <div>
+                        <h2>Configurações</h2>
+                        <p class="text-muted">Personalize o sistema com a identidade da sua empresa.</p>
+                    </div>
+                </div>
+
+                <div class="card card-form">
                     <div class="form-group">
                         <label>Nome da Empresa</label>
-                        <input type="text" id="input-company-name" class="form-control">
+                        <input type="text" id="input-company-name" class="form-control" placeholder="Digite o nome da empresa">
                     </div>
                     <div class="form-group">
                         <label>Cor Principal do Sistema</label>
-                        <input type="color" id="input-primary-color" class="form-control" style="height: 40px; padding: 2px;">
+                        <div class="color-picker-wrapper">
+                            <input type="color" id="input-primary-color" class="form-control color-input">
+                            <span class="text-muted text-sm">Escolha a cor que representa sua marca.</span>
+                        </div>
                     </div>
-                    <button id="btn-save-settings" class="btn btn-primary">Salvar Configurações</button>
+                    <div class="form-actions">
+                        <button id="btn-save-settings" class="btn btn-primary btn-icon">
+                            <span class="material-symbols-outlined">save</span> 
+                            Salvar Configurações
+                        </button>
+                    </div>
                 </div>
             </section>
 
-            <!-- MODAL: NOVO CHAMADO (Fica oculto por padrão) -->
-            <div class="modal-overlay hidden" id="modal-novo-chamado">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h2>Abrir Novo Chamado</h2>
-                        <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-chamado">close</button>
-                    </div>
-                    <div class="modal-body">
-                        <form id="form-novo-chamado">
-                            <div class="form-group">
-                                <label>Condomínio</label>
-                                <input type="text" id="input-chamado-condominio" class="form-control" required placeholder="Ex: Residencial Solar">
-                            </div>
-                            <div class="form-group">
-                                <label>Problema Relatado</label>
-                                <textarea id="input-chamado-problema" class="form-control" required rows="3" placeholder="Descreva o que aconteceu..."></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Prioridade</label>
-                                <select id="input-chamado-prioridade" class="form-control">
-                                    <option value="Normal">Normal</option>
-                                    <option value="Alta">Alta</option>
-                                    <option value="Urgente">Urgente</option>
-                                </select>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn" id="btn-cancelar-chamado">Cancelar</button>
-                        <!-- O atributo form conecta este botão ao formulário -->
-                        <button class="btn btn-primary" type="submit" form="form-novo-chamado">Salvar Chamado</button>
-                    </div>
-                </div>
-            </div>
-
         </main>
+    </div>
+
+    <!-- ===================================== -->
+    <!-- MODAL: NOVO CHAMADO (Fica fora das telas) -->
+    <!-- ===================================== -->
+    <div class="modal-overlay hidden" id="modal-novo-chamado">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Abrir Novo Chamado</h2>
+                <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-chamado">close</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-novo-chamado">
+                    <div class="form-group">
+                        <label>Condomínio</label>
+                        <input type="text" id="input-chamado-condominio" class="form-control" required placeholder="Ex: Residencial Solar">
+                    </div>
+                    <div class="form-group">
+                        <label>Problema Relatado</label>
+                        <textarea id="input-chamado-problema" class="form-control" required rows="3" placeholder="Descreva o que aconteceu de forma clara..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Prioridade da Solicitação</label>
+                        <select id="input-chamado-prioridade" class="form-control">
+                            <option value="Normal">🟢 Normal (Atendimento padrão)</option>
+                            <option value="Alta">🟠 Alta (Atendimento prioritário)</option>
+                            <option value="Urgente">🔴 Urgente (Risco ou parada total)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="btn-cancelar-chamado">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-novo-chamado">Confirmar Chamado</button>
+            </div>
+        </div>
     </div>
 
     <!-- Scripts -->
