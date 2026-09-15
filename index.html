@@ -62,9 +62,7 @@
 
         <main id="content">
             
-            <!-- ===================================== -->
             <!-- TELA: DASHBOARD -->
-            <!-- ===================================== -->
             <section id="page-dashboard" class="page-view active">
                 <div class="section-header">
                     <div>
@@ -89,9 +87,7 @@
                 </div>
             </section>
 
-            <!-- ===================================== -->
             <!-- TELA: CHAMADOS -->
-            <!-- ===================================== -->
             <section id="page-chamados" class="page-view hidden">
                 <div class="section-header">
                     <div>
@@ -117,35 +113,45 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- O JavaScript vai injetar as linhas aqui -->
+                            <!-- JavaScript injeta as linhas -->
                         </tbody>
                     </table>
                 </div>
             </section>
 
-            <!-- ===================================== -->
-            <!-- TELA: ORDENS DE SERVIÇO -->
-            <!-- ===================================== -->
+            <!-- TELA: ORDENS DE SERVIÇO (Atualizada) -->
             <section id="page-os" class="page-view hidden">
                 <div class="section-header">
                     <div>
                         <h2>Ordens de Serviço (OS)</h2>
                         <p class="text-muted">Controle de execuções de manutenção e serviços.</p>
                     </div>
-                    <button class="btn btn-primary btn-icon">
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-os">
                         <span class="material-symbols-outlined">add</span> 
                         Nova OS
                     </button>
                 </div>
 
-                <div class="card">
-                    <p class="empty-state">O módulo de Ordens de Serviço será construído na próxima etapa.</p>
+                <div class="card table-responsive">
+                    <table class="table" id="tabela-os">
+                        <thead>
+                            <tr>
+                                <th>OS</th>
+                                <th>Condomínio</th>
+                                <th>Serviço</th>
+                                <th>Técnico</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- JavaScript injeta as linhas -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
-            <!-- ===================================== -->
             <!-- TELA: CONFIGURAÇÕES -->
-            <!-- ===================================== -->
             <section id="page-configuracoes" class="page-view hidden">
                 <div class="section-header">
                     <div>
@@ -178,9 +184,7 @@
         </main>
     </div>
 
-    <!-- ===================================== -->
-    <!-- MODAL: NOVO CHAMADO (Fica fora das telas) -->
-    <!-- ===================================== -->
+    <!-- MODAL: NOVO CHAMADO -->
     <div class="modal-overlay hidden" id="modal-novo-chamado">
         <div class="modal-content">
             <div class="modal-header">
@@ -195,14 +199,14 @@
                     </div>
                     <div class="form-group">
                         <label>Problema Relatado</label>
-                        <textarea id="input-chamado-problema" class="form-control" required rows="3" placeholder="Descreva o que aconteceu de forma clara..."></textarea>
+                        <textarea id="input-chamado-problema" class="form-control" required rows="3" placeholder="Descreva o que aconteceu..."></textarea>
                     </div>
                     <div class="form-group">
                         <label>Prioridade da Solicitação</label>
                         <select id="input-chamado-prioridade" class="form-control">
-                            <option value="Normal">🟢 Normal (Atendimento padrão)</option>
-                            <option value="Alta">🟠 Alta (Atendimento prioritário)</option>
-                            <option value="Urgente">🔴 Urgente (Risco ou parada total)</option>
+                            <option value="Normal">🟢 Normal</option>
+                            <option value="Alta">🟠 Alta</option>
+                            <option value="Urgente">🔴 Urgente</option>
                         </select>
                     </div>
                 </form>
@@ -210,6 +214,48 @@
             <div class="modal-footer">
                 <button class="btn btn-ghost" id="btn-cancelar-chamado">Cancelar</button>
                 <button class="btn btn-primary" type="submit" form="form-novo-chamado">Confirmar Chamado</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVA OS -->
+    <div class="modal-overlay hidden" id="modal-nova-os">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Gerar Ordem de Serviço</h2>
+                <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-os">close</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-nova-os">
+                    <div class="form-group">
+                        <label>Condomínio</label>
+                        <input type="text" id="input-os-condominio" class="form-control" required placeholder="Ex: Edifício Central">
+                    </div>
+                    <div class="form-group">
+                        <label>Serviço a ser realizado</label>
+                        <input type="text" id="input-os-servico" class="form-control" required placeholder="Ex: Troca de válvula da bomba d'água">
+                    </div>
+                    <div class="form-group">
+                        <label>Técnico Responsável</label>
+                        <select id="input-os-tecnico" class="form-control">
+                            <option value="Não definido">Deixar em aberto</option>
+                            <option value="João Silva">João Silva</option>
+                            <option value="Carlos Souza">Carlos Souza</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Status Inicial</label>
+                        <select id="input-os-status" class="form-control">
+                            <option value="Aberta">Aberta (Aguardando)</option>
+                            <option value="Agendada">Agendada</option>
+                            <option value="Em andamento">Em andamento</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" type="button" id="btn-cancelar-os">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-nova-os">Salvar OS</button>
             </div>
         </div>
     </div>

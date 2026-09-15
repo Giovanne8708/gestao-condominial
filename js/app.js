@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarMenuMobile();
     configurarTelaConfiguracoes();
     configurarModuloChamados();
+    configurarModuloOS(); // Inicializa módulo de OS
 });
 
 // ==========================================
@@ -11,11 +12,9 @@ document.addEventListener('DOMContentLoaded', () => {
 // ==========================================
 function inicializarSistema() {
     if (!localStorage.getItem('mp_data')) {
-        // Se estiver usando o data.js externo, e ele existir:
         if (typeof mockData !== 'undefined') {
             localStorage.setItem('mp_data', JSON.stringify(mockData));
         } else {
-            // Um banco de dados vazio como fallback
             const emptyData = {
                 settings: { companyName: "Manutenção Pro", primaryColor: "#2563eb" },
                 chamados: [],
@@ -29,19 +28,15 @@ function inicializarSistema() {
     atualizarDashboard();
 }
 
-function getDados() {
-    return JSON.parse(localStorage.getItem('mp_data'));
-}
-
-function salvarDados(dados) {
-    localStorage.setItem('mp_data', JSON.stringify(dados));
-    atualizarDashboard(); // Atualiza dashboard sempre que salvar dados
+function getDados() { return JSON.parse(localStorage.getItem('mp_data')); }
+function salvarDados(dados) { 
+    localStorage.setItem('mp_data', JSON.stringify(dados)); 
+    atualizarDashboard();
 }
 
 function aplicarConfiguracoesVisuais() {
     const dados = getDados();
     const settings = dados.settings;
-
     document.documentElement.style.setProperty('--primary-color', settings.primaryColor);
     document.getElementById('company-name-display').textContent = settings.companyName;
     document.title = `${settings.companyName} | Sistema de Gestão`;
@@ -54,7 +49,6 @@ function aplicarConfiguracoesVisuais() {
 function configurarNavegacao() {
     const navItems = document.querySelectorAll('.nav-item');
     const pageViews = document.querySelectorAll('.page-view');
-    const pageTitle = document.getElementById('page-title');
 
     navItems.forEach(item => {
         item.addEventListener('click', (e) => {
@@ -67,11 +61,11 @@ function configurarNavegacao() {
             item.classList.add('active');
             document.getElementById(`page-${targetPage}`).classList.remove('hidden');
 
-            pageTitle.textContent = item.textContent.trim();
             document.getElementById('sidebar').classList.remove('open');
             
-            // Se abrir chamados, renderiza a tabela novamente para garantir
+            // Renderiza as tabelas caso tenham novos dados
             if(targetPage === 'chamados') renderizarTabelaChamados();
+            if(targetPage === 'os') renderizarTabelaOS();
         });
     });
 }
@@ -84,26 +78,25 @@ function configurarMenuMobile() {
 
 function atualizarDashboard() {
     const dados = getDados();
+    if(!dados.ordensServico) return;
+
     const totalAbertas = dados.ordensServico.filter(os => os.status === 'Aberta').length;
     const totalAndamento = dados.ordensServico.filter(os => os.status === 'Em andamento').length;
+    const totalAtrasadas = dados.ordensServico.filter(os => os.status === 'Atrasada').length;
 
     document.getElementById('count-os').textContent = totalAbertas;
     document.getElementById('count-andamento').textContent = totalAndamento;
+    document.getElementById('count-atrasadas').textContent = totalAtrasadas;
 }
 
 function configurarTelaConfiguracoes() {
     const dados = getDados();
-    
     document.getElementById('input-company-name').value = dados.settings.companyName;
     document.getElementById('input-primary-color').value = dados.settings.primaryColor;
 
     document.getElementById('btn-save-settings').addEventListener('click', () => {
-        const newName = document.getElementById('input-company-name').value;
-        const newColor = document.getElementById('input-primary-color').value;
-
-        dados.settings.companyName = newName;
-        dados.settings.primaryColor = newColor;
-
+        dados.settings.companyName = document.getElementById('input-company-name').value;
+        dados.settings.primaryColor = document.getElementById('input-primary-color').value;
         salvarDados(dados);
         aplicarConfiguracoesVisuais();
         alert("Configurações salvas com sucesso!");
@@ -115,46 +108,26 @@ function configurarTelaConfiguracoes() {
 // ==========================================
 function configurarModuloChamados() {
     renderizarTabelaChamados();
-
     const modalNovo = document.getElementById('modal-novo-chamado');
-    const btnAbrir = document.getElementById('btn-abrir-modal-chamado');
-    const btnFechar = document.getElementById('btn-fechar-modal-chamado');
-    const btnCancelar = document.getElementById('btn-cancelar-chamado');
     const formNovo = document.getElementById('form-novo-chamado');
 
-    btnAbrir.addEventListener('click', () => modalNovo.classList.remove('hidden'));
+    document.getElementById('btn-abrir-modal-chamado').addEventListener('click', () => modalNovo.classList.remove('hidden'));
 
-    const fecharModal = () => {
-        modalNovo.classList.add('hidden');
-        formNovo.reset();
-    };
+    const fecharModal = () => { modalNovo.classList.add('hidden'); formNovo.reset(); };
 
-    btnFechar.addEventListener('click', fecharModal);
-    btnCancelar.addEventListener('click', (e) => {
-        e.preventDefault();
-        fecharModal();
-    });
+    document.getElementById('btn-fechar-modal-chamado').addEventListener('click', fecharModal);
+    document.getElementById('btn-cancelar-chamado').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
 
     formNovo.addEventListener('submit', (e) => {
         e.preventDefault(); 
-        
-        const condominio = document.getElementById('input-chamado-condominio').value;
-        const problema = document.getElementById('input-chamado-problema').value;
-        const prioridade = document.getElementById('input-chamado-prioridade').value;
-
         const dados = getDados();
-        
-        let novoId = 1;
-        if (dados.chamados.length > 0) {
-            const ids = dados.chamados.map(c => c.id);
-            novoId = Math.max(...ids) + 1;
-        }
+        const novoId = dados.chamados.length > 0 ? Math.max(...dados.chamados.map(c => c.id)) + 1 : 1;
         
         dados.chamados.push({
             id: novoId,
-            condominio: condominio,
-            problema: problema,
-            prioridade: prioridade,
+            condominio: document.getElementById('input-chamado-condominio').value,
+            problema: document.getElementById('input-chamado-problema').value,
+            prioridade: document.getElementById('input-chamado-prioridade').value,
             status: "Novo" 
         });
 
@@ -170,15 +143,12 @@ function renderizarTabelaChamados() {
     if(!tbody) return;
     
     tbody.innerHTML = ''; 
-
     if (dados.chamados.length === 0) {
         tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum chamado registrado no momento.</td></tr>`;
         return;
     }
 
-    const chamadosExibicao = [...dados.chamados].reverse();
-
-    chamadosExibicao.forEach(chamado => {
+    [...dados.chamados].reverse().forEach(chamado => {
         const tr = document.createElement('tr');
         
         let badgeStatus = 'badge-status-novo';
@@ -199,7 +169,79 @@ function renderizarTabelaChamados() {
                 <button class="icon-btn" title="Ver Detalhes"><span class="material-symbols-outlined">visibility</span></button>
             </td>
         `;
+        tbody.appendChild(tr);
+    });
+}
+
+// ==========================================
+// MÓDULO DE ORDENS DE SERVIÇO (OS)
+// ==========================================
+function configurarModuloOS() {
+    renderizarTabelaOS();
+    const modalOS = document.getElementById('modal-nova-os');
+    const formOS = document.getElementById('form-nova-os');
+
+    document.getElementById('btn-abrir-modal-os').addEventListener('click', () => modalOS.classList.remove('hidden'));
+
+    const fecharModal = () => { modalOS.classList.add('hidden'); formOS.reset(); };
+
+    document.getElementById('btn-fechar-modal-os').addEventListener('click', fecharModal);
+    document.getElementById('btn-cancelar-os').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
+
+    formOS.addEventListener('submit', (e) => {
+        e.preventDefault(); 
+        const dados = getDados();
         
+        // As OS começam do número 1001 para diferenciar dos chamados
+        let novoId = 1001;
+        if (dados.ordensServico && dados.ordensServico.length > 0) {
+            novoId = Math.max(...dados.ordensServico.map(os => os.id)) + 1;
+        }
+        
+        dados.ordensServico.push({
+            id: novoId,
+            condominio: document.getElementById('input-os-condominio').value,
+            servico: document.getElementById('input-os-servico').value,
+            tecnico: document.getElementById('input-os-tecnico').value,
+            status: document.getElementById('input-os-status').value
+        });
+
+        salvarDados(dados);
+        renderizarTabelaOS();
+        fecharModal();
+    });
+}
+
+function renderizarTabelaOS() {
+    const dados = getDados();
+    const tbody = document.querySelector('#tabela-os tbody');
+    if(!tbody) return;
+    
+    tbody.innerHTML = ''; 
+    if (!dados.ordensServico || dados.ordensServico.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhuma OS registrada no momento.</td></tr>`;
+        return;
+    }
+
+    [...dados.ordensServico].reverse().forEach(os => {
+        const tr = document.createElement('tr');
+        
+        let badgeStatus = 'badge-status-aberta'; // Cor padrão (Azul)
+        if (os.status === 'Agendada') badgeStatus = 'badge-status-agendada'; // Roxo
+        if (os.status === 'Em andamento') badgeStatus = 'badge-status-andamento'; // Amarelo
+        if (os.status === 'Concluída') badgeStatus = 'badge-status-concluida'; // Verde
+        if (os.status === 'Atrasada') badgeStatus = 'badge-status-atrasada'; // Vermelho
+
+        tr.innerHTML = `
+            <td>#${os.id}</td>
+            <td><strong>${os.condominio}</strong></td>
+            <td>${os.servico}</td>
+            <td>${os.tecnico}</td>
+            <td><span class="badge ${badgeStatus}">${os.status}</span></td>
+            <td style="text-align: right;">
+                <button class="icon-btn" title="Ver Detalhes"><span class="material-symbols-outlined">visibility</span></button>
+            </td>
+        `;
         tbody.appendChild(tr);
     });
 }

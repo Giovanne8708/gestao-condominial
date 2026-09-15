@@ -3,8 +3,8 @@
     --primary-color: #2563eb; 
     --primary-hover: #1d4ed8;
     --primary-light: rgba(37, 99, 235, 0.1);
-    --bg-color: #f1f5f9; /* Cinza mais moderno e limpo */
-    --sidebar-bg: #0f172a; /* Azul bem escuro, profissional */
+    --bg-color: #f1f5f9; 
+    --sidebar-bg: #0f172a; 
     --sidebar-text: #94a3b8;
     --sidebar-text-active: #ffffff;
     --text-main: #0f172a;
@@ -195,15 +195,9 @@ body {
 }
 
 /* MAIN CONTENT E CARDS */
-#content {
-    padding: 32px;
-}
+#content { padding: 32px; }
+.page-view.hidden { display: none; }
 
-.page-view.hidden {
-    display: none;
-}
-
-/* PADRÃO DE CABEÇALHO DAS TELAS */
 .section-header {
     display: flex;
     justify-content: space-between;
@@ -238,9 +232,7 @@ body {
     box-shadow: 0 1px 2px rgba(0,0,0,0.02); 
 }
 
-.card.border-danger {
-    border-bottom: 3px solid var(--danger-color);
-}
+.card.border-danger { border-bottom: 3px solid var(--danger-color); }
 
 .card h3 {
     font-size: 14px;
@@ -255,9 +247,7 @@ body {
     color: var(--text-main);
 }
 
-.text-danger {
-    color: var(--danger-color);
-}
+.text-danger { color: var(--danger-color); }
 
 /* BOTOES */
 .btn {
@@ -275,15 +265,12 @@ body {
     align-items: center;
     gap: 8px;
 }
-.btn-icon .material-symbols-outlined {
-    font-size: 20px;
-}
+.btn-icon .material-symbols-outlined { font-size: 20px; }
 
 .btn-primary {
     background-color: var(--primary-color);
     color: white;
 }
-
 .btn-primary:hover {
     background-color: var(--primary-hover);
     box-shadow: 0 4px 12px var(--primary-light);
@@ -294,18 +281,11 @@ body {
     color: var(--text-main);
     border: 1px solid var(--border-color);
 }
-.btn-ghost:hover {
-    background-color: var(--bg-color);
-}
+.btn-ghost:hover { background-color: var(--bg-color); }
 
 /* FORMULÁRIOS PROFISSIONAIS */
-.card-form {
-    max-width: 600px;
-}
-
-.form-group {
-    margin-bottom: 20px;
-}
+.card-form { max-width: 600px; }
+.form-group { margin-bottom: 20px; }
 
 .form-group label {
     display: block;
@@ -356,7 +336,7 @@ body {
 /* TABELAS MODERNAS */
 .table-responsive {
     overflow-x: auto;
-    padding: 0; /* Remove padding do card para a tabela encostar nas bordas */
+    padding: 0; 
 }
 
 .table {
@@ -384,13 +364,8 @@ body {
     vertical-align: middle;
 }
 
-.table tbody tr {
-    transition: background-color 0.2s;
-}
-
-.table tbody tr:hover {
-    background-color: #f8fafc;
-}
+.table tbody tr { transition: background-color 0.2s; }
+.table tbody tr:hover { background-color: #f8fafc; }
 
 /* BADGES DE STATUS/PRIORIDADE */
 .badge {
@@ -402,12 +377,20 @@ body {
     letter-spacing: 0.3px;
 }
 
+/* Chamados */
 .badge-status-novo { background-color: #e0f2fe; color: #0284c7; }
 .badge-status-analise { background-color: #fef08a; color: #a16207; }
 .badge-status-aprovado { background-color: #dcfce7; color: #15803d; }
 .badge-prio-normal { background-color: #f1f5f9; color: #475569; }
 .badge-prio-alta { background-color: #ffedd5; color: #c2410c; }
 .badge-prio-urgente { background-color: #fee2e2; color: #b91c1c; }
+
+/* Ordens de Serviço (OS) */
+.badge-status-aberta { background-color: #e0f2fe; color: #0284c7; }
+.badge-status-agendada { background-color: #f3e8ff; color: #7e22ce; }
+.badge-status-andamento { background-color: #fef08a; color: #a16207; }
+.badge-status-concluida { background-color: #dcfce7; color: #15803d; }
+.badge-status-atrasada { background-color: #fee2e2; color: #b91c1c; }
 
 /* MODAL / SOBREPOSIÇÃO */
 .modal-overlay {
@@ -440,9 +423,7 @@ body {
     transition: transform 0.3s ease;
 }
 
-.modal-overlay.hidden .modal-content {
-    transform: translateY(20px);
-}
+.modal-overlay.hidden .modal-content { transform: translateY(20px); }
 
 .modal-header {
     padding: 24px;
@@ -452,18 +433,10 @@ body {
     align-items: center;
 }
 
-.modal-header h2 { 
-    font-size: 18px; 
-    font-weight: 700;
-}
+.modal-header h2 { font-size: 18px; font-weight: 700; }
 
 .btn-close-modal { 
-    background: none; 
-    border: none; 
-    cursor: pointer; 
-    font-size: 24px; 
-    color: var(--text-muted); 
-    transition: color 0.2s;
+    background: none; border: none; cursor: pointer; font-size: 24px; color: var(--text-muted); transition: color 0.2s;
 }
 .btn-close-modal:hover { color: var(--text-main); }
 
@@ -481,22 +454,10 @@ body {
 
 /* RESPONSIVIDADE */
 @media (max-width: 768px) {
-    #sidebar {
-        position: fixed;
-        left: -260px;
-        height: 100%;
-        z-index: 1000;
-    }
-    #sidebar.open {
-        left: 0;
-        box-shadow: 4px 0 24px rgba(0,0,0,0.5);
-    }
-    #mobile-menu-btn {
-        display: block;
-    }
-    .search-box {
-        display: none;
-    }
+    #sidebar { position: fixed; left: -260px; height: 100%; z-index: 1000; }
+    #sidebar.open { left: 0; box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
+    #mobile-menu-btn { display: block; }
+    .search-box { display: none; }
     #content { padding: 20px; }
     .section-header { flex-direction: column; align-items: flex-start; gap: 16px; }
 }
