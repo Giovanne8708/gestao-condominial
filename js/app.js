@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarMenuMobile();
     configurarTelaConfiguracoes();
     configurarModuloChamados();
-    configurarModuloOS(); // Inicializa módulo de OS
+    configurarModuloOS();
 });
 
 // ==========================================
@@ -24,6 +24,13 @@ function inicializarSistema() {
         }
     }
     
+    // Prevenção de erro: se os arrays não existirem no cache antigo, criamos agora
+    const dados = getDados();
+    let precisaSalvar = false;
+    if(!dados.chamados) { dados.chamados = []; precisaSalvar = true; }
+    if(!dados.ordensServico) { dados.ordensServico = []; precisaSalvar = true; }
+    if(precisaSalvar) salvarDados(dados);
+
     aplicarConfiguracoesVisuais();
     atualizarDashboard();
 }
@@ -60,10 +67,8 @@ function configurarNavegacao() {
 
             item.classList.add('active');
             document.getElementById(`page-${targetPage}`).classList.remove('hidden');
-
             document.getElementById('sidebar').classList.remove('open');
             
-            // Renderiza as tabelas caso tenham novos dados
             if(targetPage === 'chamados') renderizarTabelaChamados();
             if(targetPage === 'os') renderizarTabelaOS();
         });
@@ -180,8 +185,45 @@ function configurarModuloOS() {
     renderizarTabelaOS();
     const modalOS = document.getElementById('modal-nova-os');
     const formOS = document.getElementById('form-nova-os');
+    
+    const selectChamado = document.getElementById('input-os-chamado');
+    const inputCondominio = document.getElementById('input-os-condominio');
+    const inputServico = document.getElementById('input-os-servico');
 
-    document.getElementById('btn-abrir-modal-os').addEventListener('click', () => modalOS.classList.remove('hidden'));
+    document.getElementById('btn-abrir-modal-os').addEventListener('click', () => {
+        // Popula o select de Chamados Abertos
+        const dados = getDados();
+        selectChamado.innerHTML = '<option value="">Nenhum (Criar OS Avulsa)</option>';
+        
+        // Filtra apenas chamados que ainda não viraram OS
+        const chamadosAbertos = dados.chamados.filter(c => c.status !== 'Convertido em OS');
+        
+        chamadosAbertos.forEach(c => {
+            const option = document.createElement('option');
+            option.value = c.id;
+            // Exemplo: "#2 - Residencial Solar (Vazamento na...)"
+            option.textContent = `#${c.id} - ${c.condominio} (${c.problema.substring(0, 30)}...)`;
+            selectChamado.appendChild(option);
+        });
+
+        modalOS.classList.remove('hidden');
+    });
+
+    // MÁGICA: Autopreencher os campos ao selecionar um Chamado
+    selectChamado.addEventListener('change', (e) => {
+        const chamadoId = e.target.value;
+        if(chamadoId) {
+            const dados = getDados();
+            const chamado = dados.chamados.find(c => c.id == chamadoId);
+            if(chamado) {
+                inputCondominio.value = chamado.condominio;
+                inputServico.value = chamado.problema; // O problema vira o serviço base
+            }
+        } else {
+            inputCondominio.value = '';
+            inputServico.value = '';
+        }
+    });
 
     const fecharModal = () => { modalOS.classList.add('hidden'); formOS.reset(); };
 
@@ -192,22 +234,37 @@ function configurarModuloOS() {
         e.preventDefault(); 
         const dados = getDados();
         
-        // As OS começam do número 1001 para diferenciar dos chamados
+        // Se as ordens não existirem, cria a estrutura para evitar erro
+        if (!dados.ordensServico) dados.ordensServico = [];
+        
+        // OS começam no 1001
         let novoId = 1001;
-        if (dados.ordensServico && dados.ordensServico.length > 0) {
+        if (dados.ordensServico.length > 0) {
             novoId = Math.max(...dados.ordensServico.map(os => os.id)) + 1;
         }
         
+        const chamadoIdVinculado = selectChamado.value;
+
         dados.ordensServico.push({
             id: novoId,
-            condominio: document.getElementById('input-os-condominio').value,
-            servico: document.getElementById('input-os-servico').value,
+            chamadoId: chamadoIdVinculado || null,
+            condominio: inputCondominio.value,
+            servico: inputServico.value,
             tecnico: document.getElementById('input-os-tecnico').value,
             status: document.getElementById('input-os-status').value
         });
 
+        // Se vinculou a um chamado, atualiza o status dele
+        if(chamadoIdVinculado) {
+            const index = dados.chamados.findIndex(c => c.id == chamadoIdVinculado);
+            if(index !== -1) {
+                dados.chamados[index].status = 'Convertido em OS';
+            }
+        }
+
         salvarDados(dados);
         renderizarTabelaOS();
+        renderizarTabelaChamados(); // Atualiza a tela de chamados para mostrar a tag Verde
         fecharModal();
     });
 }
@@ -226,16 +283,19 @@ function renderizarTabelaOS() {
     [...dados.ordensServico].reverse().forEach(os => {
         const tr = document.createElement('tr');
         
-        let badgeStatus = 'badge-status-aberta'; // Cor padrão (Azul)
-        if (os.status === 'Agendada') badgeStatus = 'badge-status-agendada'; // Roxo
-        if (os.status === 'Em andamento') badgeStatus = 'badge-status-andamento'; // Amarelo
-        if (os.status === 'Concluída') badgeStatus = 'badge-status-concluida'; // Verde
-        if (os.status === 'Atrasada') badgeStatus = 'badge-status-atrasada'; // Vermelho
+        let badgeStatus = 'badge-status-aberta';
+        if (os.status === 'Agendada') badgeStatus = 'badge-status-agendada'; 
+        if (os.status === 'Em andamento') badgeStatus = 'badge-status-andamento'; 
+        if (os.status === 'Concluída') badgeStatus = 'badge-status-concluida'; 
+        if (os.status === 'Atrasada') badgeStatus = 'badge-status-atrasada'; 
+
+        // Se veio de um chamado, exibe o ícone de linkzinho
+        const linkChamado = os.chamadoId ? `<br><small style="color:var(--text-muted);">Ref: Chamado #${os.chamadoId}</small>` : '';
 
         tr.innerHTML = `
             <td>#${os.id}</td>
             <td><strong>${os.condominio}</strong></td>
-            <td>${os.servico}</td>
+            <td>${os.servico} ${linkChamado}</td>
             <td>${os.tecnico}</td>
             <td><span class="badge ${badgeStatus}">${os.status}</span></td>
             <td style="text-align: right;">

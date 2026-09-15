@@ -119,7 +119,7 @@
                 </div>
             </section>
 
-            <!-- TELA: ORDENS DE SERVIÇO (Atualizada) -->
+            <!-- TELA: ORDENS DE SERVIÇO -->
             <section id="page-os" class="page-view hidden">
                 <div class="section-header">
                     <div>
@@ -227,6 +227,15 @@
             </div>
             <div class="modal-body">
                 <form id="form-nova-os">
+                    <!-- AQUI ESTÁ A MÁGICA: Vincular Chamado -->
+                    <div class="form-group">
+                        <label>Vincular a um Chamado (Opcional)</label>
+                        <select id="input-os-chamado" class="form-control">
+                            <option value="">Nenhum (Criar OS Avulsa)</option>
+                            <!-- JS vai injetar opções aqui -->
+                        </select>
+                    </div>
+
                     <div class="form-group">
                         <label>Condomínio</label>
                         <input type="text" id="input-os-condominio" class="form-control" required placeholder="Ex: Edifício Central">
@@ -238,7 +247,7 @@
                     <div class="form-group">
                         <label>Técnico Responsável</label>
                         <select id="input-os-tecnico" class="form-control">
-                            <option value="Não definido">Deixar em aberto</option>
+                            <option value="Não definido">Deixar em aberto (Alocar depois)</option>
                             <option value="João Silva">João Silva</option>
                             <option value="Carlos Souza">Carlos Souza</option>
                         </select>
