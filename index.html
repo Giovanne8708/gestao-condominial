@@ -154,20 +154,23 @@
                 </div>
             </section>
 
-            <!-- NOVO: TELA AGENDA E ROTAS -->
+            <!-- TELA AGENDA E ROTAS -->
             <section id="page-agenda" class="page-view hidden">
                 <div class="section-header">
                     <div>
                         <h2>Agenda e Rotas</h2>
                         <p class="text-muted">Roteiro diário e sequência de visitas dos técnicos.</p>
                     </div>
-                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                         <input type="date" id="filtro-agenda-data" class="form-control" style="background: white; width: auto;">
                         <select id="filtro-agenda-tecnico" class="form-control" style="background: white; width: auto;">
                             <option value="Todos">Todos os Técnicos</option>
                             <option value="João Silva">João Silva</option>
                             <option value="Carlos Souza">Carlos Souza</option>
                         </select>
+                        <button class="btn btn-primary btn-icon" id="btn-abrir-modal-os-agenda">
+                            <span class="material-symbols-outlined">add</span> Agendar
+                        </button>
                     </div>
                 </div>
 
@@ -261,11 +264,11 @@
         </div>
     </div>
 
-    <!-- MODAL: NOVA OS -->
+    <!-- MODAL: NOVA OS / AGENDAMENTO -->
     <div class="modal-overlay hidden" id="modal-nova-os">
         <div class="modal-content">
             <div class="modal-header">
-                <h2>Gerar Ordem de Serviço</h2>
+                <h2>Agendar Ordem de Serviço</h2>
                 <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-os">close</button>
             </div>
             <div class="modal-body">
@@ -285,14 +288,13 @@
                         <input type="text" id="input-os-servico" class="form-control" required placeholder="Ex: Troca de válvula da bomba d'água">
                     </div>
                     
-                    <!-- NOVO: Adicionado Data e Hora -->
                     <div style="display: flex; gap: 16px;">
                         <div class="form-group" style="flex: 1;">
                             <label>Data Agendada</label>
                             <input type="date" id="input-os-data" class="form-control" required>
                         </div>
                         <div class="form-group" style="flex: 1;">
-                            <label>Horário</label>
+                            <label>Horário previsto</label>
                             <input type="time" id="input-os-hora" class="form-control" required>
                         </div>
                     </div>
@@ -319,7 +321,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-ghost" type="button" id="btn-cancelar-os">Cancelar</button>
-                <button class="btn btn-primary" type="submit" form="form-nova-os">Salvar OS</button>
+                <button class="btn btn-primary" type="submit" form="form-nova-os">Confirmar Agendamento</button>
             </div>
         </div>
     </div>

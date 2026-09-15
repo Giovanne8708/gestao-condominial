@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloChamados();
     configurarModuloOS();
     configurarModuloTecnico();
-    configurarModuloAgenda(); // Novo Módulo
+    configurarModuloAgenda(); 
 });
 
 // ==========================================
@@ -128,7 +128,7 @@ function renderizarTabelaChamados() {
     
     tbody.innerHTML = ''; 
     if (dados.chamados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum chamado.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum chamado registrado.</td></tr>`;
         return;
     }
 
@@ -150,7 +150,7 @@ function renderizarTabelaChamados() {
 }
 
 // ==========================================
-// ORDENS DE SERVIÇO
+// ORDENS DE SERVIÇO E AGENDAMENTO
 // ==========================================
 function configurarModuloOS() {
     const modalOS = document.getElementById('modal-nova-os');
@@ -158,8 +158,8 @@ function configurarModuloOS() {
     const selectChamado = document.getElementById('input-os-chamado');
     const fecharModal = () => { modalOS.classList.add('hidden'); formOS.reset(); };
 
-    // Seta data de hoje por padrão ao abrir
-    document.getElementById('btn-abrir-modal-os').addEventListener('click', () => {
+    // Função para abrir o Modal (usada por 2 botões diferentes agora)
+    const abrirModalOS = () => {
         const dados = getDados();
         selectChamado.innerHTML = '<option value="">Nenhum (Criar OS Avulsa)</option>';
         dados.chamados.filter(c => c.status !== 'Convertido em OS').forEach(c => {
@@ -168,12 +168,18 @@ function configurarModuloOS() {
             selectChamado.appendChild(opt);
         });
         
-        // Pega data de hoje (Formato YYYY-MM-DD para o input HTML)
-        document.getElementById('input-os-data').value = new Date().toISOString().split('T')[0];
+        // Pega data do filtro da agenda se estiver preenchido, se não, pega hoje
+        const dataFiltroAgenda = document.getElementById('filtro-agenda-data').value;
+        document.getElementById('input-os-data').value = dataFiltroAgenda || new Date().toISOString().split('T')[0];
         document.getElementById('input-os-hora').value = "08:00";
 
         modalOS.classList.remove('hidden');
-    });
+    };
+
+    // Botão na tela de OS
+    document.getElementById('btn-abrir-modal-os').addEventListener('click', abrirModalOS);
+    // Botão na tela de Agenda (O novo que resolveu o problema!)
+    document.getElementById('btn-abrir-modal-os-agenda').addEventListener('click', abrirModalOS);
 
     selectChamado.addEventListener('change', (e) => {
         const chamado = getDados().chamados.find(c => c.id == e.target.value);
@@ -195,7 +201,6 @@ function configurarModuloOS() {
         let novoId = dados.ordensServico.length > 0 ? Math.max(...dados.ordensServico.map(os => os.id)) + 1 : 1001;
         const chamadoIdVinculado = selectChamado.value;
 
-        // Formata a data para exibir bonito (DD/MM/YYYY)
         const dataBruta = document.getElementById('input-os-data').value;
         const dataFormatada = dataBruta.split('-').reverse().join('/');
 
@@ -204,7 +209,7 @@ function configurarModuloOS() {
             chamadoId: chamadoIdVinculado || null,
             condominio: document.getElementById('input-os-condominio').value,
             servico: document.getElementById('input-os-servico').value,
-            dataFormatoEN: dataBruta, // Salva para filtro
+            dataFormatoEN: dataBruta,
             data: dataFormatada,
             hora: document.getElementById('input-os-hora').value,
             tecnico: document.getElementById('input-os-tecnico').value,
@@ -217,7 +222,11 @@ function configurarModuloOS() {
             if(index !== -1) dados.chamados[index].status = 'Convertido em OS';
         }
 
-        salvarDados(dados); renderizarTabelaOS(); renderizarTabelaChamados(); fecharModal();
+        salvarDados(dados); 
+        renderizarTabelaOS(); 
+        renderizarTabelaChamados(); 
+        renderizarAgendaRotas(); // Atualiza a agenda se estivermos lá
+        fecharModal();
     });
 }
 
@@ -228,7 +237,7 @@ function renderizarTabelaOS() {
     
     tbody.innerHTML = ''; 
     if (dados.ordensServico.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted);">Nenhuma OS.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted);">Nenhuma OS registrada.</td></tr>`;
         return;
     }
 
@@ -255,7 +264,7 @@ function renderizarTabelaOS() {
 }
 
 // ==========================================
-// TÉCNICO
+// TÉCNICO E AGENDA
 // ==========================================
 function configurarModuloTecnico() {
     document.getElementById('simulador-tecnico').addEventListener('change', renderizarAgendaTecnico);
@@ -276,7 +285,7 @@ function atualizarStatusOSTecnico(novoStatus, diag = "") {
     if(index !== -1) {
         dados.ordensServico[index].status = novoStatus;
         if(diag) dados.ordensServico[index].diagnostico = diag;
-        salvarDados(dados); renderizarAgendaTecnico();
+        salvarDados(dados); renderizarAgendaTecnico(); renderizarAgendaRotas();
         if(novoStatus === 'Em andamento') document.getElementById('btn-iniciar-servico').style.display = 'none';
     }
 }
@@ -326,14 +335,12 @@ function renderizarAgendaTecnico() {
 }
 
 // ==========================================
-// AGENDA E ROTAS (NOVO)
+// AGENDA E ROTAS (TIMELINE)
 // ==========================================
 function configurarModuloAgenda() {
-    // Inicializa a data com o dia de hoje
     const hojeIso = new Date().toISOString().split('T')[0];
     document.getElementById('filtro-agenda-data').value = hojeIso;
 
-    // Filtros
     document.getElementById('filtro-agenda-data').addEventListener('change', renderizarAgendaRotas);
     document.getElementById('filtro-agenda-tecnico').addEventListener('change', renderizarAgendaRotas);
 }
@@ -349,21 +356,19 @@ function renderizarAgendaRotas() {
     
     let ordens = getDados().ordensServico || [];
 
-    // Filtra pela Data
-    if(dataFiltro) {
-        ordens = ordens.filter(os => os.dataFormatoEN === dataFiltro);
-    }
-    // Filtra pelo Técnico
-    if(tecnicoFiltro !== 'Todos') {
-        ordens = ordens.filter(os => os.tecnico === tecnicoFiltro);
-    }
+    if(dataFiltro) ordens = ordens.filter(os => os.dataFormatoEN === dataFiltro);
+    if(tecnicoFiltro !== 'Todos') ordens = ordens.filter(os => os.tecnico === tecnicoFiltro);
 
     if(ordens.length === 0) {
-        container.innerHTML = `<p style="color: var(--text-muted); padding: 20px;">Nenhuma rota ou serviço agendado para os filtros selecionados.</p>`;
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px 20px;">
+                <span class="material-symbols-outlined" style="font-size: 48px; color: var(--border-color); margin-bottom: 12px; display: block;">calendar_today</span>
+                <p style="color: var(--text-muted); font-size: 15px;">Nenhuma rota ou serviço agendado para esta data.</p>
+                <p style="color: var(--text-muted); font-size: 13px; margin-top: 8px;">Clique no botão "Agendar" acima para adicionar o primeiro serviço.</p>
+            </div>`;
         return;
     }
 
-    // Ordena pela hora (mais cedo primeiro)
     ordens.sort((a, b) => {
         if (!a.hora) return 1;
         if (!b.hora) return -1;
@@ -371,15 +376,13 @@ function renderizarAgendaRotas() {
     });
 
     let passo = 1;
-
     ordens.forEach(os => {
         const item = document.createElement('div');
         item.className = 'timeline-item';
         
-        // Cor do status
         let colorStatus = 'var(--text-muted)';
-        if (os.status === 'Em andamento') colorStatus = '#a16207'; // Amarelo escuro
-        if (os.status === 'Concluída') colorStatus = '#15803d'; // Verde
+        if (os.status === 'Em andamento') colorStatus = '#a16207'; 
+        if (os.status === 'Concluída') colorStatus = '#15803d'; 
 
         item.innerHTML = `
             <div class="timeline-dot">${passo}</div>
