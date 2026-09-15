@@ -226,7 +226,7 @@
                 </div>
             </section>
 
-            <!-- TELA: EQUIPAMENTOS (NOVO) -->
+            <!-- TELA: EQUIPAMENTOS -->
             <section id="page-equipamentos" class="page-view hidden">
                 <div class="section-header">
                     <div>
@@ -242,7 +242,7 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Nome do Equipamento</th>
+                                <th>Nome e Especificação</th>
                                 <th>Condomínio</th>
                                 <th>Categoria</th>
                                 <th>Localização</th>
@@ -396,11 +396,11 @@
         </div>
     </div>
 
-    <!-- MODAL: NOVO EQUIPAMENTO (NOVO) -->
+    <!-- MODAL: NOVO EQUIPAMENTO (Atualizado com Especificações Técnicas) -->
     <div class="modal-overlay hidden" id="modal-novo-equipamento">
         <div class="modal-content" style="max-width: 650px;">
             <div class="modal-header">
-                <h2>Cadastrar Equipamento</h2>
+                <h2>Cadastrar Equipamento / Máquina</h2>
                 <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-equipamento">close</button>
             </div>
             <div class="modal-body">
@@ -408,13 +408,13 @@
                     <div style="display: flex; gap: 16px;">
                         <div class="form-group" style="flex: 2;">
                             <label>Nome / Identificação</label>
-                            <input type="text" id="input-equip-nome" class="form-control" required placeholder="Ex: Bomba d'água Torre A">
+                            <input type="text" id="input-equip-nome" class="form-control" required placeholder="Ex: Bomba de Recalque 01">
                         </div>
                         <div class="form-group" style="flex: 1;">
                             <label>Categoria</label>
                             <select id="input-equip-categoria" class="form-control" required>
-                                <option value="Hidráulica">Hidráulica</option>
-                                <option value="Elétrica">Elétrica</option>
+                                <option value="Hidráulica">Hidráulica / Bombas</option>
+                                <option value="Elétrica">Elétrica / Motores</option>
                                 <option value="Elevadores">Elevadores</option>
                                 <option value="Segurança">Segurança/CFTV</option>
                                 <option value="Outros">Outros</option>
@@ -423,14 +423,13 @@
                     </div>
 
                     <div style="display: flex; gap: 16px;">
-                        <!-- O JS vai injetar os condomínios aqui dentro -->
                         <div class="form-group" style="flex: 1;">
                             <label>Condomínio Vinculado</label>
                             <select id="input-equip-condominio" class="form-control" required></select>
                         </div>
                         <div class="form-group" style="flex: 1;">
                             <label>Localização (Setor)</label>
-                            <input type="text" id="input-equip-local" class="form-control" placeholder="Ex: Casa de Máquinas">
+                            <input type="text" id="input-equip-local" class="form-control" placeholder="Ex: Casa de Máquinas (Subsolo)">
                         </div>
                     </div>
 
@@ -438,6 +437,12 @@
                         <div class="form-group" style="flex: 1;"><label>Fabricante</label><input type="text" id="input-equip-fabricante" class="form-control"></div>
                         <div class="form-group" style="flex: 1;"><label>Modelo</label><input type="text" id="input-equip-modelo" class="form-control"></div>
                         <div class="form-group" style="flex: 1;"><label>Nº de Série</label><input type="text" id="input-equip-serie" class="form-control"></div>
+                    </div>
+
+                    <!-- NOVO CAMPO: ESPECIFICAÇÕES TÉCNICAS -->
+                    <div class="form-group">
+                        <label>Especificações Técnicas (Potência, Voltagem, Vazão, etc.)</label>
+                        <input type="text" id="input-equip-especificacoes" class="form-control" placeholder="Ex: 2CV, 220V, Trifásico, 60Hz, 30mca">
                     </div>
 
                     <div style="display: flex; gap: 16px;">
@@ -454,6 +459,11 @@
                                 <option value="Inativo">⚫ Inativo</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label>Observações Adicionais</label>
+                        <textarea id="input-equip-obs" class="form-control" rows="2" placeholder="Algum detalhe importante sobre este equipamento?"></textarea>
                     </div>
                 </form>
             </div>

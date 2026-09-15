@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloTecnico();
     configurarModuloAgenda(); 
     configurarModuloCondominios();
-    configurarModuloEquipamentos(); // NOVO MÓDULO
+    configurarModuloEquipamentos(); 
 });
 
 // ==========================================
@@ -27,7 +27,7 @@ function inicializarSistema() {
     if(!dados.chamados) { dados.chamados = []; precisaSalvar = true; }
     if(!dados.ordensServico) { dados.ordensServico = []; precisaSalvar = true; }
     if(!dados.condominios) { dados.condominios = []; precisaSalvar = true; }
-    if(!dados.equipamentos) { dados.equipamentos = []; precisaSalvar = true; } // Prevenção
+    if(!dados.equipamentos) { dados.equipamentos = []; precisaSalvar = true; } 
     if(precisaSalvar) salvarDados(dados);
 
     aplicarConfiguracoesVisuais();
@@ -49,7 +49,7 @@ function aplicarConfiguracoesVisuais() {
 }
 
 // ==========================================
-// NAVEGAÇÃO
+// NAVEGAÇÃO E LAYOUT
 // ==========================================
 function configurarNavegacao() {
     const navItems = document.querySelectorAll('.nav-item');
@@ -107,7 +107,7 @@ function configurarTelaConfiguracoes() {
 }
 
 // ==========================================
-// CHAMADOS
+// MÓDULOS DE CHAMADOS E OS (Simplificados visualmente aqui no código)
 // ==========================================
 function configurarModuloChamados() {
     const btnAbrir = document.getElementById('btn-abrir-modal-chamado');
@@ -154,9 +154,6 @@ function renderizarTabelaChamados() {
     });
 }
 
-// ==========================================
-// ORDENS DE SERVIÇO E AGENDA
-// ==========================================
 function configurarModuloOS() {
     const btnAbrirOS = document.getElementById('btn-abrir-modal-os');
     if(!btnAbrirOS) return;
@@ -209,7 +206,6 @@ function configurarModuloOS() {
         salvarDados(dados); renderizarTabelaOS(); renderizarTabelaChamados(); renderizarAgendaRotas(); fecharModal();
     });
 }
-
 function renderizarTabelaOS() {
     const dados = getDados();
     const tbody = document.querySelector('#tabela-os tbody');
@@ -229,7 +225,7 @@ function renderizarTabelaOS() {
     });
 }
 
-// ... Código de Agenda e Técnico ...
+// AGENDA E TÉCNICO
 function configurarModuloAgenda() {
     const inputData = document.getElementById('filtro-agenda-data');
     if(!inputData) return;
@@ -243,6 +239,7 @@ function renderizarAgendaRotas() {
     const dataFiltro = document.getElementById('filtro-agenda-data').value;
     const tecnicoFiltro = document.getElementById('filtro-agenda-tecnico').value;
     let ordens = getDados().ordensServico || [];
+
     if(dataFiltro) ordens = ordens.filter(os => os.dataFormatoEN === dataFiltro);
     if(tecnicoFiltro !== 'Todos') ordens = ordens.filter(os => os.tecnico === tecnicoFiltro);
 
@@ -263,7 +260,6 @@ function renderizarAgendaRotas() {
         container.appendChild(item); passo++;
     });
 }
-
 function configurarModuloTecnico() {
     const sel = document.getElementById('simulador-tecnico');
     if(sel) sel.addEventListener('change', renderizarAgendaTecnico);
@@ -323,7 +319,7 @@ function renderizarAgendaTecnico() {
 }
 
 // ==========================================
-// CONDOMÍNIOS 
+// CONDOMÍNIOS
 // ==========================================
 function configurarModuloCondominios() {
     const btnAbrir = document.getElementById('btn-abrir-modal-condominio');
@@ -372,7 +368,7 @@ function renderizarTabelaCondominios() {
 }
 
 // ==========================================
-// EQUIPAMENTOS (NOVO)
+// EQUIPAMENTOS (Módulo da Etapa 8 Atualizado)
 // ==========================================
 function configurarModuloEquipamentos() {
     const btnAbrir = document.getElementById('btn-abrir-modal-equipamento');
@@ -383,14 +379,12 @@ function configurarModuloEquipamentos() {
     const selectCond = document.getElementById('input-equip-condominio');
     const fecharModal = () => { modalEquip.classList.add('hidden'); formEquip.reset(); };
 
-    // Ao clicar em novo, carrega a lista de condomínios atualizada
     btnAbrir.addEventListener('click', () => {
         const dados = getDados();
         selectCond.innerHTML = '<option value="">Selecione o Condomínio...</option>';
         if(dados.condominios.length === 0) {
             selectCond.innerHTML = '<option value="">(Cadastre um Condomínio primeiro)</option>';
         } else {
-            // Lista apenas condomínios ativos para instalação de equipamentos
             dados.condominios.filter(c => c.status === 'Ativo').forEach(c => {
                 const opt = document.createElement('option');
                 opt.value = c.nome; 
@@ -406,16 +400,10 @@ function configurarModuloEquipamentos() {
 
     formEquip.addEventListener('submit', (e) => {
         e.preventDefault(); 
-        
-        // Verifica se tem condomínio selecionado
         const condNome = selectCond.value;
-        if(!condNome) {
-            alert('É obrigatório vincular o equipamento a um condomínio válido.');
-            return;
-        }
+        if(!condNome) { alert('É obrigatório vincular o equipamento a um condomínio.'); return; }
 
         const dados = getDados();
-        // ID que simula plaqueta de tombamento (EQ-001)
         const numId = dados.equipamentos.length > 0 ? Math.max(...dados.equipamentos.map(eq => eq.id)) + 1 : 1;
         
         dados.equipamentos.push({
@@ -428,14 +416,13 @@ function configurarModuloEquipamentos() {
             fabricante: document.getElementById('input-equip-fabricante').value,
             modelo: document.getElementById('input-equip-modelo').value,
             serie: document.getElementById('input-equip-serie').value,
+            especificacoes: document.getElementById('input-equip-especificacoes').value, // NOVO CAMPO SALVO AQUI
             dataInstalacao: document.getElementById('input-equip-data').value,
             status: document.getElementById('input-equip-status').value,
             obs: document.getElementById('input-equip-obs').value
         });
 
-        salvarDados(dados); 
-        renderizarTabelaEquipamentos(); 
-        fecharModal();
+        salvarDados(dados); renderizarTabelaEquipamentos(); fecharModal();
     });
 }
 
@@ -458,9 +445,12 @@ function renderizarTabelaEquipamentos() {
         if (eq.status === 'Em manutenção') badgeStatus = 'badge-equip-manut';
         if (eq.status === 'Com problema') badgeStatus = 'badge-equip-prob';
 
+        // Mostra a especificação técnica logo abaixo do nome se ela existir
+        const specHtml = eq.especificacoes ? `<br><small style="color: var(--text-muted); font-size: 12px;">Spec: ${eq.especificacoes}</small>` : '';
+
         tr.innerHTML = `
             <td><strong style="color:var(--primary-color)">${eq.codigo}</strong></td>
-            <td><strong>${eq.nome}</strong></td>
+            <td><strong>${eq.nome}</strong>${specHtml}</td>
             <td>${eq.condominio}</td>
             <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:12px;">${eq.categoria}</span></td>
             <td style="font-size: 13px; color: var(--text-muted);">${eq.local || '-'}</td>
