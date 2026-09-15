@@ -34,8 +34,11 @@
                 Ordens de Serviço
             </a>
 
-            <!-- NOVO MÓDULO: ÁREA DO TÉCNICO -->
             <span class="nav-section">OPERAÇÃO</span>
+            <a href="#" class="nav-item" data-page="agenda">
+                <span class="material-symbols-outlined">map</span>
+                Agenda e Rotas
+            </a>
             <a href="#" class="nav-item" data-page="tecnico">
                 <span class="material-symbols-outlined">engineering</span>
                 Área do Técnico
@@ -102,11 +105,9 @@
                         <p class="text-muted">Lista de solicitações e problemas reportados pelos condomínios.</p>
                     </div>
                     <button class="btn btn-primary btn-icon" id="btn-abrir-modal-chamado">
-                        <span class="material-symbols-outlined">add</span> 
-                        Novo Chamado
+                        <span class="material-symbols-outlined">add</span> Novo Chamado
                     </button>
                 </div>
-
                 <div class="card table-responsive">
                     <table class="table" id="tabela-chamados">
                         <thead>
@@ -132,11 +133,9 @@
                         <p class="text-muted">Controle de execuções de manutenção e serviços.</p>
                     </div>
                     <button class="btn btn-primary btn-icon" id="btn-abrir-modal-os">
-                        <span class="material-symbols-outlined">add</span> 
-                        Nova OS
+                        <span class="material-symbols-outlined">add</span> Nova OS
                     </button>
                 </div>
-
                 <div class="card table-responsive">
                     <table class="table" id="tabela-os">
                         <thead>
@@ -144,6 +143,7 @@
                                 <th>OS</th>
                                 <th>Condomínio</th>
                                 <th>Serviço</th>
+                                <th>Data/Hora</th>
                                 <th>Técnico</th>
                                 <th>Status</th>
                                 <th style="text-align: right;">Ações</th>
@@ -154,6 +154,30 @@
                 </div>
             </section>
 
+            <!-- NOVO: TELA AGENDA E ROTAS -->
+            <section id="page-agenda" class="page-view hidden">
+                <div class="section-header">
+                    <div>
+                        <h2>Agenda e Rotas</h2>
+                        <p class="text-muted">Roteiro diário e sequência de visitas dos técnicos.</p>
+                    </div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <input type="date" id="filtro-agenda-data" class="form-control" style="background: white; width: auto;">
+                        <select id="filtro-agenda-tecnico" class="form-control" style="background: white; width: auto;">
+                            <option value="Todos">Todos os Técnicos</option>
+                            <option value="João Silva">João Silva</option>
+                            <option value="Carlos Souza">Carlos Souza</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div id="timeline-rotas" class="timeline-container">
+                        <!-- O Javascript vai injetar a linha do tempo aqui -->
+                    </div>
+                </div>
+            </section>
+
             <!-- TELA: ÁREA DO TÉCNICO -->
             <section id="page-tecnico" class="page-view hidden">
                 <div class="section-header">
@@ -161,7 +185,6 @@
                         <h2>Minha Agenda</h2>
                         <p class="text-muted">Serviços designados para execução.</p>
                     </div>
-                    <!-- Simulação de Login de Técnico para facilitar seus testes -->
                     <div>
                         <select id="simulador-tecnico" class="form-control" style="background: white;">
                             <option value="Todos">Todos os Técnicos</option>
@@ -170,11 +193,7 @@
                         </select>
                     </div>
                 </div>
-
-                <!-- A lista de OS será gerada em Cards aqui dentro -->
-                <div class="mobile-grid" id="lista-os-tecnico">
-                    <!-- Cards injetados via JS -->
-                </div>
+                <div class="mobile-grid" id="lista-os-tecnico"></div>
             </section>
 
             <!-- TELA: CONFIGURAÇÕES -->
@@ -185,7 +204,6 @@
                         <p class="text-muted">Personalize o sistema com a identidade da sua empresa.</p>
                     </div>
                 </div>
-
                 <div class="card card-form">
                     <div class="form-group">
                         <label>Nome da Empresa</label>
@@ -200,8 +218,7 @@
                     </div>
                     <div class="form-actions">
                         <button id="btn-save-settings" class="btn btn-primary btn-icon">
-                            <span class="material-symbols-outlined">save</span> 
-                            Salvar Configurações
+                            <span class="material-symbols-outlined">save</span> Salvar Configurações
                         </button>
                     </div>
                 </div>
@@ -213,7 +230,6 @@
     <!-- MODAL: NOVO CHAMADO -->
     <div class="modal-overlay hidden" id="modal-novo-chamado">
         <div class="modal-content">
-            <!-- (Conteúdo idêntico ao da etapa anterior) -->
             <div class="modal-header">
                 <h2>Abrir Novo Chamado</h2>
                 <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-chamado">close</button>
@@ -248,7 +264,6 @@
     <!-- MODAL: NOVA OS -->
     <div class="modal-overlay hidden" id="modal-nova-os">
         <div class="modal-content">
-             <!-- (Conteúdo idêntico ao da etapa anterior) -->
             <div class="modal-header">
                 <h2>Gerar Ordem de Serviço</h2>
                 <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-os">close</button>
@@ -269,21 +284,36 @@
                         <label>Serviço a ser realizado</label>
                         <input type="text" id="input-os-servico" class="form-control" required placeholder="Ex: Troca de válvula da bomba d'água">
                     </div>
-                    <div class="form-group">
-                        <label>Técnico Responsável</label>
-                        <select id="input-os-tecnico" class="form-control">
-                            <option value="Não definido">Deixar em aberto (Alocar depois)</option>
-                            <option value="João Silva">João Silva</option>
-                            <option value="Carlos Souza">Carlos Souza</option>
-                        </select>
+                    
+                    <!-- NOVO: Adicionado Data e Hora -->
+                    <div style="display: flex; gap: 16px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Data Agendada</label>
+                            <input type="date" id="input-os-data" class="form-control" required>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Horário</label>
+                            <input type="time" id="input-os-hora" class="form-control" required>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Status Inicial</label>
-                        <select id="input-os-status" class="form-control">
-                            <option value="Aberta">Aberta (Aguardando)</option>
-                            <option value="Agendada">Agendada</option>
-                            <option value="Em andamento">Em andamento</option>
-                        </select>
+
+                    <div style="display: flex; gap: 16px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Técnico Responsável</label>
+                            <select id="input-os-tecnico" class="form-control">
+                                <option value="Não definido">Deixar em aberto</option>
+                                <option value="João Silva">João Silva</option>
+                                <option value="Carlos Souza">Carlos Souza</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Status Inicial</label>
+                            <select id="input-os-status" class="form-control">
+                                <option value="Aberta">Aberta (Aguardando)</option>
+                                <option value="Agendada" selected>Agendada</option>
+                                <option value="Em andamento">Em andamento</option>
+                            </select>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -303,24 +333,19 @@
             </div>
             <div class="modal-body">
                 <input type="hidden" id="exec-os-id">
-                
                 <div style="margin-bottom: 24px; padding: 16px; background-color: var(--bg-color); border-radius: 8px;">
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Serviço a realizar:</p>
                     <p id="exec-os-servico" style="font-weight: 600; font-size: 16px;">Descrição do serviço</p>
                 </div>
-
                 <div class="form-group">
                     <label>Diagnóstico / Serviço Realizado</label>
                     <textarea id="exec-os-diagnostico" class="form-control" rows="4" placeholder="Descreva o que foi encontrado e o que foi feito..."></textarea>
                 </div>
             </div>
             <div class="modal-footer" style="justify-content: space-between;">
-                <!-- Botão de Iniciar altera o status para Em andamento -->
                 <button class="btn" id="btn-iniciar-servico" style="background-color: #f59e0b; color: white;">
                     <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">play_arrow</span> Iniciar Serviço
                 </button>
-                
-                <!-- Botão Finalizar altera o status para Concluída -->
                 <button class="btn" id="btn-finalizar-servico" style="background-color: #10b981; color: white;">
                     <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">check_circle</span> Finalizar OS
                 </button>
