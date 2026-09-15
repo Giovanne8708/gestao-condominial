@@ -39,10 +39,12 @@
                 <span class="material-symbols-outlined">engineering</span> Área do Técnico
             </a>
 
-            <!-- NOVO MÓDULO: ESTRUTURA -->
             <span class="nav-section">ESTRUTURA</span>
             <a href="#" class="nav-item" data-page="condominios">
                 <span class="material-symbols-outlined">apartment</span> Condomínios
+            </a>
+            <a href="#" class="nav-item" data-page="equipamentos">
+                <span class="material-symbols-outlined">precision_manufacturing</span> Equipamentos
             </a>
 
             <span class="nav-section">GESTÃO</span>
@@ -196,7 +198,7 @@
                 <div class="mobile-grid" id="lista-os-tecnico"></div>
             </section>
 
-            <!-- TELA: CONDOMÍNIOS (NOVO) -->
+            <!-- TELA: CONDOMÍNIOS -->
             <section id="page-condominios" class="page-view hidden">
                 <div class="section-header">
                     <div>
@@ -215,6 +217,35 @@
                                 <th>Síndico</th>
                                 <th>Contato</th>
                                 <th>Endereço</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- TELA: EQUIPAMENTOS (NOVO) -->
+            <section id="page-equipamentos" class="page-view hidden">
+                <div class="section-header">
+                    <div>
+                        <h2>Equipamentos</h2>
+                        <p class="text-muted">Cadastro e controle de ativos instalados nos condomínios.</p>
+                    </div>
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-equipamento">
+                        <span class="material-symbols-outlined">add</span> Novo Equipamento
+                    </button>
+                </div>
+                <div class="card table-responsive">
+                    <table class="table" id="tabela-equipamentos">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome do Equipamento</th>
+                                <th>Condomínio</th>
+                                <th>Categoria</th>
+                                <th>Localização</th>
                                 <th>Status</th>
                                 <th style="text-align: right;">Ações</th>
                             </tr>
@@ -255,6 +286,8 @@
         </main>
     </div>
 
+    <!-- TODOS OS MODAIS FICAM AQUI EMBAIXO INVISÍVEIS -->
+    
     <!-- MODAL: NOVO CHAMADO -->
     <div class="modal-overlay hidden" id="modal-novo-chamado">
         <div class="modal-content">
@@ -264,20 +297,12 @@
             </div>
             <div class="modal-body">
                 <form id="form-novo-chamado">
-                    <div class="form-group">
-                        <label>Condomínio</label>
-                        <input type="text" id="input-chamado-condominio" class="form-control" required placeholder="Ex: Residencial Solar">
-                    </div>
-                    <div class="form-group">
-                        <label>Problema Relatado</label>
-                        <textarea id="input-chamado-problema" class="form-control" required rows="3"></textarea>
-                    </div>
+                    <div class="form-group"><label>Condomínio</label><input type="text" id="input-chamado-condominio" class="form-control" required></div>
+                    <div class="form-group"><label>Problema Relatado</label><textarea id="input-chamado-problema" class="form-control" required rows="3"></textarea></div>
                     <div class="form-group">
                         <label>Prioridade da Solicitação</label>
                         <select id="input-chamado-prioridade" class="form-control">
-                            <option value="Normal">🟢 Normal</option>
-                            <option value="Alta">🟠 Alta</option>
-                            <option value="Urgente">🔴 Urgente</option>
+                            <option value="Normal">🟢 Normal</option><option value="Alta">🟠 Alta</option><option value="Urgente">🔴 Urgente</option>
                         </select>
                     </div>
                 </form>
@@ -298,39 +323,16 @@
             </div>
             <div class="modal-body">
                 <form id="form-nova-os">
-                    <div class="form-group">
-                        <label>Vincular a um Chamado (Opcional)</label>
-                        <select id="input-os-chamado" class="form-control"><option value="">Nenhum (Criar OS Avulsa)</option></select>
-                    </div>
-                    <div class="form-group">
-                        <label>Condomínio</label>
-                        <input type="text" id="input-os-condominio" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Serviço a ser realizado</label>
-                        <input type="text" id="input-os-servico" class="form-control" required>
-                    </div>
+                    <div class="form-group"><label>Vincular a um Chamado (Opcional)</label><select id="input-os-chamado" class="form-control"></select></div>
+                    <div class="form-group"><label>Condomínio</label><input type="text" id="input-os-condominio" class="form-control" required></div>
+                    <div class="form-group"><label>Serviço a ser realizado</label><input type="text" id="input-os-servico" class="form-control" required></div>
                     <div style="display: flex; gap: 16px;">
                         <div class="form-group" style="flex: 1;"><label>Data Agendada</label><input type="date" id="input-os-data" class="form-control" required></div>
                         <div class="form-group" style="flex: 1;"><label>Horário previsto</label><input type="time" id="input-os-hora" class="form-control" required></div>
                     </div>
                     <div style="display: flex; gap: 16px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Técnico Responsável</label>
-                            <select id="input-os-tecnico" class="form-control">
-                                <option value="Não definido">Deixar em aberto</option>
-                                <option value="João Silva">João Silva</option>
-                                <option value="Carlos Souza">Carlos Souza</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Status Inicial</label>
-                            <select id="input-os-status" class="form-control">
-                                <option value="Aberta">Aberta (Aguardando)</option>
-                                <option value="Agendada" selected>Agendada</option>
-                                <option value="Em andamento">Em andamento</option>
-                            </select>
-                        </div>
+                        <div class="form-group" style="flex: 1;"><label>Técnico Responsável</label><select id="input-os-tecnico" class="form-control"><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select></div>
+                        <div class="form-group" style="flex: 1;"><label>Status</label><select id="input-os-status" class="form-control"><option value="Agendada">Agendada</option><option value="Aberta">Aberta</option></select></div>
                     </div>
                 </form>
             </div>
@@ -352,25 +354,18 @@
                 <input type="hidden" id="exec-os-id">
                 <div style="margin-bottom: 24px; padding: 16px; background-color: var(--bg-color); border-radius: 8px;">
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Serviço a realizar:</p>
-                    <p id="exec-os-servico" style="font-weight: 600; font-size: 16px;">Descrição</p>
+                    <p id="exec-os-servico" style="font-weight: 600; font-size: 16px;"></p>
                 </div>
-                <div class="form-group">
-                    <label>Diagnóstico / Serviço Realizado</label>
-                    <textarea id="exec-os-diagnostico" class="form-control" rows="4"></textarea>
-                </div>
+                <div class="form-group"><label>Diagnóstico / Serviço Realizado</label><textarea id="exec-os-diagnostico" class="form-control" rows="4"></textarea></div>
             </div>
             <div class="modal-footer" style="justify-content: space-between;">
-                <button class="btn" id="btn-iniciar-servico" style="background-color: #f59e0b; color: white;">
-                    <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">play_arrow</span> Iniciar Serviço
-                </button>
-                <button class="btn" id="btn-finalizar-servico" style="background-color: #10b981; color: white;">
-                    <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">check_circle</span> Finalizar OS
-                </button>
+                <button class="btn" id="btn-iniciar-servico" style="background-color: #f59e0b; color: white;">Iniciar Serviço</button>
+                <button class="btn" id="btn-finalizar-servico" style="background-color: #10b981; color: white;">Finalizar OS</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: NOVO CONDOMÍNIO (NOVO) -->
+    <!-- MODAL: NOVO CONDOMÍNIO -->
     <div class="modal-overlay hidden" id="modal-novo-condominio">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
@@ -379,53 +374,92 @@
             </div>
             <div class="modal-body">
                 <form id="form-novo-condominio">
-                    
-                    <h3 style="font-size: 14px; color: var(--primary-color); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">Dados do Local</h3>
                     <div style="display: flex; gap: 16px;">
-                        <div class="form-group" style="flex: 2;">
-                            <label>Nome do Condomínio</label>
-                            <input type="text" id="input-cond-nome" class="form-control" required placeholder="Ex: Residencial Flores">
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>CNPJ</label>
-                            <input type="text" id="input-cond-cnpj" class="form-control" placeholder="00.000.000/0001-00">
-                        </div>
+                        <div class="form-group" style="flex: 2;"><label>Nome do Condomínio</label><input type="text" id="input-cond-nome" class="form-control" required></div>
+                        <div class="form-group" style="flex: 1;"><label>CNPJ</label><input type="text" id="input-cond-cnpj" class="form-control"></div>
                     </div>
-                    <div class="form-group">
-                        <label>Endereço Completo</label>
-                        <input type="text" id="input-cond-endereco" class="form-control" required placeholder="Rua, Número, Bairro, Cidade">
-                    </div>
-
-                    <h3 style="font-size: 14px; color: var(--primary-color); margin-top: 24px; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">Contato do Síndico</h3>
+                    <div class="form-group"><label>Endereço Completo</label><input type="text" id="input-cond-endereco" class="form-control" required></div>
                     <div style="display: flex; gap: 16px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Nome do Síndico</label>
-                            <input type="text" id="input-cond-sindico" class="form-control" required placeholder="Nome completo">
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Telefone / WhatsApp</label>
-                            <input type="text" id="input-cond-telefone" class="form-control" required placeholder="(00) 00000-0000">
-                        </div>
+                        <div class="form-group" style="flex: 1;"><label>Nome do Síndico</label><input type="text" id="input-cond-sindico" class="form-control" required></div>
+                        <div class="form-group" style="flex: 1;"><label>Telefone</label><input type="text" id="input-cond-telefone" class="form-control" required></div>
                     </div>
-
-                    <div style="display: flex; gap: 16px; margin-top: 8px;">
-                        <div class="form-group" style="flex: 2;">
-                            <label>E-mail do Condomínio</label>
-                            <input type="email" id="input-cond-email" class="form-control" placeholder="contato@condominio.com">
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Status do Contrato</label>
-                            <select id="input-cond-status" class="form-control">
-                                <option value="Ativo">🟢 Ativo</option>
-                                <option value="Inativo">🔴 Inativo</option>
-                            </select>
-                        </div>
+                    <div style="display: flex; gap: 16px;">
+                        <div class="form-group" style="flex: 2;"><label>E-mail</label><input type="email" id="input-cond-email" class="form-control"></div>
+                        <div class="form-group" style="flex: 1;"><label>Status</label><select id="input-cond-status" class="form-control"><option value="Ativo">🟢 Ativo</option><option value="Inativo">🔴 Inativo</option></select></div>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-ghost" type="button" id="btn-cancelar-condominio">Cancelar</button>
                 <button class="btn btn-primary" type="submit" form="form-novo-condominio">Salvar Condomínio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVO EQUIPAMENTO (NOVO) -->
+    <div class="modal-overlay hidden" id="modal-novo-equipamento">
+        <div class="modal-content" style="max-width: 650px;">
+            <div class="modal-header">
+                <h2>Cadastrar Equipamento</h2>
+                <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-equipamento">close</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-novo-equipamento">
+                    <div style="display: flex; gap: 16px;">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Nome / Identificação</label>
+                            <input type="text" id="input-equip-nome" class="form-control" required placeholder="Ex: Bomba d'água Torre A">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Categoria</label>
+                            <select id="input-equip-categoria" class="form-control" required>
+                                <option value="Hidráulica">Hidráulica</option>
+                                <option value="Elétrica">Elétrica</option>
+                                <option value="Elevadores">Elevadores</option>
+                                <option value="Segurança">Segurança/CFTV</option>
+                                <option value="Outros">Outros</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 16px;">
+                        <!-- O JS vai injetar os condomínios aqui dentro -->
+                        <div class="form-group" style="flex: 1;">
+                            <label>Condomínio Vinculado</label>
+                            <select id="input-equip-condominio" class="form-control" required></select>
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Localização (Setor)</label>
+                            <input type="text" id="input-equip-local" class="form-control" placeholder="Ex: Casa de Máquinas">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 16px;">
+                        <div class="form-group" style="flex: 1;"><label>Fabricante</label><input type="text" id="input-equip-fabricante" class="form-control"></div>
+                        <div class="form-group" style="flex: 1;"><label>Modelo</label><input type="text" id="input-equip-modelo" class="form-control"></div>
+                        <div class="form-group" style="flex: 1;"><label>Nº de Série</label><input type="text" id="input-equip-serie" class="form-control"></div>
+                    </div>
+
+                    <div style="display: flex; gap: 16px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Data de Instalação</label>
+                            <input type="date" id="input-equip-data" class="form-control">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Status Operacional</label>
+                            <select id="input-equip-status" class="form-control">
+                                <option value="Funcionando">🟢 Funcionando</option>
+                                <option value="Em manutenção">🟠 Em manutenção</option>
+                                <option value="Com problema">🔴 Com problema</option>
+                                <option value="Inativo">⚫ Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" type="button" id="btn-cancelar-equipamento">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-novo-equipamento">Salvar Equipamento</button>
             </div>
         </div>
     </div>
