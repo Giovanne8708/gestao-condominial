@@ -9,11 +9,21 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloAgenda(); 
     configurarModuloCondominios();
     configurarModuloEquipamentos(); 
-    configurarModuloPreventivas(); // NOVO MÓDULO
+    configurarModuloPreventivas(); 
 });
 
 // ==========================================
-// INICIALIZAÇÃO E BANCO DE DADOS
+// FUNÇÃO GLOBAL DE NAVEGAÇÃO PARA O DASHBOARD
+// ==========================================
+window.irParaTela = function(tela) {
+    const link = document.querySelector(`.nav-item[data-page="${tela}"]`);
+    if(link) {
+        link.click();
+    }
+};
+
+// ==========================================
+// INICIALIZAÇÃO
 // ==========================================
 function inicializarSistema() {
     if (!localStorage.getItem('mp_data')) {
@@ -29,7 +39,7 @@ function inicializarSistema() {
     if(!dados.ordensServico) { dados.ordensServico = []; precisaSalvar = true; }
     if(!dados.condominios) { dados.condominios = []; precisaSalvar = true; }
     if(!dados.equipamentos) { dados.equipamentos = []; precisaSalvar = true; } 
-    if(!dados.preventivas) { dados.preventivas = []; precisaSalvar = true; } // Prevenção
+    if(!dados.preventivas) { dados.preventivas = []; precisaSalvar = true; }
     if(precisaSalvar) salvarDados(dados);
 
     aplicarConfiguracoesVisuais();
@@ -117,7 +127,7 @@ function atualizarDashboard() {
     if(osAtrasadas.length > 0) {
         temAviso = true;
         containerAvisos.innerHTML += `
-            <div class="alert-card">
+            <div class="alert-card clickable-alert" onclick="irParaTela('os')">
                 <span class="material-symbols-outlined alert-icon">warning</span>
                 <div class="alert-content">
                     <p class="alert-title">${osAtrasadas.length} Ordem(ns) de Serviço Atrasada(s)</p>
@@ -135,7 +145,7 @@ function atualizarDashboard() {
     if(prevPendentes > 0) {
         temAviso = true;
         containerAvisos.innerHTML += `
-            <div class="alert-card">
+            <div class="alert-card clickable-alert" onclick="irParaTela('preventivas')">
                 <span class="material-symbols-outlined alert-icon" style="color: #c2410c;">event_busy</span>
                 <div class="alert-content">
                     <p class="alert-title" style="color: #9a3412;">${prevPendentes} Preventiva(s) Pendente(s)</p>
@@ -166,17 +176,17 @@ function configurarTelaConfiguracoes() {
     });
 }
 
-// ... [O CÓDIGO DOS MÓDULOS CHAMADOS, OS, AGENDA, TECNICO, CONDOMINIOS E EQUIPAMENTOS ESTÁ RESUMIDO AQUI PARA NÃO FICAR GIGANTE, MAS É O MESMO DE ANTES] ...
-
 function configurarModuloChamados() {
     const btnAbrir = document.getElementById('btn-abrir-modal-chamado');
     if(!btnAbrir) return;
     const modalNovo = document.getElementById('modal-novo-chamado');
     const formNovo = document.getElementById('form-novo-chamado');
     const fecharModal = () => { modalNovo.classList.add('hidden'); formNovo.reset(); };
+
     btnAbrir.addEventListener('click', () => modalNovo.classList.remove('hidden'));
     document.getElementById('btn-fechar-modal-chamado').addEventListener('click', fecharModal);
     document.getElementById('btn-cancelar-chamado').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
+
     formNovo.addEventListener('submit', (e) => {
         e.preventDefault(); 
         const dados = getDados();
@@ -192,7 +202,7 @@ function configurarModuloChamados() {
 function renderizarTabelaChamados() {
     const dados = getDados(); const tbody = document.querySelector('#tabela-chamados tbody'); if(!tbody) return;
     tbody.innerHTML = ''; 
-    if (dados.chamados.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum chamado.</td></tr>`; return;}
+    if (dados.chamados.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum chamado registrado.</td></tr>`; return;}
     [...dados.chamados].reverse().forEach(chamado => {
         const tr = document.createElement('tr');
         let badgeStatus = chamado.status === 'Convertido em OS' ? 'badge-status-aprovado' : (chamado.status === 'Em análise' ? 'badge-status-analise' : 'badge-status-novo');
@@ -258,6 +268,7 @@ function renderizarTabelaOS() {
         if (os.status === 'Agendada') badgeStatus = 'badge-status-agendada'; 
         if (os.status === 'Em andamento') badgeStatus = 'badge-status-andamento'; 
         if (os.status === 'Concluída') badgeStatus = 'badge-status-concluida'; 
+        if (os.status === 'Atrasada') badgeStatus = 'badge-status-atrasada'; 
         const exibeDataHora = os.data ? `${os.data} às ${os.hora}` : 'Não definida';
         tr.innerHTML = `<td>#${os.id}</td><td><strong>${os.condominio}</strong></td><td>${os.servico}</td><td style="font-size: 13px;">${exibeDataHora}</td>
             <td>${os.tecnico}</td><td><span class="badge ${badgeStatus}">${os.status}</span></td><td style="text-align: right;"><button class="icon-btn"><span class="material-symbols-outlined">visibility</span></button></td>`;
@@ -278,6 +289,7 @@ function renderizarAgendaRotas() {
     let ordens = getDados().ordensServico || [];
     if(dataFiltro) ordens = ordens.filter(os => os.dataFormatoEN === dataFiltro);
     if(tecnicoFiltro !== 'Todos') ordens = ordens.filter(os => os.tecnico === tecnicoFiltro);
+
     if(ordens.length === 0) { container.innerHTML = `<div style="text-align: center; padding: 40px 20px;"><p style="color: var(--text-muted);">Nenhuma rota agendada.</p></div>`; return; }
     ordens.sort((a, b) => { if (!a.hora) return 1; if (!b.hora) return -1; return a.hora.localeCompare(b.hora); });
     let passo = 1;
@@ -396,9 +408,6 @@ function renderizarTabelaEquipamentos() {
     });
 }
 
-// ==========================================
-// PREVENTIVAS (Módulo da Etapa 9)
-// ==========================================
 function configurarModuloPreventivas() {
     const btnAbrir = document.getElementById('btn-abrir-modal-preventiva');
     if(!btnAbrir) return;
@@ -409,7 +418,6 @@ function configurarModuloPreventivas() {
     const inputCond = document.getElementById('input-prev-condominio');
     const fecharModal = () => { modalPrev.classList.add('hidden'); formPrev.reset(); };
 
-    // Ao abrir o modal, carrega os equipamentos
     btnAbrir.addEventListener('click', () => {
         const dados = getDados();
         selectEquip.innerHTML = '<option value="">Selecione o Equipamento...</option>';
@@ -420,7 +428,6 @@ function configurarModuloPreventivas() {
                 const opt = document.createElement('option');
                 opt.value = eq.id; 
                 opt.textContent = `${eq.codigo} - ${eq.nome}`;
-                // Salva o condominio no dataset para facilitar
                 opt.dataset.condominio = eq.condominio; 
                 selectEquip.appendChild(opt);
             });
@@ -428,7 +435,6 @@ function configurarModuloPreventivas() {
         modalPrev.classList.remove('hidden');
     });
 
-    // Mágica: Quando seleciona o equipamento, preenche o Condomínio sozinho
     selectEquip.addEventListener('change', (e) => {
         const selectedOption = e.target.options[e.target.selectedIndex];
         if(selectedOption && selectedOption.dataset.condominio) {
@@ -448,10 +454,7 @@ function configurarModuloPreventivas() {
 
         const dados = getDados();
         const numId = dados.preventivas.length > 0 ? Math.max(...dados.preventivas.map(p => p.id)) + 1 : 1;
-        
-        // Pega o nome do equipamento para salvar na tabela mais facil
         const equipamentoObj = dados.equipamentos.find(eq => eq.id == eqId);
-        
         const dataProxima = document.getElementById('input-prev-proxima').value;
 
         dados.preventivas.push({
@@ -466,51 +469,27 @@ function configurarModuloPreventivas() {
             checklist: document.getElementById('input-prev-checklist').value
         });
 
-        salvarDados(dados); 
-        renderizarTabelaPreventivas(); 
-        fecharModal();
+        salvarDados(dados); renderizarTabelaPreventivas(); fecharModal();
     });
 }
 
 function renderizarTabelaPreventivas() {
-    const dados = getDados();
-    const tbody = document.querySelector('#tabela-preventivas tbody');
-    if(!tbody) return;
-    
+    const dados = getDados(); const tbody = document.querySelector('#tabela-preventivas tbody'); if(!tbody) return;
     tbody.innerHTML = ''; 
-    if (dados.preventivas.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum plano preventivo cadastrado.</td></tr>`;
-        return;
-    }
+    if (dados.preventivas.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum plano preventivo cadastrado.</td></tr>`; return; }
 
     const hojeIso = new Date().toISOString().split('T')[0];
 
     [...dados.preventivas].reverse().forEach(prev => {
         const tr = document.createElement('tr');
+        let status = 'No Prazo'; let badgeStatus = 'badge-prev-prazo';
         
-        // Lógica de Status Baseada na Data!
-        let status = 'No Prazo';
-        let badgeStatus = 'badge-prev-prazo';
-        
-        if (prev.proximaData < hojeIso) {
-            status = 'Atrasada';
-            badgeStatus = 'badge-prev-atraso';
-        } else if (prev.proximaData === hojeIso) {
-            status = 'Vence Hoje';
-            badgeStatus = 'badge-prev-hoje';
-        }
+        if (prev.proximaData < hojeIso) { status = 'Atrasada'; badgeStatus = 'badge-prev-atraso'; } 
+        else if (prev.proximaData === hojeIso) { status = 'Vence Hoje'; badgeStatus = 'badge-prev-hoje'; }
 
-        // Formata data
         const dataFormatada = prev.proximaData.split('-').reverse().join('/');
 
-        tr.innerHTML = `
-            <td><strong>${prev.equipamentoNome}</strong></td>
-            <td>${prev.condominio}</td>
-            <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:12px;">${prev.periodicidade}</span></td>
-            <td><strong>${dataFormatada}</strong></td>
-            <td><span class="badge ${badgeStatus}">${status}</span></td>
-            <td style="text-align: right;"><button class="icon-btn"><span class="material-symbols-outlined">visibility</span></button></td>
-        `;
+        tr.innerHTML = `<td><strong>${prev.equipamentoNome}</strong></td><td>${prev.condominio}</td><td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:12px;">${prev.periodicidade}</span></td><td><strong>${dataFormatada}</strong></td><td><span class="badge ${badgeStatus}">${status}</span></td><td style="text-align: right;"><button class="icon-btn"><span class="material-symbols-outlined">visibility</span></button></td>`;
         tbody.appendChild(tr);
     });
 }

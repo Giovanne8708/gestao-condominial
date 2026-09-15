@@ -2,54 +2,16 @@
 :root { --primary-color: #2563eb; --primary-hover: #1d4ed8; --primary-light: rgba(37, 99, 235, 0.1); --bg-color: #f1f5f9; --sidebar-bg: #0f172a; --sidebar-text: #94a3b8; --sidebar-text-active: #ffffff; --text-main: #0f172a; --text-muted: #64748b; --border-color: #e2e8f0; --danger-color: #ef4444; --warning-color: #f59e0b; --success-color: #10b981; --card-bg: #ffffff; }
 
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
-
-/* Trava a tela inteira para criar o grid interno */
 body { background-color: var(--bg-color); color: var(--text-main); display: flex; height: 100vh; overflow: hidden; -webkit-font-smoothing: antialiased; }
 
-/* ==========================================
-   CORREÇÃO DE ROLAGEM: SIDEBAR
-   ========================================== */
-#sidebar { 
-    width: 260px; 
-    background-color: var(--sidebar-bg); 
-    color: var(--sidebar-text); 
-    display: flex; 
-    flex-direction: column; 
-    height: 100vh; 
-    overflow-y: auto; /* Permite rolar o menu lateral */
-    transition: left 0.3s ease; 
-}
-/* Barra de rolagem discreta para o menu lateral */
+/* CORREÇÃO DE ROLAGEM */
+#sidebar { width: 260px; background-color: var(--sidebar-bg); color: var(--sidebar-text); display: flex; flex-direction: column; height: 100vh; overflow-y: auto; transition: left 0.3s ease; }
 #sidebar::-webkit-scrollbar { width: 6px; }
 #sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
 
-/* ==========================================
-   CORREÇÃO DE ROLAGEM: CONTEÚDO PRINCIPAL
-   ========================================== */
-.main-wrapper { 
-    flex: 1; 
-    display: flex; 
-    flex-direction: column; 
-    height: 100vh; 
-    overflow: hidden; /* A casca externa não rola */
-}
-
-#top-header { 
-    flex-shrink: 0; /* Impede o cabeçalho de encolher */
-    background-color: white; 
-    height: 64px; 
-    padding: 0 32px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border-bottom: 1px solid var(--border-color); 
-}
-
-#content { 
-    flex: 1; 
-    overflow-y: auto; /* APENAS o conteúdo rola! */
-    padding: 32px; 
-}
+.main-wrapper { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+#top-header { flex-shrink: 0; background-color: white; height: 64px; padding: 0 32px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+#content { flex: 1; overflow-y: auto; padding: 32px; }
 
 /* SIDEBAR COMPONENTS */
 .sidebar-header { padding: 24px 20px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid rgba(255,255,255,0.05); flex-shrink: 0; }
@@ -84,11 +46,19 @@ body { background-color: var(--bg-color); color: var(--text-main); display: flex
 .card-value { font-size: 32px; font-weight: 700; color: var(--text-main); }
 .text-danger { color: var(--danger-color); }
 
+/* DASHBOARD CLICÁVEL (Regra 7) */
+.clickable-card { cursor: pointer; transition: all 0.2s ease; }
+.clickable-card:hover { transform: translateY(-4px); border-color: var(--primary-color); box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
+.clickable-card.border-danger:hover { border-color: var(--danger-color); }
+
 /* ALERTAS DO DASHBOARD */
 .alert-card { background: #fee2e2; border-left: 4px solid var(--danger-color); padding: 16px; border-radius: 8px; display: flex; align-items: center; gap: 16px; margin-bottom: 12px; }
 .alert-icon { color: var(--danger-color); font-size: 28px; }
 .alert-content p.alert-title { font-weight: 700; color: #991b1b; margin-bottom: 4px; font-size: 15px; }
 .alert-content p.alert-desc { color: #b91c1c; font-size: 13px; }
+
+.clickable-alert { cursor: pointer; transition: all 0.2s ease; }
+.clickable-alert:hover { transform: translateX(6px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
 
 /* BOTOES E FORMULÁRIOS */
 .btn { padding: 10px 18px; border-radius: 8px; border: 1px solid transparent; cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s ease; }
@@ -176,7 +146,6 @@ body { background-color: var(--bg-color); color: var(--text-main); display: flex
 .modal-body { padding: 24px; }
 .modal-footer { padding: 16px 24px; background-color: #f8fafc; border-top: 1px solid var(--border-color); border-radius: 0 0 12px 12px; display: flex; justify-content: flex-end; gap: 12px; position: sticky; bottom: 0; z-index: 10; }
 
-/* RESPONSIVIDADE */
 @media (max-width: 768px) {
     #sidebar { position: fixed; left: -260px; height: 100%; z-index: 1000; }
     #sidebar.open { left: 0; box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
