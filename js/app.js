@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloOS();
     configurarModuloTecnico();
     configurarModuloAgenda(); 
+    configurarModuloCondominios(); // Novo Módulo
 });
 
 // ==========================================
@@ -16,7 +17,7 @@ function inicializarSistema() {
     if (!localStorage.getItem('mp_data')) {
         const emptyData = {
             settings: { companyName: "Manutenção Pro", primaryColor: "#2563eb" },
-            chamados: [], ordensServico: []
+            chamados: [], ordensServico: [], condominios: []
         };
         localStorage.setItem('mp_data', JSON.stringify(emptyData));
     }
@@ -24,6 +25,7 @@ function inicializarSistema() {
     let precisaSalvar = false;
     if(!dados.chamados) { dados.chamados = []; precisaSalvar = true; }
     if(!dados.ordensServico) { dados.ordensServico = []; precisaSalvar = true; }
+    if(!dados.condominios) { dados.condominios = []; precisaSalvar = true; }
     if(precisaSalvar) salvarDados(dados);
 
     aplicarConfiguracoesVisuais();
@@ -42,7 +44,7 @@ function aplicarConfiguracoesVisuais() {
 }
 
 // ==========================================
-// NAVEGAÇÃO
+// NAVEGAÇÃO E LAYOUT
 // ==========================================
 function configurarNavegacao() {
     const navItems = document.querySelectorAll('.nav-item');
@@ -64,6 +66,7 @@ function configurarNavegacao() {
             if(targetPage === 'os') renderizarTabelaOS();
             if(targetPage === 'tecnico') renderizarAgendaTecnico(); 
             if(targetPage === 'agenda') renderizarAgendaRotas(); 
+            if(targetPage === 'condominios') renderizarTabelaCondominios(); 
         });
     });
 }
@@ -150,7 +153,7 @@ function renderizarTabelaChamados() {
 }
 
 // ==========================================
-// ORDENS DE SERVIÇO E AGENDAMENTO
+// ORDENS DE SERVIÇO
 // ==========================================
 function configurarModuloOS() {
     const modalOS = document.getElementById('modal-nova-os');
@@ -158,7 +161,6 @@ function configurarModuloOS() {
     const selectChamado = document.getElementById('input-os-chamado');
     const fecharModal = () => { modalOS.classList.add('hidden'); formOS.reset(); };
 
-    // Função para abrir o Modal (usada por 2 botões diferentes agora)
     const abrirModalOS = () => {
         const dados = getDados();
         selectChamado.innerHTML = '<option value="">Nenhum (Criar OS Avulsa)</option>';
@@ -168,7 +170,6 @@ function configurarModuloOS() {
             selectChamado.appendChild(opt);
         });
         
-        // Pega data do filtro da agenda se estiver preenchido, se não, pega hoje
         const dataFiltroAgenda = document.getElementById('filtro-agenda-data').value;
         document.getElementById('input-os-data').value = dataFiltroAgenda || new Date().toISOString().split('T')[0];
         document.getElementById('input-os-hora').value = "08:00";
@@ -176,9 +177,7 @@ function configurarModuloOS() {
         modalOS.classList.remove('hidden');
     };
 
-    // Botão na tela de OS
     document.getElementById('btn-abrir-modal-os').addEventListener('click', abrirModalOS);
-    // Botão na tela de Agenda (O novo que resolveu o problema!)
     document.getElementById('btn-abrir-modal-os-agenda').addEventListener('click', abrirModalOS);
 
     selectChamado.addEventListener('change', (e) => {
@@ -200,7 +199,6 @@ function configurarModuloOS() {
         const dados = getDados();
         let novoId = dados.ordensServico.length > 0 ? Math.max(...dados.ordensServico.map(os => os.id)) + 1 : 1001;
         const chamadoIdVinculado = selectChamado.value;
-
         const dataBruta = document.getElementById('input-os-data').value;
         const dataFormatada = dataBruta.split('-').reverse().join('/');
 
@@ -222,11 +220,7 @@ function configurarModuloOS() {
             if(index !== -1) dados.chamados[index].status = 'Convertido em OS';
         }
 
-        salvarDados(dados); 
-        renderizarTabelaOS(); 
-        renderizarTabelaChamados(); 
-        renderizarAgendaRotas(); // Atualiza a agenda se estivermos lá
-        fecharModal();
+        salvarDados(dados); renderizarTabelaOS(); renderizarTabelaChamados(); renderizarAgendaRotas(); fecharModal();
     });
 }
 
@@ -234,13 +228,11 @@ function renderizarTabelaOS() {
     const dados = getDados();
     const tbody = document.querySelector('#tabela-os tbody');
     if(!tbody) return;
-    
     tbody.innerHTML = ''; 
     if (dados.ordensServico.length === 0) {
         tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted);">Nenhuma OS registrada.</td></tr>`;
         return;
     }
-
     [...dados.ordensServico].reverse().forEach(os => {
         const tr = document.createElement('tr');
         let badgeStatus = 'badge-status-aberta';
@@ -296,15 +288,12 @@ window.abrirModalExecutarOS = function(osId) {
     document.getElementById('exec-os-title').textContent = `OS #${os.id}`;
     document.getElementById('exec-os-servico').textContent = os.servico;
     document.getElementById('exec-os-diagnostico').value = os.diagnostico || "";
-
     const btnIn = document.getElementById('btn-iniciar-servico');
     const btnFi = document.getElementById('btn-finalizar-servico');
     const inputDiag = document.getElementById('exec-os-diagnostico');
-
     if(os.status === 'Concluída') { btnIn.style.display = 'none'; btnFi.style.display = 'none'; inputDiag.disabled = true; } 
     else if (os.status === 'Em andamento') { btnIn.style.display = 'none'; btnFi.style.display = 'block'; inputDiag.disabled = false; } 
     else { btnIn.style.display = 'block'; btnFi.style.display = 'block'; inputDiag.disabled = false; }
-
     document.getElementById('modal-executar-os').classList.remove('hidden');
 };
 function renderizarAgendaTecnico() {
@@ -319,41 +308,25 @@ function renderizarAgendaTecnico() {
         const card = document.createElement('div'); card.className = 'task-card';
         let bg = os.status === 'Concluída' ? 'badge-status-concluida' : 'badge-status-aberta';
         card.innerHTML = `
-            <div class="task-header">
-                <span class="task-id">OS #${os.id}</span>
-                <span class="badge ${bg}">${os.status}</span>
-            </div>
-            <div class="task-info">
-                <p class="title">${os.condominio}</p>
-                <p class="desc">${os.servico}</p>
-            </div>
+            <div class="task-header"><span class="task-id">OS #${os.id}</span><span class="badge ${bg}">${os.status}</span></div>
+            <div class="task-info"><p class="title">${os.condominio}</p><p class="desc">${os.servico}</p></div>
             <div class="task-footer"><button class="btn btn-primary btn-executar" style="width: 100%;">Executar</button></div>
         `;
         card.querySelector('.btn-executar').addEventListener('click', () => abrirModalExecutarOS(os.id));
         container.appendChild(card);
     });
 }
-
-// ==========================================
-// AGENDA E ROTAS (TIMELINE)
-// ==========================================
 function configurarModuloAgenda() {
     const hojeIso = new Date().toISOString().split('T')[0];
     document.getElementById('filtro-agenda-data').value = hojeIso;
-
     document.getElementById('filtro-agenda-data').addEventListener('change', renderizarAgendaRotas);
     document.getElementById('filtro-agenda-tecnico').addEventListener('change', renderizarAgendaRotas);
 }
-
 function renderizarAgendaRotas() {
     const container = document.getElementById('timeline-rotas');
-    if(!container) return;
-    
-    container.innerHTML = '';
-
+    if(!container) return; container.innerHTML = '';
     const dataFiltro = document.getElementById('filtro-agenda-data').value;
     const tecnicoFiltro = document.getElementById('filtro-agenda-tecnico').value;
-    
     let ordens = getDados().ordensServico || [];
 
     if(dataFiltro) ordens = ordens.filter(os => os.dataFormatoEN === dataFiltro);
@@ -364,22 +337,14 @@ function renderizarAgendaRotas() {
             <div style="text-align: center; padding: 40px 20px;">
                 <span class="material-symbols-outlined" style="font-size: 48px; color: var(--border-color); margin-bottom: 12px; display: block;">calendar_today</span>
                 <p style="color: var(--text-muted); font-size: 15px;">Nenhuma rota ou serviço agendado para esta data.</p>
-                <p style="color: var(--text-muted); font-size: 13px; margin-top: 8px;">Clique no botão "Agendar" acima para adicionar o primeiro serviço.</p>
             </div>`;
         return;
     }
-
-    ordens.sort((a, b) => {
-        if (!a.hora) return 1;
-        if (!b.hora) return -1;
-        return a.hora.localeCompare(b.hora);
-    });
+    ordens.sort((a, b) => { if (!a.hora) return 1; if (!b.hora) return -1; return a.hora.localeCompare(b.hora); });
 
     let passo = 1;
     ordens.forEach(os => {
-        const item = document.createElement('div');
-        item.className = 'timeline-item';
-        
+        const item = document.createElement('div'); item.className = 'timeline-item';
         let colorStatus = 'var(--text-muted)';
         if (os.status === 'Em andamento') colorStatus = '#a16207'; 
         if (os.status === 'Concluída') colorStatus = '#15803d'; 
@@ -398,7 +363,66 @@ function renderizarAgendaRotas() {
                 </div>
             </div>
         `;
-        container.appendChild(item);
-        passo++;
+        container.appendChild(item); passo++;
+    });
+}
+
+// ==========================================
+// CONDOMÍNIOS (NOVO)
+// ==========================================
+function configurarModuloCondominios() {
+    const modalCond = document.getElementById('modal-novo-condominio');
+    const formCond = document.getElementById('form-novo-condominio');
+    const fecharModal = () => { modalCond.classList.add('hidden'); formCond.reset(); };
+
+    document.getElementById('btn-abrir-modal-condominio').addEventListener('click', () => modalCond.classList.remove('hidden'));
+    document.getElementById('btn-fechar-modal-condominio').addEventListener('click', fecharModal);
+    document.getElementById('btn-cancelar-condominio').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
+
+    formCond.addEventListener('submit', (e) => {
+        e.preventDefault(); 
+        const dados = getDados();
+        const novoId = dados.condominios.length > 0 ? Math.max(...dados.condominios.map(c => c.id)) + 1 : 1;
+        
+        dados.condominios.push({
+            id: novoId,
+            nome: document.getElementById('input-cond-nome').value,
+            cnpj: document.getElementById('input-cond-cnpj').value,
+            endereco: document.getElementById('input-cond-endereco').value,
+            sindico: document.getElementById('input-cond-sindico').value,
+            telefone: document.getElementById('input-cond-telefone').value,
+            email: document.getElementById('input-cond-email').value,
+            status: document.getElementById('input-cond-status').value
+        });
+
+        salvarDados(dados); renderizarTabelaCondominios(); fecharModal();
+    });
+}
+
+function renderizarTabelaCondominios() {
+    const dados = getDados();
+    const tbody = document.querySelector('#tabela-condominios tbody');
+    if(!tbody) return;
+    
+    tbody.innerHTML = ''; 
+    if (dados.condominios.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum condomínio cadastrado.</td></tr>`;
+        return;
+    }
+
+    [...dados.condominios].reverse().forEach(cond => {
+        const tr = document.createElement('tr');
+        
+        let badgeStatus = cond.status === 'Ativo' ? 'badge-status-ativo' : 'badge-status-inativo';
+
+        tr.innerHTML = `
+            <td><strong>${cond.nome}</strong></td>
+            <td>${cond.sindico}</td>
+            <td style="font-size: 13px; color: var(--text-muted);">${cond.telefone}</td>
+            <td style="font-size: 13px;">${cond.endereco}</td>
+            <td><span class="badge ${badgeStatus}">${cond.status}</span></td>
+            <td style="text-align: right;"><button class="icon-btn"><span class="material-symbols-outlined">visibility</span></button></td>
+        `;
+        tbody.appendChild(tr);
     });
 }

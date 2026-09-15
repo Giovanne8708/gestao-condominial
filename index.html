@@ -20,34 +20,34 @@
         <nav class="sidebar-nav">
             <span class="nav-section">VISÃO GERAL</span>
             <a href="#" class="nav-item active" data-page="dashboard">
-                <span class="material-symbols-outlined">dashboard</span>
-                Dashboard
+                <span class="material-symbols-outlined">dashboard</span> Dashboard
             </a>
 
             <span class="nav-section">MANUTENÇÃO</span>
             <a href="#" class="nav-item" data-page="chamados">
-                <span class="material-symbols-outlined">confirmation_number</span>
-                Chamados
+                <span class="material-symbols-outlined">confirmation_number</span> Chamados
             </a>
             <a href="#" class="nav-item" data-page="os">
-                <span class="material-symbols-outlined">build</span>
-                Ordens de Serviço
+                <span class="material-symbols-outlined">build</span> Ordens de Serviço
             </a>
 
             <span class="nav-section">OPERAÇÃO</span>
             <a href="#" class="nav-item" data-page="agenda">
-                <span class="material-symbols-outlined">map</span>
-                Agenda e Rotas
+                <span class="material-symbols-outlined">map</span> Agenda e Rotas
             </a>
             <a href="#" class="nav-item" data-page="tecnico">
-                <span class="material-symbols-outlined">engineering</span>
-                Área do Técnico
+                <span class="material-symbols-outlined">engineering</span> Área do Técnico
+            </a>
+
+            <!-- NOVO MÓDULO: ESTRUTURA -->
+            <span class="nav-section">ESTRUTURA</span>
+            <a href="#" class="nav-item" data-page="condominios">
+                <span class="material-symbols-outlined">apartment</span> Condomínios
             </a>
 
             <span class="nav-section">GESTÃO</span>
             <a href="#" class="nav-item" data-page="configuracoes">
-                <span class="material-symbols-outlined">settings</span>
-                Configurações
+                <span class="material-symbols-outlined">settings</span> Configurações
             </a>
         </nav>
     </aside>
@@ -102,7 +102,7 @@
                 <div class="section-header">
                     <div>
                         <h2>Chamados</h2>
-                        <p class="text-muted">Lista de solicitações e problemas reportados pelos condomínios.</p>
+                        <p class="text-muted">Lista de solicitações e problemas reportados.</p>
                     </div>
                     <button class="btn btn-primary btn-icon" id="btn-abrir-modal-chamado">
                         <span class="material-symbols-outlined">add</span> Novo Chamado
@@ -130,7 +130,7 @@
                 <div class="section-header">
                     <div>
                         <h2>Ordens de Serviço (OS)</h2>
-                        <p class="text-muted">Controle de execuções de manutenção e serviços.</p>
+                        <p class="text-muted">Controle de execuções de manutenção.</p>
                     </div>
                     <button class="btn btn-primary btn-icon" id="btn-abrir-modal-os">
                         <span class="material-symbols-outlined">add</span> Nova OS
@@ -154,12 +154,12 @@
                 </div>
             </section>
 
-            <!-- TELA AGENDA E ROTAS -->
+            <!-- TELA: AGENDA E ROTAS -->
             <section id="page-agenda" class="page-view hidden">
                 <div class="section-header">
                     <div>
                         <h2>Agenda e Rotas</h2>
-                        <p class="text-muted">Roteiro diário e sequência de visitas dos técnicos.</p>
+                        <p class="text-muted">Roteiro diário de visitas dos técnicos.</p>
                     </div>
                     <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
                         <input type="date" id="filtro-agenda-data" class="form-control" style="background: white; width: auto;">
@@ -173,11 +173,8 @@
                         </button>
                     </div>
                 </div>
-
                 <div class="card">
-                    <div id="timeline-rotas" class="timeline-container">
-                        <!-- O Javascript vai injetar a linha do tempo aqui -->
-                    </div>
+                    <div id="timeline-rotas" class="timeline-container"></div>
                 </div>
             </section>
 
@@ -199,18 +196,46 @@
                 <div class="mobile-grid" id="lista-os-tecnico"></div>
             </section>
 
+            <!-- TELA: CONDOMÍNIOS (NOVO) -->
+            <section id="page-condominios" class="page-view hidden">
+                <div class="section-header">
+                    <div>
+                        <h2>Condomínios</h2>
+                        <p class="text-muted">Gerencie a sua carteira de clientes e contratos.</p>
+                    </div>
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-condominio">
+                        <span class="material-symbols-outlined">add</span> Novo Condomínio
+                    </button>
+                </div>
+                <div class="card table-responsive">
+                    <table class="table" id="tabela-condominios">
+                        <thead>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Síndico</th>
+                                <th>Contato</th>
+                                <th>Endereço</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </section>
+
             <!-- TELA: CONFIGURAÇÕES -->
             <section id="page-configuracoes" class="page-view hidden">
                 <div class="section-header">
                     <div>
                         <h2>Configurações</h2>
-                        <p class="text-muted">Personalize o sistema com a identidade da sua empresa.</p>
+                        <p class="text-muted">Personalize o sistema com a identidade da empresa.</p>
                     </div>
                 </div>
                 <div class="card card-form">
                     <div class="form-group">
                         <label>Nome da Empresa</label>
-                        <input type="text" id="input-company-name" class="form-control" placeholder="Digite o nome da empresa">
+                        <input type="text" id="input-company-name" class="form-control">
                     </div>
                     <div class="form-group">
                         <label>Cor Principal do Sistema</label>
@@ -245,7 +270,7 @@
                     </div>
                     <div class="form-group">
                         <label>Problema Relatado</label>
-                        <textarea id="input-chamado-problema" class="form-control" required rows="3" placeholder="Descreva o que aconteceu..."></textarea>
+                        <textarea id="input-chamado-problema" class="form-control" required rows="3"></textarea>
                     </div>
                     <div class="form-group">
                         <label>Prioridade da Solicitação</label>
@@ -264,7 +289,7 @@
         </div>
     </div>
 
-    <!-- MODAL: NOVA OS / AGENDAMENTO -->
+    <!-- MODAL: NOVA OS -->
     <div class="modal-overlay hidden" id="modal-nova-os">
         <div class="modal-content">
             <div class="modal-header">
@@ -275,30 +300,20 @@
                 <form id="form-nova-os">
                     <div class="form-group">
                         <label>Vincular a um Chamado (Opcional)</label>
-                        <select id="input-os-chamado" class="form-control">
-                            <option value="">Nenhum (Criar OS Avulsa)</option>
-                        </select>
+                        <select id="input-os-chamado" class="form-control"><option value="">Nenhum (Criar OS Avulsa)</option></select>
                     </div>
                     <div class="form-group">
                         <label>Condomínio</label>
-                        <input type="text" id="input-os-condominio" class="form-control" required placeholder="Ex: Edifício Central">
+                        <input type="text" id="input-os-condominio" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label>Serviço a ser realizado</label>
-                        <input type="text" id="input-os-servico" class="form-control" required placeholder="Ex: Troca de válvula da bomba d'água">
+                        <input type="text" id="input-os-servico" class="form-control" required>
                     </div>
-                    
                     <div style="display: flex; gap: 16px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Data Agendada</label>
-                            <input type="date" id="input-os-data" class="form-control" required>
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Horário previsto</label>
-                            <input type="time" id="input-os-hora" class="form-control" required>
-                        </div>
+                        <div class="form-group" style="flex: 1;"><label>Data Agendada</label><input type="date" id="input-os-data" class="form-control" required></div>
+                        <div class="form-group" style="flex: 1;"><label>Horário previsto</label><input type="time" id="input-os-hora" class="form-control" required></div>
                     </div>
-
                     <div style="display: flex; gap: 16px;">
                         <div class="form-group" style="flex: 1;">
                             <label>Técnico Responsável</label>
@@ -321,7 +336,7 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-ghost" type="button" id="btn-cancelar-os">Cancelar</button>
-                <button class="btn btn-primary" type="submit" form="form-nova-os">Confirmar Agendamento</button>
+                <button class="btn btn-primary" type="submit" form="form-nova-os">Confirmar</button>
             </div>
         </div>
     </div>
@@ -337,11 +352,11 @@
                 <input type="hidden" id="exec-os-id">
                 <div style="margin-bottom: 24px; padding: 16px; background-color: var(--bg-color); border-radius: 8px;">
                     <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Serviço a realizar:</p>
-                    <p id="exec-os-servico" style="font-weight: 600; font-size: 16px;">Descrição do serviço</p>
+                    <p id="exec-os-servico" style="font-weight: 600; font-size: 16px;">Descrição</p>
                 </div>
                 <div class="form-group">
                     <label>Diagnóstico / Serviço Realizado</label>
-                    <textarea id="exec-os-diagnostico" class="form-control" rows="4" placeholder="Descreva o que foi encontrado e o que foi feito..."></textarea>
+                    <textarea id="exec-os-diagnostico" class="form-control" rows="4"></textarea>
                 </div>
             </div>
             <div class="modal-footer" style="justify-content: space-between;">
@@ -351,6 +366,66 @@
                 <button class="btn" id="btn-finalizar-servico" style="background-color: #10b981; color: white;">
                     <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">check_circle</span> Finalizar OS
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVO CONDOMÍNIO (NOVO) -->
+    <div class="modal-overlay hidden" id="modal-novo-condominio">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <h2>Cadastrar Condomínio</h2>
+                <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-condominio">close</button>
+            </div>
+            <div class="modal-body">
+                <form id="form-novo-condominio">
+                    
+                    <h3 style="font-size: 14px; color: var(--primary-color); margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">Dados do Local</h3>
+                    <div style="display: flex; gap: 16px;">
+                        <div class="form-group" style="flex: 2;">
+                            <label>Nome do Condomínio</label>
+                            <input type="text" id="input-cond-nome" class="form-control" required placeholder="Ex: Residencial Flores">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>CNPJ</label>
+                            <input type="text" id="input-cond-cnpj" class="form-control" placeholder="00.000.000/0001-00">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Endereço Completo</label>
+                        <input type="text" id="input-cond-endereco" class="form-control" required placeholder="Rua, Número, Bairro, Cidade">
+                    </div>
+
+                    <h3 style="font-size: 14px; color: var(--primary-color); margin-top: 24px; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 4px;">Contato do Síndico</h3>
+                    <div style="display: flex; gap: 16px;">
+                        <div class="form-group" style="flex: 1;">
+                            <label>Nome do Síndico</label>
+                            <input type="text" id="input-cond-sindico" class="form-control" required placeholder="Nome completo">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Telefone / WhatsApp</label>
+                            <input type="text" id="input-cond-telefone" class="form-control" required placeholder="(00) 00000-0000">
+                        </div>
+                    </div>
+
+                    <div style="display: flex; gap: 16px; margin-top: 8px;">
+                        <div class="form-group" style="flex: 2;">
+                            <label>E-mail do Condomínio</label>
+                            <input type="email" id="input-cond-email" class="form-control" placeholder="contato@condominio.com">
+                        </div>
+                        <div class="form-group" style="flex: 1;">
+                            <label>Status do Contrato</label>
+                            <select id="input-cond-status" class="form-control">
+                                <option value="Ativo">🟢 Ativo</option>
+                                <option value="Inativo">🔴 Inativo</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" type="button" id="btn-cancelar-condominio">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-novo-condominio">Salvar Condomínio</button>
             </div>
         </div>
     </div>
