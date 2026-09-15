@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarTelaConfiguracoes();
     configurarModuloChamados();
     configurarModuloOS();
-    configurarModuloTecnico(); // Novo Módulo
+    configurarModuloTecnico(); 
 });
 
 // ==========================================
@@ -71,7 +71,7 @@ function configurarNavegacao() {
             
             if(targetPage === 'chamados') renderizarTabelaChamados();
             if(targetPage === 'os') renderizarTabelaOS();
-            if(targetPage === 'tecnico') renderizarAgendaTecnico(); // Carrega tela do técnico
+            if(targetPage === 'tecnico') renderizarAgendaTecnico(); 
         });
     });
 }
@@ -287,11 +287,8 @@ function renderizarTabelaOS() {
 // ==========================================
 function configurarModuloTecnico() {
     const selectTecnico = document.getElementById('simulador-tecnico');
-    
-    // Quando alterar o técnico no dropdown, re-renderiza a lista de cards
     selectTecnico.addEventListener('change', renderizarAgendaTecnico);
 
-    // Modal de Execução
     const modalExec = document.getElementById('modal-executar-os');
     const btnFechar = document.getElementById('btn-fechar-modal-exec');
     const btnIniciar = document.getElementById('btn-iniciar-servico');
@@ -300,21 +297,50 @@ function configurarModuloTecnico() {
     const fecharModalExec = () => { modalExec.classList.add('hidden'); };
     btnFechar.addEventListener('click', fecharModalExec);
 
-    // Lógica para INICIAR serviço
     btnIniciar.addEventListener('click', () => {
         atualizarStatusOSTecnico('Em andamento');
     });
 
-    // Lógica para FINALIZAR serviço
     btnFinalizar.addEventListener('click', () => {
         const diagnostico = document.getElementById('exec-os-diagnostico').value;
         if(diagnostico.trim() === '') {
-            alert('Por favor, preencha o campo de diagnóstico/serviço realizado antes de finalizar.');
+            alert('Por favor, descreva o que foi feito no campo de diagnóstico antes de finalizar a OS.');
             return;
         }
         atualizarStatusOSTecnico('Concluída', diagnostico);
         fecharModalExec();
     });
+}
+
+function abrirModalExecutarOS(osId) {
+    const os = getDados().ordensServico.find(o => o.id == osId);
+    if(!os) return;
+
+    document.getElementById('exec-os-id').value = os.id;
+    document.getElementById('exec-os-title').textContent = `OS #${os.id} - ${os.condominio}`;
+    document.getElementById('exec-os-servico').textContent = os.servico;
+    document.getElementById('exec-os-diagnostico').value = os.diagnostico || "";
+
+    const btnIniciar = document.getElementById('btn-iniciar-servico');
+    const btnFinalizar = document.getElementById('btn-finalizar-servico');
+    const inputDiag = document.getElementById('exec-os-diagnostico');
+
+    if(os.status === 'Concluída') {
+        btnIniciar.style.display = 'none';
+        btnFinalizar.style.display = 'none';
+        inputDiag.disabled = true;
+    } else if (os.status === 'Em andamento') {
+        btnIniciar.style.display = 'none';
+        btnFinalizar.style.display = 'block';
+        inputDiag.disabled = false;
+    } else {
+        // Aberta ou Agendada
+        btnIniciar.style.display = 'block';
+        btnFinalizar.style.display = 'block';
+        inputDiag.disabled = false;
+    }
+
+    document.getElementById('modal-executar-os').classList.remove('hidden');
 }
 
 function atualizarStatusOSTecnico(novoStatus, diagnostico = "") {
@@ -330,45 +356,12 @@ function atualizarStatusOSTecnico(novoStatus, diagnostico = "") {
         salvarDados(dados);
         renderizarAgendaTecnico();
         
-        // Atualiza botões no modal imediatamente se apenas Iniciar
+        // Atualiza botões no modal imediatamente
         if(novoStatus === 'Em andamento') {
             document.getElementById('btn-iniciar-servico').style.display = 'none';
         }
     }
 }
-
-// Função global para ser chamada pelo HTML gerado via JS
-window.abrirModalExecutarOS = function(osId) {
-    const os = getDados().ordensServico.find(o => o.id == osId);
-    if(!os) return;
-
-    document.getElementById('exec-os-id').value = os.id;
-    document.getElementById('exec-os-title').textContent = `OS #${os.id} - ${os.condominio}`;
-    document.getElementById('exec-os-servico').textContent = os.servico;
-    document.getElementById('exec-os-diagnostico').value = os.diagnostico || "";
-
-    // Esconde o botão de Iniciar se já estiver em andamento ou concluída
-    const btnIniciar = document.getElementById('btn-iniciar-servico');
-    const btnFinalizar = document.getElementById('btn-finalizar-servico');
-    const inputDiag = document.getElementById('exec-os-diagnostico');
-
-    if(os.status === 'Concluída') {
-        btnIniciar.style.display = 'none';
-        btnFinalizar.style.display = 'none';
-        inputDiag.disabled = true;
-    } else if (os.status === 'Em andamento') {
-        btnIniciar.style.display = 'none';
-        btnFinalizar.style.display = 'block';
-        inputDiag.disabled = false;
-    } else {
-        // Aberta / Agendada
-        btnIniciar.style.display = 'block';
-        btnFinalizar.style.display = 'block';
-        inputDiag.disabled = false;
-    }
-
-    document.getElementById('modal-executar-os').classList.remove('hidden');
-};
 
 function renderizarAgendaTecnico() {
     const dados = getDados();
@@ -377,21 +370,19 @@ function renderizarAgendaTecnico() {
     container.innerHTML = '';
 
     const tecnicoFiltro = document.getElementById('simulador-tecnico').value;
-
     let ordens = dados.ordensServico || [];
     
-    // Filtra pelo técnico se não for "Todos"
     if(tecnicoFiltro !== 'Todos') {
         ordens = ordens.filter(os => os.tecnico === tecnicoFiltro);
     }
 
     if (ordens.length === 0) {
-        container.innerHTML = `<p style="color: var(--text-muted); width: 100%;">Nenhuma OS designada para este filtro.</p>`;
+        container.innerHTML = `<p style="color: var(--text-muted); width: 100%;">Nenhuma OS encontrada para este técnico.</p>`;
         return;
     }
 
-    ordens.forEach(os => {
-        // Cores dos status para o Card
+    // Usando .reverse() para mostrar a mais recente primeiro
+    [...ordens].reverse().forEach(os => {
         let badgeStatus = 'badge-status-aberta';
         if (os.status === 'Agendada') badgeStatus = 'badge-status-agendada'; 
         if (os.status === 'Em andamento') badgeStatus = 'badge-status-andamento'; 
@@ -409,11 +400,17 @@ function renderizarAgendaTecnico() {
                 <p class="desc">${os.servico}</p>
             </div>
             <div class="task-footer">
-                <button class="btn btn-primary" style="width: 100%;" onclick="abrirModalExecutarOS(${os.id})">
+                <button class="btn btn-primary btn-executar" style="width: 100%;">
                     Visualizar e Executar
                 </button>
             </div>
         `;
+        
+        // Adiciona o evento de clique pelo JS (Muito mais seguro e à prova de falhas)
+        card.querySelector('.btn-executar').addEventListener('click', () => {
+            abrirModalExecutarOS(os.id);
+        });
+
         container.appendChild(card);
     });
 }
