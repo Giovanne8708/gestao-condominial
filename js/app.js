@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarTelaConfiguracoes();
     configurarModuloChamados();
     configurarModuloOS();
+    configurarModuloTecnico(); // Novo Módulo
 });
 
 // ==========================================
@@ -24,7 +25,6 @@ function inicializarSistema() {
         }
     }
     
-    // Prevenção de erro: se os arrays não existirem no cache antigo, criamos agora
     const dados = getDados();
     let precisaSalvar = false;
     if(!dados.chamados) { dados.chamados = []; precisaSalvar = true; }
@@ -71,6 +71,7 @@ function configurarNavegacao() {
             
             if(targetPage === 'chamados') renderizarTabelaChamados();
             if(targetPage === 'os') renderizarTabelaOS();
+            if(targetPage === 'tecnico') renderizarAgendaTecnico(); // Carrega tela do técnico
         });
     });
 }
@@ -112,7 +113,6 @@ function configurarTelaConfiguracoes() {
 // MÓDULO DE CHAMADOS
 // ==========================================
 function configurarModuloChamados() {
-    renderizarTabelaChamados();
     const modalNovo = document.getElementById('modal-novo-chamado');
     const formNovo = document.getElementById('form-novo-chamado');
 
@@ -149,13 +149,12 @@ function renderizarTabelaChamados() {
     
     tbody.innerHTML = ''; 
     if (dados.chamados.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum chamado registrado no momento.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum chamado registrado.</td></tr>`;
         return;
     }
 
     [...dados.chamados].reverse().forEach(chamado => {
         const tr = document.createElement('tr');
-        
         let badgeStatus = 'badge-status-novo';
         if (chamado.status === 'Em análise') badgeStatus = 'badge-status-analise';
         if (chamado.status === 'Convertido em OS') badgeStatus = 'badge-status-aprovado';
@@ -170,9 +169,7 @@ function renderizarTabelaChamados() {
             <td>${chamado.problema}</td>
             <td><span class="badge ${badgePrioridade}">${chamado.prioridade}</span></td>
             <td><span class="badge ${badgeStatus}">${chamado.status}</span></td>
-            <td style="text-align: right;">
-                <button class="icon-btn" title="Ver Detalhes"><span class="material-symbols-outlined">visibility</span></button>
-            </td>
+            <td style="text-align: right;"><button class="icon-btn"><span class="material-symbols-outlined">visibility</span></button></td>
         `;
         tbody.appendChild(tr);
     });
@@ -182,42 +179,33 @@ function renderizarTabelaChamados() {
 // MÓDULO DE ORDENS DE SERVIÇO (OS)
 // ==========================================
 function configurarModuloOS() {
-    renderizarTabelaOS();
     const modalOS = document.getElementById('modal-nova-os');
     const formOS = document.getElementById('form-nova-os');
-    
     const selectChamado = document.getElementById('input-os-chamado');
     const inputCondominio = document.getElementById('input-os-condominio');
     const inputServico = document.getElementById('input-os-servico');
 
     document.getElementById('btn-abrir-modal-os').addEventListener('click', () => {
-        // Popula o select de Chamados Abertos
         const dados = getDados();
         selectChamado.innerHTML = '<option value="">Nenhum (Criar OS Avulsa)</option>';
         
-        // Filtra apenas chamados que ainda não viraram OS
         const chamadosAbertos = dados.chamados.filter(c => c.status !== 'Convertido em OS');
-        
         chamadosAbertos.forEach(c => {
             const option = document.createElement('option');
             option.value = c.id;
-            // Exemplo: "#2 - Residencial Solar (Vazamento na...)"
             option.textContent = `#${c.id} - ${c.condominio} (${c.problema.substring(0, 30)}...)`;
             selectChamado.appendChild(option);
         });
-
         modalOS.classList.remove('hidden');
     });
 
-    // MÁGICA: Autopreencher os campos ao selecionar um Chamado
     selectChamado.addEventListener('change', (e) => {
         const chamadoId = e.target.value;
         if(chamadoId) {
-            const dados = getDados();
-            const chamado = dados.chamados.find(c => c.id == chamadoId);
+            const chamado = getDados().chamados.find(c => c.id == chamadoId);
             if(chamado) {
                 inputCondominio.value = chamado.condominio;
-                inputServico.value = chamado.problema; // O problema vira o serviço base
+                inputServico.value = chamado.problema;
             }
         } else {
             inputCondominio.value = '';
@@ -226,45 +214,36 @@ function configurarModuloOS() {
     });
 
     const fecharModal = () => { modalOS.classList.add('hidden'); formOS.reset(); };
-
     document.getElementById('btn-fechar-modal-os').addEventListener('click', fecharModal);
     document.getElementById('btn-cancelar-os').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
 
     formOS.addEventListener('submit', (e) => {
         e.preventDefault(); 
         const dados = getDados();
-        
-        // Se as ordens não existirem, cria a estrutura para evitar erro
         if (!dados.ordensServico) dados.ordensServico = [];
         
-        // OS começam no 1001
         let novoId = 1001;
-        if (dados.ordensServico.length > 0) {
-            novoId = Math.max(...dados.ordensServico.map(os => os.id)) + 1;
-        }
+        if (dados.ordensServico.length > 0) novoId = Math.max(...dados.ordensServico.map(os => os.id)) + 1;
         
         const chamadoIdVinculado = selectChamado.value;
-
         dados.ordensServico.push({
             id: novoId,
             chamadoId: chamadoIdVinculado || null,
             condominio: inputCondominio.value,
             servico: inputServico.value,
             tecnico: document.getElementById('input-os-tecnico').value,
-            status: document.getElementById('input-os-status').value
+            status: document.getElementById('input-os-status').value,
+            diagnostico: ""
         });
 
-        // Se vinculou a um chamado, atualiza o status dele
         if(chamadoIdVinculado) {
             const index = dados.chamados.findIndex(c => c.id == chamadoIdVinculado);
-            if(index !== -1) {
-                dados.chamados[index].status = 'Convertido em OS';
-            }
+            if(index !== -1) dados.chamados[index].status = 'Convertido em OS';
         }
 
         salvarDados(dados);
         renderizarTabelaOS();
-        renderizarTabelaChamados(); // Atualiza a tela de chamados para mostrar a tag Verde
+        renderizarTabelaChamados();
         fecharModal();
     });
 }
@@ -276,7 +255,7 @@ function renderizarTabelaOS() {
     
     tbody.innerHTML = ''; 
     if (!dados.ordensServico || dados.ordensServico.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhuma OS registrada no momento.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhuma OS registrada.</td></tr>`;
         return;
     }
 
@@ -289,7 +268,6 @@ function renderizarTabelaOS() {
         if (os.status === 'Concluída') badgeStatus = 'badge-status-concluida'; 
         if (os.status === 'Atrasada') badgeStatus = 'badge-status-atrasada'; 
 
-        // Se veio de um chamado, exibe o ícone de linkzinho
         const linkChamado = os.chamadoId ? `<br><small style="color:var(--text-muted);">Ref: Chamado #${os.chamadoId}</small>` : '';
 
         tr.innerHTML = `
@@ -298,10 +276,144 @@ function renderizarTabelaOS() {
             <td>${os.servico} ${linkChamado}</td>
             <td>${os.tecnico}</td>
             <td><span class="badge ${badgeStatus}">${os.status}</span></td>
-            <td style="text-align: right;">
-                <button class="icon-btn" title="Ver Detalhes"><span class="material-symbols-outlined">visibility</span></button>
-            </td>
+            <td style="text-align: right;"><button class="icon-btn"><span class="material-symbols-outlined">visibility</span></button></td>
         `;
         tbody.appendChild(tr);
+    });
+}
+
+// ==========================================
+// MÓDULO DO TÉCNICO (Mobile view / Interação)
+// ==========================================
+function configurarModuloTecnico() {
+    const selectTecnico = document.getElementById('simulador-tecnico');
+    
+    // Quando alterar o técnico no dropdown, re-renderiza a lista de cards
+    selectTecnico.addEventListener('change', renderizarAgendaTecnico);
+
+    // Modal de Execução
+    const modalExec = document.getElementById('modal-executar-os');
+    const btnFechar = document.getElementById('btn-fechar-modal-exec');
+    const btnIniciar = document.getElementById('btn-iniciar-servico');
+    const btnFinalizar = document.getElementById('btn-finalizar-servico');
+
+    const fecharModalExec = () => { modalExec.classList.add('hidden'); };
+    btnFechar.addEventListener('click', fecharModalExec);
+
+    // Lógica para INICIAR serviço
+    btnIniciar.addEventListener('click', () => {
+        atualizarStatusOSTecnico('Em andamento');
+    });
+
+    // Lógica para FINALIZAR serviço
+    btnFinalizar.addEventListener('click', () => {
+        const diagnostico = document.getElementById('exec-os-diagnostico').value;
+        if(diagnostico.trim() === '') {
+            alert('Por favor, preencha o campo de diagnóstico/serviço realizado antes de finalizar.');
+            return;
+        }
+        atualizarStatusOSTecnico('Concluída', diagnostico);
+        fecharModalExec();
+    });
+}
+
+function atualizarStatusOSTecnico(novoStatus, diagnostico = "") {
+    const osId = document.getElementById('exec-os-id').value;
+    const dados = getDados();
+    
+    const osIndex = dados.ordensServico.findIndex(os => os.id == osId);
+    if(osIndex !== -1) {
+        dados.ordensServico[osIndex].status = novoStatus;
+        if(diagnostico !== "") {
+            dados.ordensServico[osIndex].diagnostico = diagnostico;
+        }
+        salvarDados(dados);
+        renderizarAgendaTecnico();
+        
+        // Atualiza botões no modal imediatamente se apenas Iniciar
+        if(novoStatus === 'Em andamento') {
+            document.getElementById('btn-iniciar-servico').style.display = 'none';
+        }
+    }
+}
+
+// Função global para ser chamada pelo HTML gerado via JS
+window.abrirModalExecutarOS = function(osId) {
+    const os = getDados().ordensServico.find(o => o.id == osId);
+    if(!os) return;
+
+    document.getElementById('exec-os-id').value = os.id;
+    document.getElementById('exec-os-title').textContent = `OS #${os.id} - ${os.condominio}`;
+    document.getElementById('exec-os-servico').textContent = os.servico;
+    document.getElementById('exec-os-diagnostico').value = os.diagnostico || "";
+
+    // Esconde o botão de Iniciar se já estiver em andamento ou concluída
+    const btnIniciar = document.getElementById('btn-iniciar-servico');
+    const btnFinalizar = document.getElementById('btn-finalizar-servico');
+    const inputDiag = document.getElementById('exec-os-diagnostico');
+
+    if(os.status === 'Concluída') {
+        btnIniciar.style.display = 'none';
+        btnFinalizar.style.display = 'none';
+        inputDiag.disabled = true;
+    } else if (os.status === 'Em andamento') {
+        btnIniciar.style.display = 'none';
+        btnFinalizar.style.display = 'block';
+        inputDiag.disabled = false;
+    } else {
+        // Aberta / Agendada
+        btnIniciar.style.display = 'block';
+        btnFinalizar.style.display = 'block';
+        inputDiag.disabled = false;
+    }
+
+    document.getElementById('modal-executar-os').classList.remove('hidden');
+};
+
+function renderizarAgendaTecnico() {
+    const dados = getDados();
+    const container = document.getElementById('lista-os-tecnico');
+    if(!container) return;
+    container.innerHTML = '';
+
+    const tecnicoFiltro = document.getElementById('simulador-tecnico').value;
+
+    let ordens = dados.ordensServico || [];
+    
+    // Filtra pelo técnico se não for "Todos"
+    if(tecnicoFiltro !== 'Todos') {
+        ordens = ordens.filter(os => os.tecnico === tecnicoFiltro);
+    }
+
+    if (ordens.length === 0) {
+        container.innerHTML = `<p style="color: var(--text-muted); width: 100%;">Nenhuma OS designada para este filtro.</p>`;
+        return;
+    }
+
+    ordens.forEach(os => {
+        // Cores dos status para o Card
+        let badgeStatus = 'badge-status-aberta';
+        if (os.status === 'Agendada') badgeStatus = 'badge-status-agendada'; 
+        if (os.status === 'Em andamento') badgeStatus = 'badge-status-andamento'; 
+        if (os.status === 'Concluída') badgeStatus = 'badge-status-concluida'; 
+
+        const card = document.createElement('div');
+        card.className = 'task-card';
+        card.innerHTML = `
+            <div class="task-header">
+                <span class="task-id">OS #${os.id}</span>
+                <span class="badge ${badgeStatus}">${os.status}</span>
+            </div>
+            <div class="task-info">
+                <p class="title">${os.condominio}</p>
+                <p class="desc">${os.servico}</p>
+            </div>
+            <div class="task-footer">
+                <button class="btn btn-primary" style="width: 100%;" onclick="abrirModalExecutarOS(${os.id})">
+                    Visualizar e Executar
+                </button>
+            </div>
+        `;
+        container.appendChild(card);
     });
 }

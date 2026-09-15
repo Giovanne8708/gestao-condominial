@@ -34,6 +34,13 @@
                 Ordens de Serviço
             </a>
 
+            <!-- NOVO MÓDULO: ÁREA DO TÉCNICO -->
+            <span class="nav-section">OPERAÇÃO</span>
+            <a href="#" class="nav-item" data-page="tecnico">
+                <span class="material-symbols-outlined">engineering</span>
+                Área do Técnico
+            </a>
+
             <span class="nav-section">GESTÃO</span>
             <a href="#" class="nav-item" data-page="configuracoes">
                 <span class="material-symbols-outlined">settings</span>
@@ -112,9 +119,7 @@
                                 <th style="text-align: right;">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- JavaScript injeta as linhas -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
                 </div>
             </section>
@@ -144,10 +149,31 @@
                                 <th style="text-align: right;">Ações</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <!-- JavaScript injeta as linhas -->
-                        </tbody>
+                        <tbody></tbody>
                     </table>
+                </div>
+            </section>
+
+            <!-- TELA: ÁREA DO TÉCNICO -->
+            <section id="page-tecnico" class="page-view hidden">
+                <div class="section-header">
+                    <div>
+                        <h2>Minha Agenda</h2>
+                        <p class="text-muted">Serviços designados para execução.</p>
+                    </div>
+                    <!-- Simulação de Login de Técnico para facilitar seus testes -->
+                    <div>
+                        <select id="simulador-tecnico" class="form-control" style="background: white;">
+                            <option value="Todos">Todos os Técnicos</option>
+                            <option value="João Silva">João Silva</option>
+                            <option value="Carlos Souza">Carlos Souza</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- A lista de OS será gerada em Cards aqui dentro -->
+                <div class="mobile-grid" id="lista-os-tecnico">
+                    <!-- Cards injetados via JS -->
                 </div>
             </section>
 
@@ -187,6 +213,7 @@
     <!-- MODAL: NOVO CHAMADO -->
     <div class="modal-overlay hidden" id="modal-novo-chamado">
         <div class="modal-content">
+            <!-- (Conteúdo idêntico ao da etapa anterior) -->
             <div class="modal-header">
                 <h2>Abrir Novo Chamado</h2>
                 <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-chamado">close</button>
@@ -221,21 +248,19 @@
     <!-- MODAL: NOVA OS -->
     <div class="modal-overlay hidden" id="modal-nova-os">
         <div class="modal-content">
+             <!-- (Conteúdo idêntico ao da etapa anterior) -->
             <div class="modal-header">
                 <h2>Gerar Ordem de Serviço</h2>
                 <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-os">close</button>
             </div>
             <div class="modal-body">
                 <form id="form-nova-os">
-                    <!-- AQUI ESTÁ A MÁGICA: Vincular Chamado -->
                     <div class="form-group">
                         <label>Vincular a um Chamado (Opcional)</label>
                         <select id="input-os-chamado" class="form-control">
                             <option value="">Nenhum (Criar OS Avulsa)</option>
-                            <!-- JS vai injetar opções aqui -->
                         </select>
                     </div>
-
                     <div class="form-group">
                         <label>Condomínio</label>
                         <input type="text" id="input-os-condominio" class="form-control" required placeholder="Ex: Edifício Central">
@@ -265,6 +290,40 @@
             <div class="modal-footer">
                 <button class="btn btn-ghost" type="button" id="btn-cancelar-os">Cancelar</button>
                 <button class="btn btn-primary" type="submit" form="form-nova-os">Salvar OS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: EXECUTAR OS (TÉCNICO) -->
+    <div class="modal-overlay hidden" id="modal-executar-os">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: var(--sidebar-bg); color: white; border-radius: 12px 12px 0 0;">
+                <h2 id="exec-os-title" style="color: white;">OS #0000</h2>
+                <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-exec" style="color: white;">close</button>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="exec-os-id">
+                
+                <div style="margin-bottom: 24px; padding: 16px; background-color: var(--bg-color); border-radius: 8px;">
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 4px;">Serviço a realizar:</p>
+                    <p id="exec-os-servico" style="font-weight: 600; font-size: 16px;">Descrição do serviço</p>
+                </div>
+
+                <div class="form-group">
+                    <label>Diagnóstico / Serviço Realizado</label>
+                    <textarea id="exec-os-diagnostico" class="form-control" rows="4" placeholder="Descreva o que foi encontrado e o que foi feito..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer" style="justify-content: space-between;">
+                <!-- Botão de Iniciar altera o status para Em andamento -->
+                <button class="btn" id="btn-iniciar-servico" style="background-color: #f59e0b; color: white;">
+                    <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">play_arrow</span> Iniciar Serviço
+                </button>
+                
+                <!-- Botão Finalizar altera o status para Concluída -->
+                <button class="btn" id="btn-finalizar-servico" style="background-color: #10b981; color: white;">
+                    <span class="material-symbols-outlined" style="vertical-align: middle; font-size: 18px;">check_circle</span> Finalizar OS
+                </button>
             </div>
         </div>
     </div>

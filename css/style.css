@@ -367,6 +367,54 @@ body {
 .table tbody tr { transition: background-color 0.2s; }
 .table tbody tr:hover { background-color: #f8fafc; }
 
+/* VISÃO DO TÉCNICO (Mobile Cards) */
+.mobile-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.task-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.task-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+}
+
+.task-id {
+    font-weight: 700;
+    font-size: 16px;
+    color: var(--text-main);
+}
+
+.task-info p {
+    margin-bottom: 4px;
+    font-size: 14px;
+    color: var(--text-main);
+}
+.task-info p.title {
+    font-weight: 600;
+}
+.task-info p.desc {
+    color: var(--text-muted);
+}
+
+.task-footer {
+    padding-top: 12px;
+}
+
 /* BADGES DE STATUS/PRIORIDADE */
 .badge {
     padding: 6px 10px;
