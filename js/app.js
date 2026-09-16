@@ -97,7 +97,7 @@ function configurarMenuMobile() {
     if(btn) btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 }
 
-// INTELIGÊNCIA DO DASHBOARD
+// INTELIGÊNCIA DO DASHBOARD ATUALIZADA
 function atualizarDashboard() {
     const dados = getDados();
     const ordens = dados.ordensServico || [];
@@ -109,12 +109,24 @@ function atualizarDashboard() {
     const cAtr = document.getElementById('count-atrasadas');
     const cPrev = document.getElementById('count-preventivas');
     
+    const qtdAtrasadas = ordens.filter(os => os.status === 'Atrasada').length;
+
     if(cOs) cOs.textContent = ordens.filter(os => os.status === 'Aberta').length;
     if(cAnd) cAnd.textContent = ordens.filter(os => os.status === 'Em andamento').length;
-    if(cAtr) cAtr.textContent = ordens.filter(os => os.status === 'Atrasada').length;
+    if(cAtr) cAtr.textContent = qtdAtrasadas;
     if(cPrev) cPrev.textContent = preventivas.length;
 
-    // Lógica do "Requer Atenção"
+    // Faz o cartão de OS Atrasadas piscar APENAS se houver atraso real
+    const cardAtrasadasEl = document.querySelector('.card-atrasadas-animado');
+    if(cardAtrasadasEl) {
+        if(qtdAtrasadas > 0) {
+            cardAtrasadasEl.classList.add('tem-atraso');
+        } else {
+            cardAtrasadasEl.classList.remove('tem-atraso');
+        }
+    }
+
+    // Lógica do "Requer Atenção" centralizado
     const containerAvisos = document.getElementById('dashboard-avisos');
     if(!containerAvisos) return;
     
@@ -123,16 +135,41 @@ function atualizarDashboard() {
     const hojeIso = new Date().toISOString().split('T')[0];
 
     // Checa OS Atrasadas
-    const osAtrasadas = ordens.filter(os => os.status === 'Atrasada');
-    if(osAtrasadas.length > 0) {
+    if(qtdAtrasadas > 0) {
         temAviso = true;
         containerAvisos.innerHTML += `
             <div class="alert-card clickable-alert" onclick="irParaTela('os')">
                 <span class="material-symbols-outlined alert-icon">warning</span>
                 <div class="alert-content">
-                    <p class="alert-title">${osAtrasadas.length} Ordem(ns) de Serviço Atrasada(s)</p>
-                    <p class="alert-desc">Verifique a aba de Ordens de Serviço urgente.</p>
+                    <p class="alert-title">${qtdAtrasadas} Ordem(ns) de Serviço Atrasada(s)</p>
+                    <p class="alert-desc">Existem manutenções fora do prazo que exigem alocação ou intervenção imediata.</p>
                 </div>
+            </div>`;
+    }
+
+    // Checa Preventivas Vencidas ou de Hoje
+    let prevPendentes = 0;
+    preventivas.forEach(p => {
+        if(p.proximaData < hojeIso || p.proximaData === hojeIso) prevPendentes++;
+    });
+
+    if(prevPendentes > 0) {
+        temAviso = true;
+        containerAvisos.innerHTML += `
+            <div class="alert-card clickable-alert" onclick="irParaTela('preventivas')">
+                <span class="material-symbols-outlined alert-icon" style="color: #c2410c; background-color: #ffedd5;">event_busy</span>
+                <div class="alert-content">
+                    <p class="alert-title" style="color: #9a3412;">${prevPendentes} Preventiva(s) Pendente(s)</p>
+                    <p class="alert-desc" style="color: #c2410c;">Há planos de revisão técnica programados para hoje ou já vencidos.</p>
+                </div>
+            </div>`;
+    }
+
+    if(!temAviso) {
+        containerAvisos.innerHTML = `
+            <div style="padding: 24px; text-align: center; background: white; border: 1px solid var(--border-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; max-width: 500px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+                <span class="material-symbols-outlined" style="color: var(--success-color); font-size: 28px;">check_circle</span>
+                <p style="color: var(--text-main); font-size: 14px; font-weight: 500;">Tudo sob controle! Nenhuma pendência urgente no momento.</p>
             </div>`;
     }
 
