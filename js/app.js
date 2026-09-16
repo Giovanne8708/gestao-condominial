@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloEquipamentos(); 
     configurarModuloPreventivas();
     configurarModuloDocumentos();
+    configurarModuloRelatorios(); // NOVO: Configura os filtros de relatórios
 });
 
 window.irParaTela = function(tela) {
@@ -81,17 +82,16 @@ function configurarNavegacao() {
             if(targetPage === 'equipamentos') renderizarTabelaEquipamentos(); 
             if(targetPage === 'preventivas') renderizarTabelaPreventivas(); 
             if(targetPage === 'documentos') renderizarTabelaDocumentos(); 
-            if(targetPage === 'relatorios') atualizarRelatorios(); // NOVO: Atualiza dados da Etapa 11
+            if(targetPage === 'relatorios') inicializarTelaRelatorios(); 
         });
     });
 }
-
 function configurarMenuMobile() {
     const btn = document.getElementById('mobile-menu-btn');
     if(btn) btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 }
 
-// INTELIGÊNCIA DO DASHBOARD E RELATÓRIOS (ETAPA 11)
+// INTELIGÊNCIA DO DASHBOARD
 function atualizarDashboard() {
     const dados = getDados();
     const ordens = dados.ordensServico || [];
@@ -184,14 +184,54 @@ function atualizarDashboard() {
     }
 }
 
-// ATUALIZAÇÃO DA TELA DE RELATÓRIOS (ETAPA 11)
+// ==========================================
+// MÓDULO DE RELATÓRIOS COM FILTROS (ETAPA 11)
+// ==========================================
+function configurarModuloRelatorios() {
+    const selCond = document.getElementById('filtro-rel-condominio');
+    const selTec = document.getElementById('filtro-rel-tecnico');
+    if(selCond) selCond.addEventListener('change', atualizarRelatorios);
+    if(selTec) selTec.addEventListener('change', atualizarRelatorios);
+}
+
+function inicializarTelaRelatorios() {
+    const dados = getDados();
+    const selCond = document.getElementById('filtro-rel-condominio');
+    if(selCond) {
+        const valorAtual = selCond.value;
+        selCond.innerHTML = '<option value="Todos">Todos os Condomínios</option>';
+        dados.condominios.forEach(c => {
+            const opt = document.createElement('option');
+            opt.value = c.nome;
+            opt.textContent = c.nome;
+            selCond.appendChild(opt);
+        });
+        selCond.value = valorAtual;
+    }
+    atualizarRelatorios();
+}
+
 function atualizarRelatorios() {
     const dados = getDados();
-    const chamados = dados.chamados || [];
-    const ordens = dados.ordensServico || [];
-    const preventivas = dados.preventivas || [];
-    const condominios = dados.condominios || [];
-    const equipamentos = dados.equipamentos || [];
+    const condFiltro = document.getElementById('filtro-rel-condominio').value;
+    const tecFiltro = document.getElementById('filtro-rel-tecnico').value;
+
+    let chamados = dados.chamados || [];
+    let ordens = dados.ordensServico || [];
+    let preventivas = dados.preventivas || [];
+    let condominios = dados.condominios || [];
+    let equipamentos = dados.equipamentos || [];
+
+    // Aplica filtros nas Ordens de Serviço
+    if(condFiltro !== 'Todos') {
+        ordens = ordens.filter(os => os.condominio === condFiltro);
+        chamados = chamados.filter(c => c.condominio === condFiltro);
+        preventivas = preventivas.filter(p => p.condominio === condFiltro);
+    }
+    if(tecFiltro !== 'Todos') {
+        ordens = ordens.filter(os => os.tecnico === tecFiltro);
+        preventivas = preventivas.filter(p => p.tecnico === tecFiltro);
+    }
 
     document.getElementById('rel-total-chamados').textContent = chamados.length;
     document.getElementById('rel-total-os').textContent = ordens.length;
@@ -572,6 +612,7 @@ function configurarModuloDocumentos() {
                 selectCond.appendChild(opt);
             });
         }
+        modalDoc.classList.add('hidden'); // Corrigido de hidden para visible logic
         modalDoc.classList.remove('hidden');
     });
 

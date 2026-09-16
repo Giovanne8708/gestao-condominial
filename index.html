@@ -54,7 +54,6 @@
             </a>
 
             <span class="nav-section">GESTÃO</span>
-            <!-- NOVO: Aba Relatórios -->
             <a href="#" class="nav-item" data-page="relatorios">
                 <span class="material-symbols-outlined">bar_chart</span> Relatórios
             </a>
@@ -218,16 +217,27 @@
                 <div class="card table-responsive"><table class="table" id="tabela-documentos"><thead><tr><th>Título do Documento</th><th>Categoria</th><th>Condomínio Vinculado</th><th>Data de Cadastro</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
 
-            <!-- TELA: RELATÓRIOS (NOVO - ETAPA 11) -->
+            <!-- TELA: RELATÓRIOS (COM FILTROS) -->
             <section id="page-relatorios" class="page-view hidden">
                 <div class="section-header">
                     <div>
                         <h2>Relatórios Operacionais</h2>
-                        <p class="text-muted">Visão consolidada da produtividade, chamados e ordens de serviço.</p>
+                        <p class="text-muted">Análise de desempenho filtrada por condomínio e técnico responsável.</p>
                     </div>
-                    <button class="btn btn-primary btn-icon" onclick="window.print()">
-                        <span class="material-symbols-outlined">print</span> Imprimir Relatório
-                    </button>
+                    <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                        <!-- NOVO: Filtros de Condomínio e Técnico -->
+                        <select id="filtro-rel-condominio" class="form-control" style="background: white; width: auto;">
+                            <option value="Todos">Todos os Condomínios</option>
+                        </select>
+                        <select id="filtro-rel-tecnico" class="form-control" style="background: white; width: auto;">
+                            <option value="Todos">Todos os Técnicos</option>
+                            <option value="João Silva">João Silva</option>
+                            <option value="Carlos Souza">Carlos Souza</option>
+                        </select>
+                        <button class="btn btn-primary btn-icon" onclick="window.print()">
+                            <span class="material-symbols-outlined">print</span> Imprimir
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Cards Resumo de Relatório -->
@@ -237,7 +247,7 @@
                         <p class="card-value" id="rel-total-chamados">0</p>
                     </div>
                     <div class="card">
-                        <h3>Total de Ordens de Serviço</h3>
+                        <h3>Ordens de Serviço Filtradas</h3>
                         <p class="card-value" id="rel-total-os">0</p>
                     </div>
                     <div class="card">
@@ -250,12 +260,12 @@
                     </div>
                 </div>
 
-                <!-- Detalhamento e Estatísticas por Condomínio -->
+                <!-- Eficiência -->
                 <div class="card" style="margin-bottom: 24px;">
-                    <h3 style="margin-bottom: 16px; font-size: 16px; color: var(--text-main);">Indicadores de Eficiência</h3>
+                    <h3 style="margin-bottom: 16px; font-size: 16px; color: var(--text-main);">Indicadores de Desempenho</h3>
                     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                         <div style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <p style="font-size: 13px; color: var(--text-muted);">Taxa de Conclusão de OS</p>
+                            <p style="font-size: 13px; color: var(--text-muted);">Taxa de Conclusão (Filtro Atual)</p>
                             <p id="rel-taxa-conclusao" style="font-size: 24px; font-weight: 700; color: var(--primary-color); margin-top: 4px;">0%</p>
                         </div>
                         <div style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color);">
@@ -263,7 +273,7 @@
                             <p id="rel-total-cond" style="font-size: 24px; font-weight: 700; color: var(--success-color); margin-top: 4px;">0</p>
                         </div>
                         <div style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <p style="font-size: 13px; color: var(--text-muted);">Equipamentos Cadastrados</p>
+                            <p style="font-size: 13px; color: var(--text-muted);">Equipamentos na Base</p>
                             <p id="rel-total-equip" style="font-size: 24px; font-weight: 700; color: #7e22ce; margin-top: 4px;">0</p>
                         </div>
                     </div>
