@@ -12,19 +12,11 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloPreventivas(); 
 });
 
-// ==========================================
-// FUNÇÃO GLOBAL DE NAVEGAÇÃO PARA O DASHBOARD
-// ==========================================
 window.irParaTela = function(tela) {
     const link = document.querySelector(`.nav-item[data-page="${tela}"]`);
-    if(link) {
-        link.click();
-    }
+    if(link) link.click();
 };
 
-// ==========================================
-// INICIALIZAÇÃO
-// ==========================================
 function inicializarSistema() {
     if (!localStorage.getItem('mp_data')) {
         const emptyData = {
@@ -60,9 +52,6 @@ function aplicarConfiguracoesVisuais() {
     if(logoHolder) logoHolder.textContent = dados.settings.companyName.substring(0, 2).toUpperCase();
 }
 
-// ==========================================
-// NAVEGAÇÃO E LAYOUT
-// ==========================================
 function configurarNavegacao() {
     const navItems = document.querySelectorAll('.nav-item');
     const pageViews = document.querySelectorAll('.page-view');
@@ -97,11 +86,26 @@ function configurarMenuMobile() {
     if(btn) btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 }
 
-// INTELIGÊNCIA DO DASHBOARD
+// INTELIGÊNCIA DO DASHBOARD COM VERIFICAÇÃO AUTOMÁTICA DE ATRASO
 function atualizarDashboard() {
     const dados = getDados();
     const ordens = dados.ordensServico || [];
     const preventivas = dados.preventivas || [];
+    const hojeIso = new Date().toISOString().split('T')[0];
+
+    // Verifica automaticamente se alguma OS passou do prazo e muda o status para "Atrasada"
+    let alterouAtraso = false;
+    ordens.forEach(os => {
+        if(os.status !== 'Concluída' && os.dataFormatoEN && os.dataFormatoEN < hojeIso) {
+            if(os.status !== 'Atrasada') {
+                os.status = 'Atrasada';
+                alterouAtraso = true;
+            }
+        }
+    });
+    if(alterouAtraso) {
+        localStorage.setItem('mp_data', JSON.stringify(dados));
+    }
     
     // Contadores
     const cOs = document.getElementById('count-os');
@@ -111,7 +115,7 @@ function atualizarDashboard() {
     
     const qtdAtrasadas = ordens.filter(os => os.status === 'Atrasada').length;
 
-    if(cOs) cOs.textContent = ordens.filter(os => os.status === 'Aberta').length;
+    if(cOs) cOs.textContent = ordens.filter(os => os.status === 'Aberta' || os.status === 'Agendada').length;
     if(cAnd) cAnd.textContent = ordens.filter(os => os.status === 'Em andamento').length;
     if(cAtr) cAtr.textContent = qtdAtrasadas;
     if(cPrev) cPrev.textContent = preventivas.length;
@@ -126,13 +130,12 @@ function atualizarDashboard() {
         }
     }
 
-    // Lógica do "Requer Atenção" centralizado
+    // Alertas centralizados (Sem faixas vazias)
     const containerAvisos = document.getElementById('dashboard-avisos');
     if(!containerAvisos) return;
     
     containerAvisos.innerHTML = '';
     let temAviso = false;
-    const hojeIso = new Date().toISOString().split('T')[0];
 
     if(qtdAtrasadas > 0) {
         temAviso = true;
@@ -259,10 +262,18 @@ function configurarModuloOS() {
         let novoId = dados.ordensServico.length > 0 ? Math.max(...dados.ordensServico.map(os => os.id)) + 1 : 1001;
         const chamadoId = selectChamado.value;
         const dataBruta = document.getElementById('input-os-data').value;
+        const hojeIso = new Date().toISOString().split('T')[0];
+        
+        // Define o status automaticamente caso a data seja anterior a hoje
+        let statusInicial = document.getElementById('input-os-status').value;
+        if(dataBruta < hojeIso && statusInicial !== 'Concluída') {
+            statusInicial = 'Atrasada';
+        }
+
         dados.ordensServico.push({
             id: novoId, chamadoId: chamadoId || null, condominio: document.getElementById('input-os-condominio').value,
             servico: document.getElementById('input-os-servico').value, dataFormatoEN: dataBruta, data: dataBruta.split('-').reverse().join('/'),
-            hora: document.getElementById('input-os-hora').value, tecnico: document.getElementById('input-os-tecnico').value, status: document.getElementById('input-os-status').value, diagnostico: ""
+            hora: document.getElementById('input-os-hora').value, tecnico: document.getElementById('input-os-tecnico').value, status: statusInicial, diagnostico: ""
         });
         if(chamadoId) { const index = dados.chamados.findIndex(c => c.id == chamadoId); if(index !== -1) dados.chamados[index].status = 'Convertido em OS'; }
         salvarDados(dados); renderizarTabelaOS(); renderizarTabelaChamados(); renderizarAgendaRotas(); fecharModal();
