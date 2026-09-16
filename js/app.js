@@ -86,28 +86,39 @@ function configurarMenuMobile() {
     if(btn) btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 }
 
-// INTELIGÊNCIA DO DASHBOARD COM VERIFICAÇÃO AUTOMÁTICA DE ATRASO
+// INTELIGÊNCIA DO DASHBOARD COM CÁLCULO BLINDADO DE ATRASO
 function atualizarDashboard() {
     const dados = getDados();
     const ordens = dados.ordensServico || [];
     const preventivas = dados.preventivas || [];
-    const hojeIso = new Date().toISOString().split('T')[0];
+    
+    // Pega a data de hoje no formato YYYY-MM-DD (ignorando horário para evitar conflitos de fuso)
+    const hojeObj = new Date();
+    const ano = hojeObj.getFullYear();
+    const mes = String(hojeObj.getMonth() + 1).padStart(2, '0');
+    const dia = String(hojeObj.getDate()).padStart(2, '0');
+    const hojeIso = `${ano}-${mes}-${dia}`;
 
-    // Verifica automaticamente se alguma OS passou do prazo e muda o status para "Atrasada"
-    let alterouAtraso = false;
+    // Varre todas as OS e atualiza o status de forma inteligente
+    let alterou = false;
     ordens.forEach(os => {
-        if(os.status !== 'Concluída' && os.dataFormatoEN && os.dataFormatoEN < hojeIso) {
-            if(os.status !== 'Atrasada') {
-                os.status = 'Atrasada';
-                alterouAtraso = true;
+        // Se a OS não estiver concluída e tiver data cadastrada
+        if(os.status !== 'Concluída' && os.dataFormatoEN) {
+            // Compara estritamente as strings de data YYYY-MM-DD
+            if(os.dataFormatoEN < hojeIso) {
+                if(os.status !== 'Atrasada') {
+                    os.status = 'Atrasada';
+                    alterou = true;
+                }
             }
         }
     });
-    if(alterouAtraso) {
+
+    if(alterou) {
         localStorage.setItem('mp_data', JSON.stringify(dados));
     }
     
-    // Contadores
+    // Contadores atualizados
     const cOs = document.getElementById('count-os');
     const cAnd = document.getElementById('count-andamento');
     const cAtr = document.getElementById('count-atrasadas');
@@ -120,7 +131,7 @@ function atualizarDashboard() {
     if(cAtr) cAtr.textContent = qtdAtrasadas;
     if(cPrev) cPrev.textContent = preventivas.length;
 
-    // Gerencia a animação de pulsação no card de atrasadas
+    // Aciona ou desativa o efeito de piscar no card de atrasadas
     const cardAtrasadasEl = document.querySelector('.card-atrasadas-animado');
     if(cardAtrasadasEl) {
         if(qtdAtrasadas > 0) {
@@ -130,7 +141,7 @@ function atualizarDashboard() {
         }
     }
 
-    // Alertas centralizados (Sem faixas vazias)
+    // Alertas centralizados
     const containerAvisos = document.getElementById('dashboard-avisos');
     if(!containerAvisos) return;
     
@@ -262,9 +273,14 @@ function configurarModuloOS() {
         let novoId = dados.ordensServico.length > 0 ? Math.max(...dados.ordensServico.map(os => os.id)) + 1 : 1001;
         const chamadoId = selectChamado.value;
         const dataBruta = document.getElementById('input-os-data').value;
-        const hojeIso = new Date().toISOString().split('T')[0];
         
-        // Define o status automaticamente caso a data seja anterior a hoje
+        // Pega a data de hoje para checagem imediata no submit
+        const hojeObj = new Date();
+        const ano = hojeObj.getFullYear();
+        const mes = String(hojeObj.getMonth() + 1).padStart(2, '0');
+        const dia = String(hojeObj.getDate()).padStart(2, '0');
+        const hojeIso = `${ano}-${mes}-${dia}`;
+
         let statusInicial = document.getElementById('input-os-status').value;
         if(dataBruta < hojeIso && statusInicial !== 'Concluída') {
             statusInicial = 'Atrasada';
