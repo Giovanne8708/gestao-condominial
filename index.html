@@ -49,12 +49,15 @@
             <a href="#" class="nav-item" data-page="equipamentos">
                 <span class="material-symbols-outlined">precision_manufacturing</span> Equipamentos
             </a>
-            <!-- NOVO: Aba Documentos -->
             <a href="#" class="nav-item" data-page="documentos">
                 <span class="material-symbols-outlined">folder_shared</span> Documentos
             </a>
 
             <span class="nav-section">GESTÃO</span>
+            <!-- NOVO: Aba Relatórios -->
+            <a href="#" class="nav-item" data-page="relatorios">
+                <span class="material-symbols-outlined">bar_chart</span> Relatórios
+            </a>
             <a href="#" class="nav-item" data-page="configuracoes">
                 <span class="material-symbols-outlined">settings</span> Configurações
             </a>
@@ -206,30 +209,64 @@
                 <div class="card table-responsive"><table class="table" id="tabela-equipamentos"><thead><tr><th>ID</th><th>Nome e Especificação</th><th>Condomínio</th><th>Categoria</th><th>Localização</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
 
-            <!-- TELA: DOCUMENTOS (NOVO) -->
+            <!-- TELA: DOCUMENTOS -->
             <section id="page-documentos" class="page-view hidden">
                 <div class="section-header">
+                    <div><h2>Documentos e Anexos</h2><p class="text-muted">Repositório de manuais, laudos técnicos, contratos e relatórios.</p></div>
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-documento"><span class="material-symbols-outlined">add</span> Novo Documento</button>
+                </div>
+                <div class="card table-responsive"><table class="table" id="tabela-documentos"><thead><tr><th>Título do Documento</th><th>Categoria</th><th>Condomínio Vinculado</th><th>Data de Cadastro</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
+            </section>
+
+            <!-- TELA: RELATÓRIOS (NOVO - ETAPA 11) -->
+            <section id="page-relatorios" class="page-view hidden">
+                <div class="section-header">
                     <div>
-                        <h2>Documentos e Anexos</h2>
-                        <p class="text-muted">Repositório de manuais, laudos técnicos, contratos e relatórios.</p>
+                        <h2>Relatórios Operacionais</h2>
+                        <p class="text-muted">Visão consolidada da produtividade, chamados e ordens de serviço.</p>
                     </div>
-                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-documento">
-                        <span class="material-symbols-outlined">add</span> Novo Documento
+                    <button class="btn btn-primary btn-icon" onclick="window.print()">
+                        <span class="material-symbols-outlined">print</span> Imprimir Relatório
                     </button>
                 </div>
-                <div class="card table-responsive">
-                    <table class="table" id="tabela-documentos">
-                        <thead>
-                            <tr>
-                                <th>Título do Documento</th>
-                                <th>Categoria</th>
-                                <th>Condomínio Vinculado</th>
-                                <th>Data de Cadastro</th>
-                                <th style="text-align: right;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
+
+                <!-- Cards Resumo de Relatório -->
+                <div class="dashboard-cards" style="margin-bottom: 24px;">
+                    <div class="card">
+                        <h3>Total de Chamados</h3>
+                        <p class="card-value" id="rel-total-chamados">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Total de Ordens de Serviço</h3>
+                        <p class="card-value" id="rel-total-os">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>OS Concluídas</h3>
+                        <p class="card-value text-success" id="rel-os-concluidas">0</p>
+                    </div>
+                    <div class="card">
+                        <h3>Planos Preventivos</h3>
+                        <p class="card-value" id="rel-total-prev">0</p>
+                    </div>
+                </div>
+
+                <!-- Detalhamento e Estatísticas por Condomínio -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 16px; color: var(--text-main);">Indicadores de Eficiência</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <p style="font-size: 13px; color: var(--text-muted);">Taxa de Conclusão de OS</p>
+                            <p id="rel-taxa-conclusao" style="font-size: 24px; font-weight: 700; color: var(--primary-color); margin-top: 4px;">0%</p>
+                        </div>
+                        <div style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <p style="font-size: 13px; color: var(--text-muted);">Condomínios Ativos na Base</p>
+                            <p id="rel-total-cond" style="font-size: 24px; font-weight: 700; color: var(--success-color); margin-top: 4px;">0</p>
+                        </div>
+                        <div style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color);">
+                            <p style="font-size: 13px; color: var(--text-muted);">Equipamentos Cadastrados</p>
+                            <p id="rel-total-equip" style="font-size: 24px; font-weight: 700; color: #7e22ce; margin-top: 4px;">0</p>
+                        </div>
+                    </div>
                 </div>
             </section>
 
@@ -249,47 +286,7 @@
     </div>
 
     <!-- MODAIS -->
-    <div class="modal-overlay hidden" id="modal-novo-documento">
-        <div class="modal-content" style="max-width: 550px;">
-            <div class="modal-header">
-                <h2>Vincular Novo Documento</h2>
-                <button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-documento">close</button>
-            </div>
-            <div class="modal-body">
-                <form id="form-novo-documento">
-                    <div class="form-group">
-                        <label>Título do Documento</label>
-                        <input type="text" id="input-doc-titulo" class="form-control" required placeholder="Ex: Manual da Bomba Principal / Laudo AVCB">
-                    </div>
-                    <div style="display: flex; gap: 16px;">
-                        <div class="form-group" style="flex: 1;">
-                            <label>Categoria</label>
-                            <select id="input-doc-categoria" class="form-control" required>
-                                <option value="Manual">Manual Técnico</option>
-                                <option value="Laudo">Laudo / Vistoria</option>
-                                <option value="Contrato">Contrato</option>
-                                <option value="Relatório">Relatório de OS</option>
-                                <option value="Outros">Outros</option>
-                            </select>
-                        </div>
-                        <div class="form-group" style="flex: 1;">
-                            <label>Condomínio Relacionado</label>
-                            <select id="input-doc-condominio" class="form-control" required></select>
-                        </div>
-                    </div>
-                    <div class="form-group" style="margin-bottom: 0;">
-                        <label>Link de Acesso (Drive / Nuvem)</label>
-                        <input type="url" id="input-doc-link" class="form-control" required placeholder="https://drive.google.com/...">
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-ghost" type="button" id="btn-cancelar-documento">Cancelar</button>
-                <button class="btn btn-primary" type="submit" form="form-novo-documento">Salvar Documento</button>
-            </div>
-        </div>
-    </div>
-
+    <div class="modal-overlay hidden" id="modal-novo-documento"><div class="modal-content" style="max-width: 550px;"><div class="modal-header"><h2>Vincular Novo Documento</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-documento">close</button></div><div class="modal-body"><form id="form-novo-documento"><div class="form-group"><label>Título do Documento</label><input type="text" id="input-doc-titulo" class="form-control" required placeholder="Ex: Manual da Bomba Principal"></div><div style="display: flex; gap: 16px;"><div class="form-group" style="flex: 1;"><label>Categoria</label><select id="input-doc-categoria" class="form-control" required><option value="Manual">Manual Técnico</option><option value="Laudo">Laudo / Vistoria</option><option value="Contrato">Contrato</option><option value="Relatório">Relatório de OS</option><option value="Outros">Outros</option></select></div><div class="form-group" style="flex: 1;"><label>Condomínio Relacionado</label><select id="input-doc-condominio" class="form-control" required></select></div></div><div class="form-group" style="margin-bottom: 0;"><label>Link de Acesso (Drive / Nuvem)</label><input type="url" id="input-doc-link" class="form-control" required placeholder="https://drive.google.com/..."></div></form></div><div class="modal-footer"><button class="btn btn-ghost" type="button" id="btn-cancelar-documento">Cancelar</button><button class="btn btn-primary" type="submit" form="form-novo-documento">Salvar Documento</button></div></div></div>
     <div class="modal-overlay hidden" id="modal-nova-preventiva"><div class="modal-content" style="max-width: 650px;"><div class="modal-header"><h2>Plano Preventivo</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-preventiva">close</button></div><div class="modal-body"><form id="form-nova-preventiva"><div style="display: flex; gap: 16px;"><div class="form-group" style="flex: 2;"><label>Selecionar Equipamento</label><select id="input-prev-equipamento" class="form-control" required></select></div><div class="form-group" style="flex: 1;"><label>Condomínio (Auto)</label><input type="text" id="input-prev-condominio" class="form-control" style="background-color: #e2e8f0;" readonly></div></div><div style="display: flex; gap: 16px;"><div class="form-group" style="flex: 1;"><label>Periodicidade</label><select id="input-prev-periodicidade" class="form-control" required><option value="Semanal">Semanal</option><option value="Mensal" selected>Mensal</option><option value="Trimestral">Trimestral</option><option value="Semestral">Semestral</option><option value="Anual">Anual</option></select></div><div class="form-group" style="flex: 1;"><label>Técnico</label><select id="input-prev-tecnico" class="form-control"><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select></div></div><div style="display: flex; gap: 16px;"><div class="form-group" style="flex: 1;"><label>Última Manutenção</label><input type="date" id="input-prev-ultima" class="form-control"></div><div class="form-group" style="flex: 1;"><label>Próxima Manutenção</label><input type="date" id="input-prev-proxima" class="form-control" required></div></div><div class="form-group"><label>Checklist Padrão</label><textarea id="input-prev-checklist" class="form-control" rows="3"></textarea></div></form></div><div class="modal-footer"><button class="btn btn-ghost" type="button" id="btn-cancelar-preventiva">Cancelar</button><button class="btn btn-primary" type="submit" form="form-nova-preventiva">Salvar Plano</button></div></div></div>
     <div class="modal-overlay hidden" id="modal-novo-chamado"><div class="modal-content"><div class="modal-header"><h2>Abrir Chamado</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-chamado">close</button></div><div class="modal-body"><form id="form-novo-chamado"><div class="form-group"><label>Condomínio</label><input type="text" id="input-chamado-condominio" class="form-control" required></div><div class="form-group"><label>Problema</label><textarea id="input-chamado-problema" class="form-control" required rows="3"></textarea></div><div class="form-group"><label>Prioridade</label><select id="input-chamado-prioridade" class="form-control"><option value="Normal">🟢 Normal</option><option value="Alta">🟠 Alta</option><option value="Urgente">🔴 Urgente</option></select></div></form></div><div class="modal-footer"><button class="btn btn-ghost" id="btn-cancelar-chamado">Cancelar</button><button class="btn btn-primary" type="submit" form="form-novo-chamado">Confirmar</button></div></div></div>
     <div class="modal-overlay hidden" id="modal-nova-os"><div class="modal-content"><div class="modal-header"><h2>Agendar OS</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-os">close</button></div><div class="modal-body"><form id="form-nova-os"><div class="form-group"><label>Vincular a Chamado (Opcional)</label><select id="input-os-chamado" class="form-control"></select></div><div class="form-group"><label>Condomínio</label><input type="text" id="input-os-condominio" class="form-control" required></div><div class="form-group"><label>Serviço</label><input type="text" id="input-os-servico" class="form-control" required></div><div style="display: flex; gap: 16px;"><div class="form-group" style="flex: 1;"><label>Data</label><input type="date" id="input-os-data" class="form-control" required></div><div class="form-group" style="flex: 1;"><label>Horário</label><input type="time" id="input-os-hora" class="form-control" required></div></div><div style="display: flex; gap: 16px;"><div class="form-group" style="flex: 1;"><label>Técnico</label><select id="input-os-tecnico" class="form-control"><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select></div><div class="form-group" style="flex: 1;"><label>Status</label><select id="input-os-status" class="form-control"><option value="Agendada">Agendada</option><option value="Aberta">Aberta</option></select></div></div></form></div><div class="modal-footer"><button class="btn btn-ghost" type="button" id="btn-cancelar-os">Cancelar</button><button class="btn btn-primary" type="submit" form="form-nova-os">Confirmar</button></div></div></div>

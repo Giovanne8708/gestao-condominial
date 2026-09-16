@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloCondominios();
     configurarModuloEquipamentos(); 
     configurarModuloPreventivas();
-    configurarModuloDocumentos(); // NOVO MÓDULO ETAPA 10
+    configurarModuloDocumentos();
 });
 
 window.irParaTela = function(tela) {
@@ -81,15 +81,17 @@ function configurarNavegacao() {
             if(targetPage === 'equipamentos') renderizarTabelaEquipamentos(); 
             if(targetPage === 'preventivas') renderizarTabelaPreventivas(); 
             if(targetPage === 'documentos') renderizarTabelaDocumentos(); 
+            if(targetPage === 'relatorios') atualizarRelatorios(); // NOVO: Atualiza dados da Etapa 11
         });
     });
 }
+
 function configurarMenuMobile() {
     const btn = document.getElementById('mobile-menu-btn');
     if(btn) btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 }
 
-// INTELIGÊNCIA DO DASHBOARD COM CÁLCULO BLINDADO DE ATRASO
+// INTELIGÊNCIA DO DASHBOARD E RELATÓRIOS (ETAPA 11)
 function atualizarDashboard() {
     const dados = getDados();
     const ordens = dados.ordensServico || [];
@@ -180,6 +182,29 @@ function atualizarDashboard() {
                 <p style="color: var(--text-main); font-size: 14px; font-weight: 500;">Tudo sob controle! Nenhuma pendência urgente no momento.</p>
             </div>`;
     }
+}
+
+// ATUALIZAÇÃO DA TELA DE RELATÓRIOS (ETAPA 11)
+function atualizarRelatorios() {
+    const dados = getDados();
+    const chamados = dados.chamados || [];
+    const ordens = dados.ordensServico || [];
+    const preventivas = dados.preventivas || [];
+    const condominios = dados.condominios || [];
+    const equipamentos = dados.equipamentos || [];
+
+    document.getElementById('rel-total-chamados').textContent = chamados.length;
+    document.getElementById('rel-total-os').textContent = ordens.length;
+    
+    const concluidas = ordens.filter(os => os.status === 'Concluída').length;
+    document.getElementById('rel-os-concluidas').textContent = concluidas;
+    document.getElementById('rel-total-prev').textContent = preventivas.length;
+
+    document.getElementById('rel-total-cond').textContent = condominios.filter(c => c.status === 'Ativo').length;
+    document.getElementById('rel-total-equip').textContent = equipamentos.length;
+
+    const taxa = ordens.length > 0 ? Math.round((concluidas / ordens.length) * 100) : 0;
+    document.getElementById('rel-taxa-conclusao').textContent = `${taxa}%`;
 }
 
 function configurarTelaConfiguracoes() {
@@ -525,9 +550,6 @@ function renderizarTabelaPreventivas() {
     });
 }
 
-// ==========================================
-// DOCUMENTOS E ANEXOS (ETAPA 10)
-// ==========================================
 function configurarModuloDocumentos() {
     const btnAbrir = document.getElementById('btn-abrir-modal-documento');
     if(!btnAbrir) return;
