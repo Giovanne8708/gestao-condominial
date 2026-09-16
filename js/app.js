@@ -183,7 +183,9 @@ function atualizarDashboard() {
     }
 }
 
-// RELATÓRIOS DETALHADOS COM TABELAS (ETAPA 11)
+// ==========================================
+// MÓDULO DE RELATÓRIOS E EXPORTAÇÃO EM PDF PROFISSIONAL
+// ==========================================
 function configurarModuloRelatorios() {
     const selCond = document.getElementById('filtro-rel-condominio');
     const selTec = document.getElementById('filtro-rel-tecnico');
@@ -219,7 +221,6 @@ function atualizarRelatorios() {
     let condominios = dados.condominios || [];
     let equipamentos = dados.equipamentos || [];
 
-    // Aplicação dos Filtros
     if(condFiltro !== 'Todos') {
         ordens = ordens.filter(os => os.condominio === condFiltro);
         chamados = chamados.filter(c => c.condominio === condFiltro);
@@ -230,7 +231,6 @@ function atualizarRelatorios() {
         preventivas = preventivas.filter(p => p.tecnico === tecFiltro);
     }
 
-    // Atualiza cards superiores
     document.getElementById('rel-total-chamados').textContent = chamados.length;
     document.getElementById('rel-total-os').textContent = ordens.length;
     
@@ -244,7 +244,6 @@ function atualizarRelatorios() {
     const taxa = ordens.length > 0 ? Math.round((concluidas / ordens.length) * 100) : 0;
     document.getElementById('rel-taxa-conclusao').textContent = `${taxa}%`;
 
-    // Renderiza a Tabela Detalhada de Ordens de Serviço no Relatório
     const tbodyOs = document.querySelector('#tabela-relatorio-os tbody');
     if(tbodyOs) {
         tbodyOs.innerHTML = '';
@@ -259,14 +258,13 @@ function atualizarRelatorios() {
                     <td>${os.servico}</td>
                     <td>${os.tecnico}</td>
                     <td style="font-size: 13px;">${os.data || 'N/D'}</td>
-                    <td><span class="badge badge-status-${os.status.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '')}">${os.status}</span></td>
+                    <td>${os.status}</td>
                 `;
                 tbodyOs.appendChild(tr);
             });
         }
     }
 
-    // Renderiza a Tabela Detalhada de Preventivas no Relatório
     const tbodyPrev = document.querySelector('#tabela-relatorio-prev tbody');
     if(tbodyPrev) {
         tbodyPrev.innerHTML = '';
@@ -288,6 +286,177 @@ function atualizarRelatorios() {
         }
     }
 }
+
+// GERADOR DE PDF / DOCUMENTO CORPORATIVO PROFISSIONAL
+window.gerarRelatorioPDF = function() {
+    const dados = getDados();
+    const empresa = dados.settings.companyName || "Manutenção Pro";
+    const condFiltro = document.getElementById('filtro-rel-condominio').value;
+    const tecFiltro = document.getElementById('filtro-rel-tecnico').value;
+    
+    let ordens = dados.ordensServico || [];
+    let preventivas = dados.preventivas || [];
+    let chamados = dados.chamados || [];
+
+    if(condFiltro !== 'Todos') {
+        ordens = ordens.filter(os => os.condominio === condFiltro);
+        chamados = chamados.filter(c => c.condominio === condFiltro);
+        preventivas = preventivas.filter(p => p.condominio === condFiltro);
+    }
+    if(tecFiltro !== 'Todos') {
+        ordens = ordens.filter(os => os.tecnico === tecFiltro);
+        preventivas = preventivas.filter(p => p.tecnico === tecFiltro);
+    }
+
+    const concluidas = ordens.filter(os => os.status === 'Concluída').length;
+    const taxa = ordens.length > 0 ? Math.round((concluidas / ordens.length) * 100) : 0;
+    const dataEmissao = new Date().toLocaleDateString('pt-BR') + ' às ' + new Date().toLocaleTimeString('pt-BR');
+
+    // Monta o HTML limpo e profissional do documento
+    let htmlConteudo = `
+        <!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+            <meta charset="UTF-8">
+            <title>Relatório Operacional - ${empresa}</title>
+            <style>
+                body { font-family: 'Inter', Arial, sans-serif; color: #0f172a; padding: 40px; margin: 0; background: #ffffff; }
+                .header { border-bottom: 2px solid #2563eb; padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-end; }
+                .header h1 { font-size: 22px; color: #0f172a; margin-bottom: 4px; }
+                .header p { font-size: 13px; color: #64748b; margin: 0; }
+                .filters-box { background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 16px; border-radius: 8px; margin-bottom: 24px; font-size: 13px; }
+                .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+                .metric-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; text-align: center; }
+                .metric-card h3 { font-size: 12px; color: #64748b; text-transform: uppercase; margin-bottom: 8px; }
+                .metric-card p { font-size: 22px; font-weight: 700; color: #2563eb; margin: 0; }
+                h2 { font-size: 16px; color: #0f172a; margin-top: 32px; margin-bottom: 12px; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; }
+                table { width: 100%; border-collapse: collapse; margin-bottom: 24px; font-size: 12px; }
+                th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+                th { background-color: #f8fafc; color: #475569; font-weight: 600; text-transform: uppercase; font-size: 11px; }
+                .footer { margin-top: 48px; text-align: center; font-size: 11px; color: #94a3b8; border-top: 1px solid #e2e8f0; padding-top: 16px; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <div>
+                    <h1>Relatório Operacional de Manutenção</h1>
+                    <p><strong>${empresa}</strong> • Sistema de Gestão Integrada</p>
+                </div>
+                <div style="text-align: right;">
+                    <p>Emitido em: ${dataEmissao}</p>
+                </div>
+            </div>
+
+            <div class="filters-box">
+                <strong>Filtros Aplicados:</strong> Condomínio: <em>${condFiltro}</em> | Técnico: <em>${tecFiltro}</em>
+            </div>
+
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <h3>Chamados</h3>
+                    <p>${chamados.length}</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Total OS</h3>
+                    <p>${ordens.length}</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Concluídas</h3>
+                    <p style="color: #10b981;">${concluidas}</p>
+                </div>
+                <div class="metric-card">
+                    <h3>Taxa Sucesso</h3>
+                    <p>${taxa}%</p>
+                </div>
+            </div>
+
+            <h2>Ordens de Serviço do Período</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>OS #</th>
+                        <th>Condomínio</th>
+                        <th>Serviço</th>
+                        <th>Técnico</th>
+                        <th>Data</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    if(ordens.length === 0) {
+        htmlConteudo += `<tr><td colspan="6" style="text-align: center; color: #64748b;">Nenhuma ordem de serviço encontrada.</td></tr>`;
+    } else {
+        [...ordens].reverse().forEach(os => {
+            htmlConteudo += `
+                <tr>
+                    <td><strong>#${os.id}</strong></td>
+                    <td>${os.condominio}</td>
+                    <td>${os.servico}</td>
+                    <td>${os.tecnico}</td>
+                    <td>${os.data || 'N/D'}</td>
+                    <td>${os.status}</td>
+                </tr>
+            `;
+        });
+    }
+
+    htmlConteudo += `
+                </tbody>
+            </table>
+
+            <h2>Planos Preventivos Vinculados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Equipamento</th>
+                        <th>Condomínio</th>
+                        <th>Periodicidade</th>
+                        <th>Próxima Manutenção</th>
+                        <th>Técnico</th>
+                    </tr>
+                </thead>
+                <tbody>
+    `;
+
+    if(preventivas.length === 0) {
+        htmlConteudo += `<tr><td colspan="5" style="text-align: center; color: #64748b;">Nenhum plano preventivo encontrado.</td></tr>`;
+    } else {
+        [...preventivas].reverse().forEach(p => {
+            const dataF = p.proximaData ? p.proximaData.split('-').reverse().join('/') : 'N/D';
+            htmlConteudo += `
+                <tr>
+                    <td><strong>${p.equipamentoNome}</strong></td>
+                    <td>${p.condominio}</td>
+                    <td>${p.periodicidade}</td>
+                    <td>${dataF}</td>
+                    <td>${p.tecnico}</td>
+                </tr>
+            `;
+        });
+    }
+
+    htmlConteudo += `
+                </tbody>
+            </table>
+
+            <div class="footer">
+                ${empresa} • Relatório gerado automaticamente pelo Manutenção Pro
+            </div>
+        </body>
+        </html>
+    `;
+
+    // Abre a aba limpa e dispara o comando de salvamento/impressão em PDF
+    const janelaPrint = window.open('', '_blank');
+    janelaPrint.document.write(htmlConteudo);
+    janelaPrint.document.close();
+    janelaPrint.focus();
+    setTimeout(() => {
+        janelaPrint.print();
+    }, 500);
+};
 
 function configurarTelaConfiguracoes() {
     const btnSave = document.getElementById('btn-save-settings');
