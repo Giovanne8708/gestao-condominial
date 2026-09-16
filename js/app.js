@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloEquipamentos(); 
     configurarModuloPreventivas();
     configurarModuloDocumentos();
-    configurarModuloRelatorios(); // NOVO: Configura os filtros de relatórios
+    configurarModuloRelatorios();
 });
 
 window.irParaTela = function(tela) {
@@ -91,7 +91,6 @@ function configurarMenuMobile() {
     if(btn) btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 }
 
-// INTELIGÊNCIA DO DASHBOARD
 function atualizarDashboard() {
     const dados = getDados();
     const ordens = dados.ordensServico || [];
@@ -184,9 +183,7 @@ function atualizarDashboard() {
     }
 }
 
-// ==========================================
-// MÓDULO DE RELATÓRIOS COM FILTROS (ETAPA 11)
-// ==========================================
+// RELATÓRIOS DETALHADOS COM TABELAS (ETAPA 11)
 function configurarModuloRelatorios() {
     const selCond = document.getElementById('filtro-rel-condominio');
     const selTec = document.getElementById('filtro-rel-tecnico');
@@ -222,7 +219,7 @@ function atualizarRelatorios() {
     let condominios = dados.condominios || [];
     let equipamentos = dados.equipamentos || [];
 
-    // Aplica filtros nas Ordens de Serviço
+    // Aplicação dos Filtros
     if(condFiltro !== 'Todos') {
         ordens = ordens.filter(os => os.condominio === condFiltro);
         chamados = chamados.filter(c => c.condominio === condFiltro);
@@ -233,6 +230,7 @@ function atualizarRelatorios() {
         preventivas = preventivas.filter(p => p.tecnico === tecFiltro);
     }
 
+    // Atualiza cards superiores
     document.getElementById('rel-total-chamados').textContent = chamados.length;
     document.getElementById('rel-total-os').textContent = ordens.length;
     
@@ -245,6 +243,50 @@ function atualizarRelatorios() {
 
     const taxa = ordens.length > 0 ? Math.round((concluidas / ordens.length) * 100) : 0;
     document.getElementById('rel-taxa-conclusao').textContent = `${taxa}%`;
+
+    // Renderiza a Tabela Detalhada de Ordens de Serviço no Relatório
+    const tbodyOs = document.querySelector('#tabela-relatorio-os tbody');
+    if(tbodyOs) {
+        tbodyOs.innerHTML = '';
+        if(ordens.length === 0) {
+            tbodyOs.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-muted);">Nenhuma OS encontrada com estes filtros.</td></tr>`;
+        } else {
+            [...ordens].reverse().forEach(os => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td><strong>#${os.id}</strong></td>
+                    <td>${os.condominio}</td>
+                    <td>${os.servico}</td>
+                    <td>${os.tecnico}</td>
+                    <td style="font-size: 13px;">${os.data || 'N/D'}</td>
+                    <td><span class="badge badge-status-${os.status.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, '')}">${os.status}</span></td>
+                `;
+                tbodyOs.appendChild(tr);
+            });
+        }
+    }
+
+    // Renderiza a Tabela Detalhada de Preventivas no Relatório
+    const tbodyPrev = document.querySelector('#tabela-relatorio-prev tbody');
+    if(tbodyPrev) {
+        tbodyPrev.innerHTML = '';
+        if(preventivas.length === 0) {
+            tbodyPrev.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-muted);">Nenhum plano preventivo encontrado com estes filtros.</td></tr>`;
+        } else {
+            [...preventivas].reverse().forEach(p => {
+                const tr = document.createElement('tr');
+                const dataFormatada = p.proximaData ? p.proximaData.split('-').reverse().join('/') : 'N/D';
+                tr.innerHTML = `
+                    <td><strong>${p.equipamentoNome}</strong></td>
+                    <td>${p.condominio}</td>
+                    <td>${p.periodicidade}</td>
+                    <td style="font-size: 13px;">${dataFormatada}</td>
+                    <td>${p.tecnico}</td>
+                `;
+                tbodyPrev.appendChild(tr);
+            });
+        }
+    }
 }
 
 function configurarTelaConfiguracoes() {
@@ -612,7 +654,6 @@ function configurarModuloDocumentos() {
                 selectCond.appendChild(opt);
             });
         }
-        modalDoc.classList.add('hidden'); // Corrigido de hidden para visible logic
         modalDoc.classList.remove('hidden');
     });
 

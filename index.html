@@ -217,14 +217,13 @@
                 <div class="card table-responsive"><table class="table" id="tabela-documentos"><thead><tr><th>Título do Documento</th><th>Categoria</th><th>Condomínio Vinculado</th><th>Data de Cadastro</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
 
-            <!-- TELA: RELATÓRIOS (COM OS FILTROS VISÍVEIS) -->
+            <!-- TELA: RELATÓRIOS DETALHADOS (ETAPA 11 REVISADA) -->
             <section id="page-relatorios" class="page-view hidden">
-                <div class="section-header">
+                <div class="section-header no-print">
                     <div>
-                        <h2>Relatórios Operacionais</h2>
-                        <p class="text-muted">Visão consolidada da produtividade, chamados e ordens de serviço.</p>
+                        <h2>Relatórios Operacionais Detalhados</h2>
+                        <p class="text-muted">Análise de produtividade e auditoria de ordens de serviço por condomínio e técnico.</p>
                     </div>
-                    <!-- FILTROS ADICIONADOS DE VOLTA NO TOPO -->
                     <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
                         <select id="filtro-rel-condominio" class="form-control" style="background: white; width: auto; padding: 8px 12px;">
                             <option value="Todos">Todos os Condomínios</option>
@@ -235,19 +234,19 @@
                             <option value="Carlos Souza">Carlos Souza</option>
                         </select>
                         <button class="btn btn-primary btn-icon" onclick="window.print()">
-                            <span class="material-symbols-outlined">print</span> Imprimir Relatório
+                            <span class="material-symbols-outlined">print</span> Imprimir / PDF
                         </button>
                     </div>
                 </div>
 
-                <!-- Cards Resumo de Relatório -->
+                <!-- Cards Resumo Consolidado -->
                 <div class="dashboard-cards" style="margin-bottom: 24px;">
                     <div class="card">
                         <h3>Total de Chamados</h3>
                         <p class="card-value" id="rel-total-chamados">0</p>
                     </div>
                     <div class="card">
-                        <h3>Total de Ordens de Serviço</h3>
+                        <h3>Ordens de Serviço Filtradas</h3>
                         <p class="card-value" id="rel-total-os">0</p>
                     </div>
                     <div class="card">
@@ -260,22 +259,61 @@
                     </div>
                 </div>
 
-                <!-- Detalhamento e Estatísticas -->
+                <!-- Indicadores e Taxas -->
                 <div class="card" style="margin-bottom: 24px;">
                     <h3 style="margin-bottom: 16px; font-size: 16px; color: var(--text-main);">Indicadores de Eficiência</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px;">
                         <div style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color);">
                             <p style="font-size: 13px; color: var(--text-muted);">Taxa de Conclusão de OS</p>
                             <p id="rel-taxa-conclusao" style="font-size: 24px; font-weight: 700; color: var(--primary-color); margin-top: 4px;">0%</p>
                         </div>
                         <div style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <p style="font-size: 13px; color: var(--text-muted);">Condomínios Ativos na Base</p>
+                            <p style="font-size: 13px; color: var(--text-muted);">Condomínios na Base</p>
                             <p id="rel-total-cond" style="font-size: 24px; font-weight: 700; color: var(--success-color); margin-top: 4px;">0</p>
                         </div>
                         <div style="padding: 16px; background: #f8fafc; border-radius: 8px; border: 1px solid var(--border-color);">
-                            <p style="font-size: 13px; color: var(--text-muted);">Equipamentos Cadastrados</p>
+                            <p style="font-size: 13px; color: var(--text-muted);">Equipamentos Mapeados</p>
                             <p id="rel-total-equip" style="font-size: 24px; font-weight: 700; color: #7e22ce; margin-top: 4px;">0</p>
                         </div>
+                    </div>
+                </div>
+
+                <!-- TABELA DETALHADA DE ORDENS DE SERVIÇO NO RELATÓRIO -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 16px; font-size: 16px; color: var(--text-main);">Detalhamento das Ordens de Serviço (Filtro Atual)</h3>
+                    <div class="table-responsive">
+                        <table class="table" id="tabela-relatorio-os">
+                            <thead>
+                                <tr>
+                                    <th>OS #</th>
+                                    <th>Condomínio</th>
+                                    <th>Serviço</th>
+                                    <th>Técnico</th>
+                                    <th>Data</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- TABELA DETALHADA DE PREVENTIVAS NO RELATÓRIO -->
+                <div class="card">
+                    <h3 style="margin-bottom: 16px; font-size: 16px; color: var(--text-main);">Planos Preventivos Associados</h3>
+                    <div class="table-responsive">
+                        <table class="table" id="tabela-relatorio-prev">
+                            <thead>
+                                <tr>
+                                    <th>Equipamento</th>
+                                    <th>Condomínio</th>
+                                    <th>Periodicidade</th>
+                                    <th>Próxima Manutenção</th>
+                                    <th>Técnico</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </section>

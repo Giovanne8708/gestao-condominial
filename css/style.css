@@ -197,6 +197,33 @@ body { background-color: var(--bg-color); color: var(--text-main); display: flex
 .modal-body { padding: 24px; }
 .modal-footer { padding: 16px 24px; background-color: #f8fafc; border-top: 1px solid var(--border-color); border-radius: 0 0 12px 12px; display: flex; justify-content: flex-end; gap: 12px; position: sticky; bottom: 0; z-index: 10; }
 
+/* CONFIGURAÇÃO DE IMPRESSÃO PROFISSIONAL (PDF / PAPEL) */
+@media print {
+    #sidebar, #top-header, .no-print, button {
+        display: none !important;
+    }
+    .main-wrapper {
+        display: block !important;
+        height: auto !important;
+        overflow: visible !important;
+    }
+    #content {
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+    body {
+        background: white !important;
+        color: black !important;
+        height: auto !important;
+        overflow: auto !important;
+    }
+    .card {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        break-inside: avoid;
+    }
+}
+
 @media (max-width: 768px) {
     #sidebar { position: fixed; left: -260px; height: 100%; z-index: 1000; }
     #sidebar.open { left: 0; box-shadow: 4px 0 24px rgba(0,0,0,0.5); }
