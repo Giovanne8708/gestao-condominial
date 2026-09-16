@@ -64,7 +64,6 @@
                 <button id="mobile-menu-btn" class="material-symbols-outlined">menu</button>
             </div>
             <div class="header-right">
-                <!-- Barra de pesquisa limpa (sem texto placeholder) -->
                 <div class="search-box">
                     <span class="material-symbols-outlined">search</span>
                     <input type="text" placeholder="">
@@ -114,7 +113,6 @@
                         <small class="text-muted">Equipe em campo</small>
                     </div>
 
-                    <!-- Cartão com a classe de animação para piscar quando houver atraso -->
                     <div class="card clickable-card border-danger card-atrasadas-animado" onclick="irParaTela('os')">
                         <div class="card-header-flex">
                             <h3>OS Atrasadas</h3>
@@ -134,7 +132,6 @@
                     </div>
                 </div>
 
-                <!-- Área de Atenção Centralizada -->
                 <div class="section-header" style="margin-top: 36px; border-top: 1px solid var(--border-color); padding-top: 24px;">
                     <div>
                         <h2 style="color: var(--danger-color); display: flex; align-items: center; gap: 8px; font-size: 18px;">
@@ -144,42 +141,81 @@
                     </div>
                 </div>
                 
-                <div id="dashboard-avisos" class="dashboard-avisos-centralizado">
-                    <!-- Alertas injetados via JS -->
-                </div>
+                <div id="dashboard-avisos" class="dashboard-avisos-centralizado"></div>
             </section>
 
-            <!-- OUTRAS TELAS -->
+            <!-- TELA: CHAMADOS -->
             <section id="page-chamados" class="page-view hidden">
-                <div class="section-header"><div><h2>Chamados</h2><p class="text-muted">Lista de solicitações e problemas reportados.</p></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-chamado"><span class="material-symbols-outlined">add</span> Novo Chamado</button></div>
+                <div class="section-header">
+                    <div><h2>Chamados</h2><p class="text-muted">Lista de solicitações e problemas reportados.</p></div>
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-chamado"><span class="material-symbols-outlined">add</span> Novo Chamado</button>
+                </div>
                 <div class="card table-responsive"><table class="table" id="tabela-chamados"><thead><tr><th>ID</th><th>Condomínio</th><th>Problema</th><th>Prioridade</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
+
+            <!-- TELA: ORDENS DE SERVIÇO -->
             <section id="page-os" class="page-view hidden">
-                <div class="section-header"><div><h2>Ordens de Serviço (OS)</h2><p class="text-muted">Controle de execuções de manutenção.</p></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-os"><span class="material-symbols-outlined">add</span> Nova OS</button></div>
+                <div class="section-header">
+                    <div><h2>Ordens de Serviço (OS)</h2><p class="text-muted">Controle de execuções de manutenção.</p></div>
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-os"><span class="material-symbols-outlined">add</span> Nova OS</button>
+                </div>
                 <div class="card table-responsive"><table class="table" id="tabela-os"><thead><tr><th>OS</th><th>Condomínio</th><th>Serviço</th><th>Data/Hora</th><th>Técnico</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
+
+            <!-- TELA: PREVENTIVAS -->
             <section id="page-preventivas" class="page-view hidden">
-                <div class="section-header"><div><h2>Manutenção Preventiva</h2><p class="text-muted">Cronograma e planos de revisão recorrente de equipamentos.</p></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-preventiva"><span class="material-symbols-outlined">add</span> Novo Plano</button></div>
+                <div class="section-header">
+                    <div><h2>Manutenção Preventiva</h2><p class="text-muted">Cronograma e planos de revisão recorrente de equipamentos.</p></div>
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-preventiva"><span class="material-symbols-outlined">add</span> Novo Plano</button>
+                </div>
                 <div class="card table-responsive"><table class="table" id="tabela-preventivas"><thead><tr><th>Equipamento</th><th>Condomínio</th><th>Periodicidade</th><th>Próxima Manut.</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
+
+            <!-- TELA: AGENDA E ROTAS -->
             <section id="page-agenda" class="page-view hidden">
-                <div class="section-header"><div><h2>Agenda e Rotas</h2><p class="text-muted">Roteiro diário de visitas dos técnicos.</p></div><div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;"><input type="date" id="filtro-agenda-data" class="form-control" style="background: white; width: auto;"><select id="filtro-agenda-tecnico" class="form-control" style="background: white; width: auto;"><option value="Todos">Todos os Técnicos</option><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select><button class="btn btn-primary btn-icon" id="btn-abrir-modal-os-agenda"><span class="material-symbols-outlined">add</span> Agendar</button></div></div>
+                <div class="section-header">
+                    <div><h2>Agenda e Rotas</h2><p class="text-muted">Roteiro diário de visitas dos técnicos.</p></div>
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center;">
+                        <input type="date" id="filtro-agenda-data" class="form-control" style="background: white; width: auto;">
+                        <select id="filtro-agenda-tecnico" class="form-control" style="background: white; width: auto;"><option value="Todos">Todos os Técnicos</option><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select>
+                        <button class="btn btn-primary btn-icon" id="btn-abrir-modal-os-agenda"><span class="material-symbols-outlined">add</span> Agendar</button>
+                    </div>
+                </div>
                 <div class="card"><div id="timeline-rotas" class="timeline-container"></div></div>
             </section>
+
+            <!-- TELA: ÁREA DO TÉCNICO -->
             <section id="page-tecnico" class="page-view hidden">
-                <div class="section-header"><div><h2>Minha Agenda</h2><p class="text-muted">Serviços designados para execução.</p></div><div><select id="simulador-tecnico" class="form-control" style="background: white;"><option value="Todos">Todos os Técnicos</option><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select></div></div>
+                <div class="section-header">
+                    <div><h2>Minha Agenda</h2><p class="text-muted">Serviços designados para execução.</p></div>
+                    <div><select id="simulador-tecnico" class="form-control" style="background: white;"><option value="Todos">Todos os Técnicos</option><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select></div>
+                </div>
                 <div class="mobile-grid" id="lista-os-tecnico"></div>
             </section>
+
+            <!-- TELA: CONDOMÍNIOS -->
             <section id="page-condominios" class="page-view hidden">
-                <div class="section-header"><div><h2>Condomínios</h2><p class="text-muted">Gerencie a sua carteira de clientes e contratos.</p></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-condominio"><span class="material-symbols-outlined">add</span> Novo Condomínio</button></div>
+                <div class="section-header">
+                    <div><h2>Condomínios</h2><p class="text-muted">Gerencie a sua carteira de clientes e contratos.</p></div>
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-condominio"><span class="material-symbols-outlined">add</span> Novo Condomínio</button>
+                </div>
                 <div class="card table-responsive"><table class="table" id="tabela-condominios"><thead><tr><th>Nome</th><th>Síndico</th><th>Contato</th><th>Endereço</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
+
+            <!-- TELA: EQUIPAMENTOS -->
             <section id="page-equipamentos" class="page-view hidden">
-                <div class="section-header"><div><h2>Equipamentos</h2><p class="text-muted">Cadastro e controle de ativos instalados.</p></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-equipamento"><span class="material-symbols-outlined">add</span> Novo Equipamento</button></div>
+                <div class="section-header">
+                    <div><h2>Equipamentos</h2><p class="text-muted">Cadastro e controle de ativos instalados.</p></div>
+                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-equipamento"><span class="material-symbols-outlined">add</span> Novo Equipamento</button>
+                </div>
                 <div class="card table-responsive"><table class="table" id="tabela-equipamentos"><thead><tr><th>ID</th><th>Nome e Especificação</th><th>Condomínio</th><th>Categoria</th><th>Localização</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
+
+            <!-- TELA: CONFIGURAÇÕES -->
             <section id="page-configuracoes" class="page-view hidden">
-                <div class="section-header"><div><h2>Configurações</h2><p class="text-muted">Personalize o sistema com a identidade da empresa.</p></div></div>
+                <div class="section-header">
+                    <div><h2>Configurações</h2><p class="text-muted">Personalize o sistema com a identidade da empresa.</p></div>
+                </div>
                 <div class="card card-form">
                     <div class="form-group"><label>Nome da Empresa</label><input type="text" id="input-company-name" class="form-control"></div>
                     <div class="form-group"><label>Cor Principal</label><div class="color-picker-wrapper"><input type="color" id="input-primary-color" class="form-control color-input"><span class="text-muted text-sm">Escolha a cor da marca.</span></div></div>

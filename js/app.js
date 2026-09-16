@@ -97,7 +97,7 @@ function configurarMenuMobile() {
     if(btn) btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 }
 
-// INTELIGÊNCIA DO DASHBOARD ATUALIZADA
+// INTELIGÊNCIA DO DASHBOARD
 function atualizarDashboard() {
     const dados = getDados();
     const ordens = dados.ordensServico || [];
@@ -116,7 +116,7 @@ function atualizarDashboard() {
     if(cAtr) cAtr.textContent = qtdAtrasadas;
     if(cPrev) cPrev.textContent = preventivas.length;
 
-    // Faz o cartão de OS Atrasadas piscar APENAS se houver atraso real
+    // Gerencia a animação de pulsação no card de atrasadas
     const cardAtrasadasEl = document.querySelector('.card-atrasadas-animado');
     if(cardAtrasadasEl) {
         if(qtdAtrasadas > 0) {
@@ -134,7 +134,6 @@ function atualizarDashboard() {
     let temAviso = false;
     const hojeIso = new Date().toISOString().split('T')[0];
 
-    // Checa OS Atrasadas
     if(qtdAtrasadas > 0) {
         temAviso = true;
         containerAvisos.innerHTML += `
@@ -147,7 +146,6 @@ function atualizarDashboard() {
             </div>`;
     }
 
-    // Checa Preventivas Vencidas ou de Hoje
     let prevPendentes = 0;
     preventivas.forEach(p => {
         if(p.proximaData < hojeIso || p.proximaData === hojeIso) prevPendentes++;
@@ -170,32 +168,6 @@ function atualizarDashboard() {
             <div style="padding: 24px; text-align: center; background: white; border: 1px solid var(--border-color); border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 12px; width: 100%; max-width: 500px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
                 <span class="material-symbols-outlined" style="color: var(--success-color); font-size: 28px;">check_circle</span>
                 <p style="color: var(--text-main); font-size: 14px; font-weight: 500;">Tudo sob controle! Nenhuma pendência urgente no momento.</p>
-            </div>`;
-    }
-
-    // Checa Preventivas Vencidas ou de Hoje
-    let prevPendentes = 0;
-    preventivas.forEach(p => {
-        if(p.proximaData < hojeIso || p.proximaData === hojeIso) prevPendentes++;
-    });
-
-    if(prevPendentes > 0) {
-        temAviso = true;
-        containerAvisos.innerHTML += `
-            <div class="alert-card clickable-alert" onclick="irParaTela('preventivas')">
-                <span class="material-symbols-outlined alert-icon" style="color: #c2410c;">event_busy</span>
-                <div class="alert-content">
-                    <p class="alert-title" style="color: #9a3412;">${prevPendentes} Preventiva(s) Pendente(s)</p>
-                    <p class="alert-desc" style="color: #c2410c;">Há planos de manutenção que vencem hoje ou já venceram.</p>
-                </div>
-            </div>`;
-    }
-
-    if(!temAviso) {
-        containerAvisos.innerHTML = `
-            <div style="padding: 20px; text-align: center; border: 1px dashed var(--border-color); border-radius: 8px;">
-                <span class="material-symbols-outlined" style="color: var(--success-color); font-size: 32px; margin-bottom: 8px;">check_circle</span>
-                <p style="color: var(--text-muted); font-size: 14px;">Tudo sob controle! Nenhuma pendência urgente no momento.</p>
             </div>`;
     }
 }
