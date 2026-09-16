@@ -9,7 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloAgenda(); 
     configurarModuloCondominios();
     configurarModuloEquipamentos(); 
-    configurarModuloPreventivas(); 
+    configurarModuloPreventivas();
+    configurarModuloDocumentos(); // NOVO MÓDULO ETAPA 10
 });
 
 window.irParaTela = function(tela) {
@@ -21,7 +22,7 @@ function inicializarSistema() {
     if (!localStorage.getItem('mp_data')) {
         const emptyData = {
             settings: { companyName: "Manutenção Pro", primaryColor: "#2563eb" },
-            chamados: [], ordensServico: [], condominios: [], equipamentos: [], preventivas: []
+            chamados: [], ordensServico: [], condominios: [], equipamentos: [], preventivas: [], documentos: []
         };
         localStorage.setItem('mp_data', JSON.stringify(emptyData));
     }
@@ -32,6 +33,7 @@ function inicializarSistema() {
     if(!dados.condominios) { dados.condominios = []; precisaSalvar = true; }
     if(!dados.equipamentos) { dados.equipamentos = []; precisaSalvar = true; } 
     if(!dados.preventivas) { dados.preventivas = []; precisaSalvar = true; }
+    if(!dados.documentos) { dados.documentos = []; precisaSalvar = true; }
     if(precisaSalvar) salvarDados(dados);
 
     aplicarConfiguracoesVisuais();
@@ -78,6 +80,7 @@ function configurarNavegacao() {
             if(targetPage === 'condominios') renderizarTabelaCondominios(); 
             if(targetPage === 'equipamentos') renderizarTabelaEquipamentos(); 
             if(targetPage === 'preventivas') renderizarTabelaPreventivas(); 
+            if(targetPage === 'documentos') renderizarTabelaDocumentos(); 
         });
     });
 }
@@ -92,19 +95,15 @@ function atualizarDashboard() {
     const ordens = dados.ordensServico || [];
     const preventivas = dados.preventivas || [];
     
-    // Pega a data de hoje no formato YYYY-MM-DD (ignorando horário para evitar conflitos de fuso)
     const hojeObj = new Date();
     const ano = hojeObj.getFullYear();
     const mes = String(hojeObj.getMonth() + 1).padStart(2, '0');
     const dia = String(hojeObj.getDate()).padStart(2, '0');
     const hojeIso = `${ano}-${mes}-${dia}`;
 
-    // Varre todas as OS e atualiza o status de forma inteligente
     let alterou = false;
     ordens.forEach(os => {
-        // Se a OS não estiver concluída e tiver data cadastrada
         if(os.status !== 'Concluída' && os.dataFormatoEN) {
-            // Compara estritamente as strings de data YYYY-MM-DD
             if(os.dataFormatoEN < hojeIso) {
                 if(os.status !== 'Atrasada') {
                     os.status = 'Atrasada';
@@ -118,7 +117,6 @@ function atualizarDashboard() {
         localStorage.setItem('mp_data', JSON.stringify(dados));
     }
     
-    // Contadores atualizados
     const cOs = document.getElementById('count-os');
     const cAnd = document.getElementById('count-andamento');
     const cAtr = document.getElementById('count-atrasadas');
@@ -131,7 +129,6 @@ function atualizarDashboard() {
     if(cAtr) cAtr.textContent = qtdAtrasadas;
     if(cPrev) cPrev.textContent = preventivas.length;
 
-    // Aciona ou desativa o efeito de piscar no card de atrasadas
     const cardAtrasadasEl = document.querySelector('.card-atrasadas-animado');
     if(cardAtrasadasEl) {
         if(qtdAtrasadas > 0) {
@@ -141,7 +138,6 @@ function atualizarDashboard() {
         }
     }
 
-    // Alertas centralizados
     const containerAvisos = document.getElementById('dashboard-avisos');
     if(!containerAvisos) return;
     
@@ -274,7 +270,6 @@ function configurarModuloOS() {
         const chamadoId = selectChamado.value;
         const dataBruta = document.getElementById('input-os-data').value;
         
-        // Pega a data de hoje para checagem imediata no submit
         const hojeObj = new Date();
         const ano = hojeObj.getFullYear();
         const mes = String(hojeObj.getMonth() + 1).padStart(2, '0');
@@ -526,6 +521,87 @@ function renderizarTabelaPreventivas() {
         const dataFormatada = prev.proximaData.split('-').reverse().join('/');
 
         tr.innerHTML = `<td><strong>${prev.equipamentoNome}</strong></td><td>${prev.condominio}</td><td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:12px;">${prev.periodicidade}</span></td><td><strong>${dataFormatada}</strong></td><td><span class="badge ${badgeStatus}">${status}</span></td><td style="text-align: right;"><button class="icon-btn"><span class="material-symbols-outlined">visibility</span></button></td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+// ==========================================
+// DOCUMENTOS E ANEXOS (ETAPA 10)
+// ==========================================
+function configurarModuloDocumentos() {
+    const btnAbrir = document.getElementById('btn-abrir-modal-documento');
+    if(!btnAbrir) return;
+
+    const modalDoc = document.getElementById('modal-novo-documento');
+    const formDoc = document.getElementById('form-novo-documento');
+    const selectCond = document.getElementById('input-doc-condominio');
+    const fecharModal = () => { modalDoc.classList.add('hidden'); formDoc.reset(); };
+
+    btnAbrir.addEventListener('click', () => {
+        const dados = getDados();
+        selectCond.innerHTML = '<option value="">Selecione o Condomínio...</option>';
+        if(dados.condominios.length === 0) {
+            selectCond.innerHTML = '<option value="">(Cadastre um Condomínio primeiro)</option>';
+        } else {
+            dados.condominios.filter(c => c.status === 'Ativo').forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.nome; 
+                opt.textContent = c.nome;
+                selectCond.appendChild(opt);
+            });
+        }
+        modalDoc.classList.remove('hidden');
+    });
+
+    document.getElementById('btn-fechar-modal-documento').addEventListener('click', fecharModal);
+    document.getElementById('btn-cancelar-documento').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
+
+    formDoc.addEventListener('submit', (e) => {
+        e.preventDefault(); 
+        const condNome = selectCond.value;
+        if(!condNome) { alert('Selecione um condomínio.'); return; }
+
+        const dados = getDados();
+        const numId = dados.documentos.length > 0 ? Math.max(...dados.documentos.map(d => d.id)) + 1 : 1;
+        const hojeIso = new Date().toISOString().split('T')[0];
+
+        dados.documentos.push({
+            id: numId,
+            titulo: document.getElementById('input-doc-titulo').value,
+            categoria: document.getElementById('input-doc-categoria').value,
+            condominio: condNome,
+            link: document.getElementById('input-doc-link').value,
+            dataCadastro: hojeIso.split('-').reverse().join('/')
+        });
+
+        salvarDados(dados); renderizarTabelaDocumentos(); fecharModal();
+    });
+}
+
+function renderizarTabelaDocumentos() {
+    const dados = getDados();
+    const tbody = document.querySelector('#tabela-documentos tbody');
+    if(!tbody) return;
+    
+    tbody.innerHTML = ''; 
+    if (dados.documentos.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">Nenhum documento anexado.</td></tr>`;
+        return;
+    }
+
+    [...dados.documentos].reverse().forEach(doc => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td><strong>${doc.titulo}</strong></td>
+            <td><span style="background:#f1f5f9; padding:4px 8px; border-radius:4px; font-size:12px;">${doc.categoria}</span></td>
+            <td>${doc.condominio}</td>
+            <td style="font-size: 13px; color: var(--text-muted);">${doc.dataCadastro}</td>
+            <td style="text-align: right;">
+                <a href="${doc.link}" target="_blank" class="btn btn-primary" style="padding: 6px 12px; font-size: 12px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+                    <span class="material-symbols-outlined" style="font-size:16px;">open_in_new</span> Abrir
+                </a>
+            </td>
+        `;
         tbody.appendChild(tr);
     });
 }

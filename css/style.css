@@ -78,7 +78,7 @@ body { background-color: var(--bg-color); color: var(--text-main); display: flex
 .clickable-card:hover { transform: translateY(-4px); border-color: var(--primary-color); box-shadow: 0 6px 16px rgba(0,0,0,0.06); }
 .clickable-card.border-danger:hover { border-color: var(--danger-color); }
 
-/* ANIMAÇÃO DE PISCAR INTENSA PARA OS ATRASADAS */
+/* EFEITO DE PISCAR PARA OS ATRASADAS */
 @keyframes piscarForte {
     0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); border-color: #ef4444; }
     50% { transform: scale(1.02); box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); border-color: #dc2626; background-color: #fff5f5; }
@@ -88,7 +88,7 @@ body { background-color: var(--bg-color); color: var(--text-main); display: flex
     animation: piscarForte 1.5s infinite ease-in-out;
 }
 
-/* ÁREA DE ATENÇÃO CENTRALIZADA (SEM FAIXA VAZIA) */
+/* ÁREA DE ATENÇÃO CENTRALIZADA */
 .dashboard-avisos-centralizado {
     display: flex;
     flex-direction: column;
@@ -96,7 +96,7 @@ body { background-color: var(--bg-color); color: var(--text-main); display: flex
     justify-content: center;
     gap: 16px;
     width: 100%;
-    margin-top: 32px;
+    margin-top: 20px;
 }
 
 .alert-card { 
