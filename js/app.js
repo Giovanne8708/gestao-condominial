@@ -59,7 +59,6 @@ function aplicarConfiguracoesVisuais() {
     if(logoHolder) logoHolder.textContent = dados.settings.companyName.substring(0, 2).toUpperCase();
 }
 
-// CONTROLE DE PERFIS DE ACESSO (Admin, Técnico, Síndico)
 function configurarSeletorPerfil() {
     const seletor = document.getElementById('seletor-perfil-usuario');
     if(!seletor) return;
@@ -73,25 +72,21 @@ function aplicarRegraPerfil(perfil) {
     navItems.forEach(item => {
         const page = item.getAttribute('data-page');
         if (perfil === 'tecnico') {
-            // Técnico vê apenas Dashboard, Agenda, Rotas, Área do Técnico e Documentos
             if (['dashboard', 'agenda', 'rotas', 'tecnico', 'documentos'].includes(page)) {
                 item.style.display = 'flex';
             } else {
                 item.style.display = 'none';
             }
         } else if (perfil === 'sindico') {
-            // Síndico vê apenas Dashboard, Chamados, Ordens de Serviço e Documentos do seu condomínio
             if (['dashboard', 'chamados', 'os', 'documentos'].includes(page)) {
                 item.style.display = 'flex';
             } else {
                 item.style.display = 'none';
             }
         } else {
-            // Administrador vê tudo
             item.style.display = 'flex';
         }
     });
-    // Se o usuário estiver numa aba restrita, redireciona para o dashboard
     const abaAtiva = document.querySelector('.nav-item.active');
     if (abaAtiva && abaAtiva.style.display === 'none') {
         irParaTela('dashboard');
@@ -137,9 +132,13 @@ function configurarMenuMobile() {
     if(btn) btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 }
 
+// =======================================================
+// NOVO DASHBOARD OPERACIONAL CORPORATIVO
+// =======================================================
 function atualizarDashboard() {
     const dados = getDados();
     const ordens = dados.ordensServico || [];
+    const chamados = dados.chamados || [];
     const preventivas = dados.preventivas || [];
     
     const hojeObj = new Date();
@@ -148,88 +147,140 @@ function atualizarDashboard() {
     const dia = String(hojeObj.getDate()).padStart(2, '0');
     const hojeIso = `${ano}-${mes}-${dia}`;
 
+    // Verificação automática de OS atrasadas
     let alterou = false;
     ordens.forEach(os => {
         if(os.status !== 'Concluída' && os.dataFormatoEN) {
-            if(os.dataFormatoEN < hojeIso) {
-                if(os.status !== 'Atrasada') {
-                    os.status = 'Atrasada';
-                    alterou = true;
-                }
+            if(os.dataFormatoEN < hojeIso && os.status !== 'Atrasada') {
+                os.status = 'Atrasada';
+                alterou = true;
             }
         }
     });
+    if(alterou) localStorage.setItem('mp_data', JSON.stringify(dados));
 
-    if(alterou) {
-        localStorage.setItem('mp_data', JSON.stringify(dados));
+    // Métricas dos 5 Indicadores
+    const chamadosNovos = chamados.filter(c => c.status === 'Novo').length;
+    const osAndamento = ordens.filter(os => os.status === 'Em andamento').length;
+    const osAtrasadas = ordens.filter(os => os.status === 'Atrasada').length;
+    const servicosHoje = ordens.filter(os => os.dataFormatoEN === hojeIso && os.status !== 'Concluída').length;
+    
+    let prevProximasCount = 0;
+    preventivas.forEach(p => {
+        if(p.proximaData >= hojeIso) {
+            const diffDias = Math.ceil((new Date(p.proximaData) - new Date(hojeIso)) / (1000 * 60 * 60 * 24));
+            if(diffDias <= 3) prevProximasCount++;
+        }
+    });
+
+    // Injeta nos contadores do topo
+    document.getElementById('dash-ind-chamados').textContent = chamadosNovos;
+    document.getElementById('dash-ind-andamento').textContent = osAndamento;
+    document.getElementById('dash-ind-atrasadas').textContent = osAtrasadas;
+    document.getElementById('dash-ind-hoje').textContent = servicosHoje;
+    document.getElementById('dash-ind-preventivas').textContent = prevProximasCount;
+
+    // Piscar cartão se houver atrasos
+    const cardAtrasoEl = document.querySelector('.card-atrasadas-animado');
+    if(cardAtrasoEl) {
+        if(osAtrasadas > 0) cardAtrasoEl.classList.add('tem-atraso');
+        else cardAtrasoEl.classList.remove('tem-atraso');
     }
-    
-    const cOs = document.getElementById('count-os');
-    const cAnd = document.getElementById('count-andamento');
-    const cAtr = document.getElementById('count-atrasadas');
-    const cPrev = document.getElementById('count-preventivas');
-    
-    const qtdAtrasadas = ordens.filter(os => os.status === 'Atrasada').length;
 
-    if(cOs) cOs.textContent = ordens.filter(os => os.status === 'Aberta' || os.status === 'Agendada').length;
-    if(cAnd) cAnd.textContent = ordens.filter(os => os.status === 'Em andamento').length;
-    if(cAtr) cAtr.textContent = qtdAtrasadas;
-    if(cPrev) cPrev.textContent = preventivas.length;
-
-    const cardAtrasadasEl = document.querySelector('.card-atrasadas-animado');
-    if(cardAtrasadasEl) {
-        if(qtdAtrasadas > 0) {
-            cardAtrasadasEl.classList.add('tem-atraso');
+    // 1. BLOCO: ATENÇÃO NA OPERAÇÃO
+    const containerAtencao = document.getElementById('dash-atencao-container');
+    if(containerAtencao) {
+        containerAtencao.innerHTML = '';
+        const pendencias = ordens.filter(os => os.status === 'Atrasada' || os.status === 'Aberta');
+        
+        if(pendencias.length === 0) {
+            containerAtencao.innerHTML = `<p style="color: var(--text-muted); font-size: 13px; padding: 6px 0;">Não existem pendências que exigem atenção.</p>`;
         } else {
-            cardAtrasadasEl.classList.remove('tem-atraso');
+            pendencias.slice(0, 3).forEach(os => {
+                containerAtencao.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                        <div>
+                            <strong>OS #${os.id}</strong> — ${os.condominio}<br>
+                            <span style="font-size: 12px; color: var(--text-muted);">${os.servico}</span>
+                        </div>
+                        <button class="btn btn-primary" style="padding: 4px 10px; font-size: 12px;" onclick="irParaTela('os')">Ver OS</button>
+                    </div>
+                `;
+            });
         }
     }
 
-    const containerAvisos = document.getElementById('dashboard-avisos');
-    if(!containerAvisos) return;
-    
-    containerAvisos.innerHTML = '';
-    let temAviso = false;
-
-    if(qtdAtrasadas > 0) {
-        temAviso = true;
-        containerAvisos.innerHTML += `
-            <div class="alert-card clickable-alert" onclick="irParaTela('os')">
-                <span class="material-symbols-outlined alert-icon">warning</span>
-                <div class="alert-content">
-                    <p class="alert-title">${qtdAtrasadas} Ordem(ns) de Serviço Atrasada(s)</p>
-                    <p class="alert-desc">Existem manutenções fora do prazo que exigem alocação ou intervenção imediata.</p>
-                </div>
-            </div>`;
+    // 2. BLOCO: AGENDA DE HOJE
+    const containerAgenda = document.getElementById('dash-agenda-hoje-container');
+    if(containerAgenda) {
+        containerAgenda.innerHTML = '';
+        const agendaHoje = ordens.filter(os => os.dataFormatoEN === hojeIso);
+        
+        if(agendaHoje.length === 0) {
+            containerAgenda.innerHTML = `<p style="color: var(--text-muted); font-size: 13px; padding: 6px 0;">Nenhum atendimento programado para hoje.</p>`;
+        } else {
+            agendaHoje.forEach(os => {
+                containerAgenda.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                        <div>
+                            <strong>${os.hora || '08:00'}</strong> — ${os.condominio}<br>
+                            <span style="font-size: 12px; color: var(--text-muted);">${os.servico} (Técnico: ${os.tecnico})</span>
+                        </div>
+                        <span class="badge badge-status-andamento">${os.status}</span>
+                    </div>
+                `;
+            });
+        }
     }
 
-    let prevPendentes = 0;
-    preventivas.forEach(p => {
-        if(p.proximaData < hojeIso || p.proximaData === hojeIso) prevPendentes++;
-    });
-
-    if(prevPendentes > 0) {
-        temAviso = true;
-        containerAvisos.innerHTML += `
-            <div class="alert-card clickable-alert" onclick="irParaTela('preventivas')">
-                <span class="material-symbols-outlined alert-icon" style="color: #9a3412; background-color: #ffedd5;">event_busy</span>
-                <div class="alert-content">
-                    <p class="alert-title" style="color: #9a3412;">${prevPendentes} Preventiva(s) Pendente(s)</p>
-                    <p class="alert-desc" style="color: #9a3412;">Há planos de revisão técnica programados para hoje ou já vencidos.</p>
-                </div>
-            </div>`;
+    // 3. BLOCO: EQUIPE EM CAMPO
+    const containerEquipe = document.getElementById('dash-equipe-container');
+    if(containerEquipe) {
+        containerEquipe.innerHTML = '';
+        const emCampo = ordens.filter(os => os.status === 'Em andamento');
+        
+        if(emCampo.length === 0) {
+            containerEquipe.innerHTML = `<p style="color: var(--text-muted); font-size: 13px; padding: 6px 0;">Nenhum técnico em atendimento no momento.</p>`;
+        } else {
+            emCampo.forEach(os => {
+                containerEquipe.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border-color);">
+                        <div>
+                            <strong>${os.tecnico}</strong><br>
+                            <span style="font-size: 12px; color: var(--text-muted);">${os.condominio} - ${os.servico}</span>
+                        </div>
+                        <span class="badge badge-status-andamento">Em campo</span>
+                    </div>
+                `;
+            });
+        }
     }
 
-    if(!temAviso) {
-        containerAvisos.innerHTML = `
-            <div style="padding: 20px; text-align: center; background: white; border: 1px solid var(--border-color); border-radius: var(--radius); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 450px;">
-                <span class="material-symbols-outlined" style="color: var(--success-color); font-size: 24px;">check_circle</span>
-                <p style="color: var(--text-main); font-size: 13px; font-weight: 500;">Tudo sob controle! Nenhuma pendência urgente no momento.</p>
-            </div>`;
+    // 4. BLOCO: PREVENTIVAS PRÓXIMAS
+    const containerPrev = document.getElementById('dash-preventivas-container');
+    if(containerPrev) {
+        containerPrev.innerHTML = '';
+        const prevsProximas = preventivas.filter(p => p.proximaData >= hojeIso).sort((a,b) => a.proximaData.localeCompare(b.proximaData));
+        
+        if(prevsProximas.length === 0) {
+            containerPrev.innerHTML = `<p style="color: var(--text-muted); font-size: 13px; padding: 6px 0;">Nenhuma manutenção preventiva programada.</p>`;
+        } else {
+            prevsProximas.slice(0, 3).forEach(p => {
+                containerPrev.innerHTML += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border-color);">
+                        <div>
+                            <strong>${p.equipamentoNome}</strong> (${p.condominio})<br>
+                            <span style="font-size: 12px; color: var(--text-muted);">Data: ${p.proximaData.split('-').reverse().join('/')} • ${p.periodicidade}</span>
+                        </div>
+                        <span class="badge badge-prev-prazo">Agendada</span>
+                    </div>
+                `;
+            });
+        }
     }
 }
 
-// MÓDULO MATERIAIS / ESTOQUE
+// MÓDULOS DE SUPORTE
 function configurarModuloMateriais() {
     const btnAbrir = document.getElementById('btn-abrir-modal-material');
     if(!btnAbrir) return;
@@ -281,7 +332,6 @@ function renderizarTabelaMateriais() {
     });
 }
 
-// MÓDULO ROTAS
 function renderizarTelaRotas() {
     const container = document.getElementById('lista-rotas-otimizadas');
     if(!container) return;
@@ -308,7 +358,6 @@ function renderizarTelaRotas() {
     });
 }
 
-// FILTROS DE CHAMADOS E OS
 window.filtrarChamados = function(status) {
     const abas = document.querySelectorAll('#page-chamados .filter-tab');
     abas.forEach(t => t.classList.remove('active'));
@@ -323,7 +372,6 @@ window.filtrarOS = function(status) {
     renderizarTabelaOS(status);
 };
 
-// RESTANTE DOS MÓDULOS PADRONIZADOS
 function configurarTelaConfiguracoes() {
     const btnSave = document.getElementById('btn-save-settings');
     if(!btnSave) return;
@@ -690,7 +738,6 @@ function atualizarRelatorios() {
     }
 }
 
-// GERADOR DE PDF REAL COM JANELA ISOLADA
 window.gerarRelatorioPDF = function() {
     const dados = getDados();
     const empresa = dados.settings.companyName || "Manutenção Pro";
