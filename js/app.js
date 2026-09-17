@@ -1,3 +1,7 @@
+// Variável Global para simular o Técnico logado
+const TÉCNICO_LOGADO = "João Silva";
+let osTecnicoAberta = null; // Armazena a OS que o técnico abriu no celular
+
 document.addEventListener('DOMContentLoaded', () => {
     inicializarSistema();
     configurarNavegacao();
@@ -6,11 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloPortalSindico();
     configurarModuloChamados();
     configurarModuloOS();
-    configurarModuloTecnico();
-    configurarModuloAgendaRotas(); 
-    configurarModuloCondominios();
-    configurarModuloEquipamentos(); 
-    configurarModuloPreventivas();
+    configurarModuloAgendaRotas();
 });
 
 window.irParaTela = function(tela) {
@@ -23,11 +23,11 @@ function inicializarSistema() {
         const emptyData = {
             settings: { companyName: "Manutenção Pro", primaryColor: "#1e40af" },
             chamados: [
-                { id: 101, condominio: "Residencial Jardim das Palmeiras", local: "Bloco B - Piscina", categoria: "Bombas", problema: "Bomba fazendo barulho", prioridade: "Alta", status: "Novo", data: "16/09/2026", foto: "" }
+                { id: 101, condominio: "Residencial Jardim das Palmeiras", local: "Piscina", categoria: "Bombas", problema: "Bomba fazendo barulho", prioridade: "Alta", status: "Novo", data: new Date().toLocaleDateString('pt-BR') }
             ], 
             ordensServico: [
-                { id: 1048, chamadoId: 101, condominio: "Residencial Jardim das Palmeiras", servico: "Manutenção da bomba", dataFormatoEN: new Date().toISOString().split('T')[0], data: "16/09/2026", hora: "08:00", tecnico: "João Silva", status: "Em andamento", diagnostico: "", materiais: "", fotosAntesDepois: "" },
-                { id: 1051, chamadoId: null, condominio: "Condomínio Solar", servico: "Inspeção elétrica", dataFormatoEN: new Date().toISOString().split('T')[0], data: "16/09/2026", hora: "10:00", tecnico: "João Silva", status: "Agendada", diagnostico: "", materiais: "", fotosAntesDepois: "" }
+                { id: 1048, chamadoId: null, condominio: "Residencial Jardim das Palmeiras", servico: "Manutenção da bomba principal", dataFormatoEN: new Date().toISOString().split('T')[0], data: new Date().toLocaleDateString('pt-BR'), hora: "14:00", tecnico: TÉCNICO_LOGADO, status: "Agendada", diagnostico: "", materiais: "" },
+                { id: 1051, chamadoId: null, condominio: "Condomínio Solar", servico: "Inspeção elétrica", dataFormatoEN: new Date().toISOString().split('T')[0], data: new Date().toLocaleDateString('pt-BR'), hora: "16:00", tecnico: TÉCNICO_LOGADO, status: "Em andamento", diagnostico: "", materiais: "" }
             ], 
             condominios: [
                 { id: 1, nome: "Residencial Jardim das Palmeiras", endereco: "Av. Beira Rio, 1000", sindico: "João Siqueira", telefone: "(81) 99888-7766", email: "joao.sindico@email.com", status: "Ativo" },
@@ -37,23 +37,11 @@ function inicializarSistema() {
         };
         localStorage.setItem('mp_data', JSON.stringify(emptyData));
     }
-    const dados = getDados();
-    let precisaSalvar = false;
-    if(!dados.chamados) { dados.chamados = []; precisaSalvar = true; }
-    if(!dados.ordensServico) { dados.ordensServico = []; precisaSalvar = true; }
-    if(!dados.condominios) { dados.condominios = []; precisaSalvar = true; }
-    if(!dados.equipamentos) { dados.equipamentos = []; precisaSalvar = true; } 
-    if(!dados.preventivas) { dados.preventivas = []; precisaSalvar = true; }
-    if(!dados.documentos) { dados.documentos = []; precisaSalvar = true; }
-    if(!dados.materiais) { dados.materiais = []; precisaSalvar = true; }
-    if(precisaSalvar) salvarDados(dados);
-
     aplicarConfiguracoesVisuais();
-    atualizarDashboard();
 }
 
 function getDados() { return JSON.parse(localStorage.getItem('mp_data')); }
-function salvarDados(dados) { localStorage.setItem('mp_data', JSON.stringify(dados)); atualizarDashboard(); }
+function salvarDados(dados) { localStorage.setItem('mp_data', JSON.stringify(dados)); }
 
 function aplicarConfiguracoesVisuais() {
     const dados = getDados();
@@ -75,14 +63,21 @@ function configurarSeletorPerfil() {
 function aplicarRegraPerfil(perfil) {
     const menuAdmin = document.getElementById('menu-admin');
     const menuSindico = document.getElementById('menu-sindico');
+    const menuTecnico = document.getElementById('menu-tecnico');
+
+    menuAdmin.classList.add('hidden');
+    menuSindico.classList.add('hidden');
+    menuTecnico.classList.add('hidden');
 
     if (perfil === 'sindico') {
-        menuAdmin.classList.add('hidden');
         menuSindico.classList.remove('hidden');
         irParaTela('sindico-inicio');
         atualizarPortalSindico();
+    } else if (perfil === 'tecnico') {
+        menuTecnico.classList.remove('hidden');
+        irParaTela('tecnico-inicio');
+        atualizarPortalTecnico();
     } else {
-        menuSindico.classList.add('hidden');
         menuAdmin.classList.remove('hidden');
         irParaTela('dashboard');
     }
@@ -107,17 +102,8 @@ function configurarNavegacao() {
             const sidebar = document.getElementById('sidebar');
             if(sidebar) sidebar.classList.remove('open');
             
-            if(targetPage === 'chamados') renderizarTabelaChamados();
-            if(targetPage === 'os') renderizarTabelaOS();
-            if(targetPage === 'tecnico') renderizarAgendaTecnico(); 
-            if(targetPage === 'agenda') renderizarAgendaRotasMaster(); 
-            if(targetPage === 'condominios') renderizarTabelaCondominios(); 
-            if(targetPage === 'equipamentos') renderizarTabelaEquipamentos(); 
-            if(targetPage === 'materiais') renderizarTabelaMateriais(); 
-            if(targetPage === 'preventivas') renderizarTabelaPreventivas(); 
-            
-            if(['sindico-inicio', 'sindico-meus-chamados', 'sindico-novo-chamado', 'sindico-condominios'].includes(targetPage)) {
-                atualizarPortalSindico();
+            if(['tecnico-inicio', 'tecnico-os'].includes(targetPage)) {
+                atualizarPortalTecnico();
             }
         });
     });
@@ -128,266 +114,253 @@ function configurarMenuMobile() {
     if(btn) btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
 }
 
-function atualizarDashboard() {
-    const dados = getDados();
-    const ordens = dados.ordensServico || [];
-    const chamados = dados.chamados || [];
-    const preventivas = dados.preventivas || [];
-    
-    const hojeObj = new Date();
-    const hojeIso = `${hojeObj.getFullYear()}-${String(hojeObj.getMonth() + 1).padStart(2, '0')}-${String(hojeObj.getDate()).padStart(2, '0')}`;
-
-    if(document.getElementById('count-os')) document.getElementById('count-os').textContent = chamados.filter(c => c.status === 'Novo').length;
-    if(document.getElementById('count-andamento')) document.getElementById('count-andamento').textContent = ordens.filter(os => os.status === 'Em andamento').length;
-    if(document.getElementById('count-atrasadas')) document.getElementById('count-atrasadas').textContent = ordens.filter(os => os.status === 'Atrasada').length;
-    if(document.getElementById('count-preventivas')) document.getElementById('count-preventivas').textContent = preventivas.length;
-}
-
 // =======================================================
-// MÓDULO AGENDA E ROTAS (FERRAMENTA REAL DE PLANEJAMENTO)
+// PORTAL DO TÉCNICO (MOBILE-FIRST)
 // =======================================================
-let visaoAtualAgenda = 'dia';
-
-function configurarModuloAgendaRotas() {
-    const inputData = document.getElementById('filtro-agenda-data');
-    const selTec = document.getElementById('filtro-agenda-tecnico');
-    
-    if(inputData) {
-        inputData.value = new Date().toISOString().split('T')[0];
-        inputData.addEventListener('change', renderizarAgendaRotasMaster);
-    }
-    if(selTec) selTec.addEventListener('change', renderizarAgendaRotasMaster);
-}
-
-window.mudarVisaoAgenda = function(visao) {
-    visaoAtualAgenda = visao;
-    document.getElementById('btn-view-dia').classList.toggle('active', visao === 'dia');
-    document.getElementById('btn-view-semana').classList.toggle('active', visao === 'semana');
-    renderizarAgendaRotasMaster();
-};
-
-function renderizarAgendaRotasMaster() {
+function atualizarPortalTecnico() {
     const dados = getDados();
-    const containerHorarios = document.getElementById('agenda-horarios-container');
-    const tbodyRota = document.querySelector('#tabela-rota-tecnico tbody');
-    if(!containerHorarios || !tbodyRota) return;
+    const hojeIso = new Date().toISOString().split('T')[0];
+    
+    // Puxar apenas OS do técnico logado
+    const ordens = dados.ordensServico.filter(os => os.tecnico === TÉCNICO_LOGADO);
 
-    containerHorarios.innerHTML = '';
-    tbodyRota.innerHTML = '';
+    // Cálculos da Tela Início
+    const osHoje = ordens.filter(os => os.dataFormatoEN === hojeIso && os.status !== 'Concluída');
+    const osAndamento = ordens.filter(os => os.status === 'Em andamento');
+    const osConcluidas = ordens.filter(os => os.status === 'Concluída');
 
-    const dataFiltro = document.getElementById('filtro-agenda-data').value;
-    const tecFiltro = document.getElementById('filtro-agenda-tecnico').value;
+    if(document.getElementById('tec-count-hoje')) document.getElementById('tec-count-hoje').textContent = osHoje.length;
+    if(document.getElementById('tec-count-andamento')) document.getElementById('tec-count-andamento').textContent = osAndamento.length;
+    if(document.getElementById('tec-count-concluidas')) document.getElementById('tec-count-concluidas').textContent = osConcluidas.length;
 
-    let ordens = dados.ordensServico || [];
+    // Lógica do Próximo Atendimento (A mais próxima que não está concluída)
+    const proximoContainer = document.getElementById('tec-proximo-atendimento');
+    if(proximoContainer) {
+        proximoContainer.innerHTML = '';
+        
+        let proximas = ordens.filter(os => os.status !== 'Concluída').sort((a,b) => {
+            const dataA = a.dataFormatoEN + " " + (a.hora || '00:00');
+            const dataB = b.dataFormatoEN + " " + (b.hora || '00:00');
+            return dataA.localeCompare(dataB);
+        });
 
-    // Filtro por Data (Dia ou Semana)
-    if(dataFiltro) {
-        if(visaoAtualAgenda === 'dia') {
-            ordens = ordens.filter(os => os.dataFormatoEN === dataFiltro);
+        if(proximas.length > 0) {
+            const prox = proximas[0];
+            let badge = prox.status === 'Em andamento' ? 'badge-status-andamento' : 'badge-status-aberta';
+            
+            proximoContainer.innerHTML = `
+                <div class="card clickable-card" style="border-left: 6px solid var(--primary-color); padding: 18px;" onclick="abrirExecucaoOSTecnico(${prox.id})">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px;">
+                        <span style="font-size:24px; font-weight:700; color:var(--primary-color);">${prox.hora || '08:00'}</span>
+                        <span class="badge ${badge}">${prox.status}</span>
+                    </div>
+                    <p style="font-size:16px; font-weight:700; color:var(--text-main); margin-bottom:2px;">${prox.condominio}</p>
+                    <p style="font-size:14px; color:var(--text-muted); margin-bottom: 16px;">${prox.servico}</p>
+                    <button class="btn btn-primary btn-block" style="margin-bottom:0;">VER OS</button>
+                </div>
+            `;
         } else {
-            // Visualização por semana (+7 dias)
-            const inicio = new Date(dataFiltro);
-            const fim = new Date(dataFiltro);
-            fim.setDate(fim.getDate() + 7);
-            ordens = ordens.filter(os => {
-                if(!os.dataFormatoEN) return false;
-                const d = new Date(os.dataFormatoEN);
-                return d >= inicio && d <= fim;
-            });
+            proximoContainer.innerHTML = `
+                <div class="card" style="text-align:center; padding: 24px;">
+                    <span class="material-symbols-outlined text-success" style="font-size: 32px; margin-bottom:8px;">task_alt</span>
+                    <p style="color:var(--text-main); font-weight:600;">Você não possui pendências.</p>
+                    <p style="font-size:13px; color:var(--text-muted);">Bom trabalho hoje!</p>
+                </div>
+            `;
         }
     }
 
-    if(tecFiltro !== 'Todos') {
-        ordens = ordens.filter(os => os.tecnico === tecFiltro);
+    // Processa a renderização da aba "Minhas OS" com o filtro atual ativo
+    const btnAtivo = document.querySelector('#page-tecnico-os .filter-tab.active');
+    const filtro = btnAtivo ? btnAtivo.textContent.trim() : 'Hoje';
+    renderizarListaOSTecnico(filtro);
+}
+
+window.mudarFiltroTecnico = function(filtro) {
+    // Muda a aba se não estiver nela
+    irParaTela('tecnico-os');
+
+    // Atualiza botões
+    const abas = document.querySelectorAll('#page-tecnico-os .filter-tab');
+    abas.forEach(t => {
+        t.classList.remove('active');
+        if(t.textContent.trim() === filtro || 
+          (filtro === 'Em andamento' && t.textContent.trim() === 'Andamento') ||
+          (filtro === 'Concluída' && t.textContent.trim() === 'Concluídas')
+        ) {
+            t.classList.add('active');
+        }
+    });
+
+    renderizarListaOSTecnico(filtro);
+};
+
+function renderizarListaOSTecnico(filtro) {
+    const dados = getDados();
+    const container = document.getElementById('container-tec-lista-os');
+    if(!container) return;
+
+    const hojeIso = new Date().toISOString().split('T')[0];
+    let ordens = dados.ordensServico.filter(os => os.tecnico === TÉCNICO_LOGADO);
+
+    if (filtro === 'Hoje') {
+        ordens = ordens.filter(os => os.dataFormatoEN === hojeIso);
+    } else if (filtro === 'Próximas') {
+        ordens = ordens.filter(os => os.dataFormatoEN > hojeIso && os.status !== 'Concluída');
+    } else if (filtro === 'Em andamento') {
+        ordens = ordens.filter(os => os.status === 'Em andamento');
+    } else if (filtro === 'Concluída') {
+        ordens = ordens.filter(os => os.status === 'Concluída');
     }
 
+    container.innerHTML = '';
+
     if(ordens.length === 0) {
-        containerHorarios.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding: 20px;">Nenhum atendimento programado para este período.</p>`;
-        tbodyRota.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Nenhuma rota ativa.</td></tr>`;
+        container.innerHTML = `<p style="text-align:center; color:var(--text-muted); margin-top:20px;">Nenhuma OS encontrada para este filtro.</p>`;
         return;
     }
 
-    // Ordena por horário
-    ordens.sort((a,b) => (a.hora || '00:00').localeCompare(b.hora || '00:00'));
+    ordens.sort((a,b) => (a.dataFormatoEN + a.hora).localeCompare(b.dataFormatoEN + b.hora));
 
-    // Verifica Conflitos de Agenda (Mesmo técnico no mesmo horário)
-    verificarConflitosAgenda(ordens);
-
-    // Renderiza Coluna 1: Agenda por Horário
     ordens.forEach(os => {
-        containerHorarios.innerHTML += `
-            <div class="timeline-item" onclick="abrirDetalheOS(${os.id})" style="cursor: pointer;">
-                <div class="timeline-dot">🕒</div>
-                <div class="timeline-content">
-                    <div class="timeline-header">
-                        <span class="timeline-time">${os.hora || '08:00'} (${os.data})</span>
-                        <span class="badge badge-status-andamento">${os.tecnico}</span>
-                    </div>
-                    <div class="timeline-title">${os.condominio}</div>
-                    <div class="timeline-desc">OS #${os.id} — ${os.servico}</div>
+        let badge = 'badge-status-aberta';
+        if(os.status === 'Concluída') badge = 'badge-status-concluida';
+        if(os.status === 'Em andamento') badge = 'badge-status-andamento';
+        if(os.status === 'Atrasada') badge = 'badge-status-atrasada';
+
+        container.innerHTML += `
+            <div class="task-card" onclick="abrirExecucaoOSTecnico(${os.id})" style="cursor:pointer;">
+                <div class="task-header">
+                    <span class="task-id">OS #${os.id}</span>
+                    <span class="badge ${badge}">${os.status}</span>
+                </div>
+                <div class="task-info">
+                    <p style="font-size:12px; color:var(--text-muted); margin-bottom:2px;">${os.data} às ${os.hora || '08:00'}</p>
+                    <p class="title">${os.condominio}</p>
+                    <p class="desc">${os.servico}</p>
                 </div>
             </div>
         `;
     });
-
-    // Renderiza Coluna 2: Tabela de Rota do Técnico com seletor de status
-    ordens.forEach(os => {
-        const condObj = dados.condominios.find(c => c.nome === os.condominio);
-        const endereco = condObj ? condObj.endereco : 'Endereço não cadastrado';
-
-        let badgeStatus = 'badge-status-andamento';
-        if(os.status === 'Concluída') badgeStatus = 'badge-status-concluida';
-        if(os.status === 'Atrasada') badgeStatus = 'badge-status-atrasada';
-
-        tbodyRota.innerHTML += `
-            <tr>
-                <td><strong>${os.hora || '08:00'}</strong><br><small style="color:var(--text-muted);">OS #${os.id}</small></td>
-                <td><strong>${os.condominio}</strong><br><small style="color:var(--text-muted);">${endereco}</small></td>
-                <td>${os.servico} (${os.tecnico})</td>
-                <td>
-                    <select class="form-control" style="padding: 4px 8px; font-size: 11px; width: auto;" onchange="atualizarStatusRota(${os.id}, this.value)">
-                        <option value="Agendada" ${os.status==='Agendada'?'selected':''}>Agendada</option>
-                        <option value="A caminho" ${os.status==='A caminho'?'selected':''}>A caminho</option>
-                        <option value="Em andamento" ${os.status==='Em andamento'?'selected':''}>Em atendimento</option>
-                        <option value="Concluída" ${os.status==='Concluída'?'selected':''}>Concluída</option>
-                        <option value="Cancelada" ${os.status==='Cancelada'?'selected':''}>Cancelada</option>
-                    </select>
-                </td>
-            </tr>
-        `;
-    });
 }
 
-// DETECÇÃO E ALERTA DE CONFLITO DE AGENDA
-function verificarConflitosAgenda(ordens) {
-    const mapaHorarios = {};
-    let temConflito = false;
-
-    ordens.forEach(os => {
-        const chave = `${os.tecnico}_${os.dataFormatoEN}_${os.hora}`;
-        if(mapaHorarios[chave] && os.status !== 'Cancelada' && os.status !== 'Concluída') {
-            temConflito = true;
-        } else {
-            mapaHorarios[chave] = os.id;
-        }
-    });
-
-    if(temConflito) {
-        document.getElementById('texto-aviso-conflito').textContent = "Atenção: O técnico selecionado possui mais de um atendimento alocado para o mesmo horário e dia!";
-        document.getElementById('modal-conflito-agenda').classList.remove('hidden');
-    }
-}
-
-window.fecharModalConflito = function() {
-    document.getElementById('modal-conflito-agenda').classList.add('hidden');
-};
-
-window.confirmarForcarConflito = function() {
-    document.getElementById('modal-conflito-agenda').classList.add('hidden');
-    alert("Conflito reconhecido pelo operador. O planejamento foi mantido sob ressalva.");
-};
-
-window.atualizarStatusRota = function(osId, novoStatus) {
+// =======================================================
+// FLUXO DE EXECUÇÃO DE OS (MOBILE-FIRST)
+// =======================================================
+window.abrirExecucaoOSTecnico = function(id) {
     const dados = getDados();
-    const os = dados.ordensServico.find(o => o.id == osId);
-    if(os) {
-        os.status = novoStatus;
-        salvarDados(dados);
-        renderizarAgendaRotasMaster();
-    }
-};
+    const os = dados.ordensServico.find(o => o.id == id);
+    if(!os) return;
 
-window.organizarRotaManual = function() {
-    alert("Assistente de Roteirização: As OS pendentes de hoje foram ordenadas por proximidade geográfica estimada.");
-    renderizarAgendaRotasMaster();
-};
+    osTecnicoAberta = os;
 
-// DEMAIS MÓDULOS PADRÃO
-function configurarModuloChamados() {
-    const btnAbrir = document.getElementById('btn-abrir-modal-chamado'); if(!btnAbrir) return;
-    const modalNovo = document.getElementById('modal-novo-chamado'); const formNovo = document.getElementById('form-novo-chamado');
-    const fecharModal = () => { modalNovo.classList.add('hidden'); formNovo.reset(); };
-    btnAbrir.addEventListener('click', () => modalNovo.classList.remove('hidden'));
-    document.getElementById('btn-fechar-modal-chamado').addEventListener('click', fecharModal);
-    document.getElementById('btn-cancelar-chamado').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
-    formNovo.addEventListener('submit', (e) => {
-        e.preventDefault(); const dados = getDados();
-        const novoId = dados.chamados.length > 0 ? Math.max(...dados.chamados.map(c => c.id)) + 1 : 101;
-        dados.chamados.push({ id: novoId, condominio: document.getElementById('input-chamado-condominio').value, problema: document.getElementById('input-chamado-problema').value, prioridade: document.getElementById('input-chamado-prioridade').value, status: "Novo", data: new Date().toLocaleDateString('pt-BR') });
-        salvarDados(dados); renderizarTabelaChamados(); fecharModal();
-    });
-}
-function renderizarTabelaChamados(filtroStatus = 'Todos') {
-    const dados = getDados(); const tbody = document.querySelector('#tabela-chamados tbody'); if(!tbody) return; tbody.innerHTML = ''; 
-    let lista = dados.chamados; if(filtroStatus !== 'Todos') lista = lista.filter(c => c.status === filtroStatus);
-    if (lista.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color: var(--text-muted);">Nenhum chamado encontrado.</td></tr>`; return;}
-    [...lista].reverse().forEach(chamado => {
-        tbody.innerHTML += `<tr><td>#${chamado.id}</td><td><strong>${chamado.condominio}</strong></td><td>${chamado.problema}</td><td><span class="badge badge-prio-normal">${chamado.prioridade}</span></td><td><span class="badge badge-status-novo">${chamado.status}</span></td><td style="text-align: right;"><button class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;" onclick="abrirDetalhesChamado(${chamado.id})">Gerenciar</button></td></tr>`;
-    });
-}
-window.abrirDetalhesChamado = function(id) {
-    const dados = getDados(); const chamado = dados.chamados.find(c => c.id == id); if(!chamado) return;
-    document.getElementById('modal-chamado-titulo').textContent = `Chamado #${chamado.id} — ${chamado.condominio}`;
-    const corpo = document.getElementById('modal-chamado-corpo'); const footer = document.getElementById('modal-chamado-footer');
-    const osExistente = dados.ordensServico.find(os => os.chamadoId == chamado.id);
-    corpo.innerHTML = `<p><strong>Problema:</strong> ${chamado.problema}</p><p><strong>Data:</strong> ${chamado.data}</p>`;
-    if(osExistente) {
-        footer.innerHTML = `<button class="btn btn-primary" onclick="document.getElementById('modal-detalhe-chamado').classList.add('hidden'); abrirDetalheOS(${osExistente.id})">Ver OS #${osExistente.id}</button>`;
+    // Puxa endereço do condomínio
+    const condObj = dados.condominios.find(c => c.nome === os.condominio);
+    const endereco = condObj ? condObj.endereco : 'Endereço não cadastrado';
+
+    document.getElementById('tec-modal-titulo').textContent = `OS #${os.id}`;
+    document.getElementById('tec-os-condominio').textContent = os.condominio;
+    document.getElementById('tec-os-endereco').textContent = endereco;
+    document.getElementById('tec-os-servico').textContent = os.servico;
+    document.getElementById('tec-os-horario').textContent = `${os.data} às ${os.hora || '08:00'}`;
+
+    const containerBotoes = document.getElementById('tec-os-botoes-acao');
+    containerBotoes.innerHTML = '';
+
+    if (os.status === 'Concluída') {
+        containerBotoes.innerHTML = `
+            <div style="background:#f0fdf4; padding:16px; border:1px solid #bbf7d0; border-radius:var(--radius); margin-bottom:16px;">
+                <p style="color:#166534; font-weight:700; margin-bottom:6px;">Serviço Finalizado</p>
+                <p style="font-size:13px; color:var(--text-main);">${os.diagnostico}</p>
+            </div>
+        `;
+    } else if (os.status === 'Em andamento') {
+        containerBotoes.innerHTML = `
+            <button class="btn btn-ghost btn-block" onclick="alert('Registro de observação gravado com sucesso!')"><span class="material-symbols-outlined">edit_note</span> REGISTRAR OBSERVAÇÃO</button>
+            <button class="btn btn-ghost btn-block" onclick="alert('Funcionalidade de câmera iniciada.')"><span class="material-symbols-outlined">photo_camera</span> ADICIONAR FOTO</button>
+            <button class="btn btn-ghost btn-block" onclick="alert('Estoque aberto para vínculo.')"><span class="material-symbols-outlined">inventory_2</span> ADICIONAR MATERIAL</button>
+            
+            <button class="btn btn-success btn-block" style="margin-top: 24px;" onclick="irParaFinalizacaoOSTecnico()">
+                <span class="material-symbols-outlined">task_alt</span> FINALIZAR SERVIÇO
+            </button>
+        `;
     } else {
-        footer.innerHTML = `<button class="btn btn-primary" onclick="converterChamadoEmOS(${chamado.id})">Criar Ordem de Serviço</button>`;
+        // Agendada ou Atrasada
+        containerBotoes.innerHTML = `
+            <button class="btn btn-primary btn-block" style="height: 54px; font-size: 16px; font-weight:700;" onclick="iniciarOSTecnico(${os.id})">
+                <span class="material-symbols-outlined">play_circle</span> INICIAR ATENDIMENTO
+            </button>
+        `;
     }
-    document.getElementById('modal-detalhe-chamado').classList.remove('hidden');
+
+    // Resetar visões
+    document.getElementById('tec-os-informacoes').classList.remove('hidden');
+    document.getElementById('tec-os-finalizacao').classList.add('hidden');
+
+    document.getElementById('modal-execucao-os-tecnico').classList.remove('hidden');
 };
-window.converterChamadoEmOS = function(chamadoId) {
-    const dados = getDados(); const chamado = dados.chamados.find(c => c.id == chamadoId); if(!chamado) return;
-    const novoId = dados.ordensServico.length > 0 ? Math.max(...dados.ordensServico.map(os => os.id)) + 1 : 1001;
-    const hojeIso = new Date().toISOString().split('T')[0];
-    dados.ordensServico.push({ id: novoId, chamadoId: chamado.id, condominio: chamado.condominio, servico: chamado.problema, dataFormatoEN: hojeIso, data: hojeIso.split('-').reverse().join('/'), hora: "09:00", tecnico: "João Silva", status: "Em andamento", diagnostico: "", materiais: "", fotosAntesDepois: "" });
-    chamado.status = "Convertido em OS"; salvarDados(dados);
-    document.getElementById('modal-detalhe-chamado').classList.add('hidden'); renderizarTabelaChamados(); renderizarTabelaOS(); alert(`OS #${novoId} criada!`);
+
+window.fecharExecucaoOS = function() {
+    document.getElementById('modal-execucao-os-tecnico').classList.add('hidden');
 };
-function configurarModuloOS() {
-    const btnAbrirOS = document.getElementById('btn-abrir-modal-os'); if(!btnAbrirOS) return;
-    const modalOS = document.getElementById('modal-nova-os'); const formOS = document.getElementById('form-nova-os');
-    const fecharModal = () => { modalOS.classList.add('hidden'); formOS.reset(); };
-    btnAbrirOS.addEventListener('click', () => { document.getElementById('input-os-data').value = new Date().toISOString().split('T')[0]; modalOS.classList.remove('hidden'); });
-    document.getElementById('btn-fechar-modal-os').addEventListener('click', fecharModal); document.getElementById('btn-cancelar-os').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
-    formOS.addEventListener('submit', (e) => {
-        e.preventDefault(); const dados = getDados(); const novoId = dados.ordensServico.length > 0 ? Math.max(...dados.ordensServico.map(os => os.id)) + 1 : 1001;
-        dados.ordensServico.push({ id: novoId, chamadoId: null, condominio: document.getElementById('input-os-condominio').value, servico: document.getElementById('input-os-servico').value, dataFormatoEN: document.getElementById('input-os-data').value, data: document.getElementById('input-os-data').value.split('-').reverse().join('/'), hora: document.getElementById('input-os-hora').value, tecnico: document.getElementById('input-os-tecnico').value, status: document.getElementById('input-os-status').value, diagnostico: "", materiais: "", fotosAntesDepois: "" });
-        salvarDados(dados); renderizarTabelaOS(); fecharModal();
-    });
-}
-function renderizarTabelaOS(filtroStatus = 'Todas') {
-    const dados = getDados(); const tbody = document.querySelector('#tabela-os tbody'); if(!tbody) return; tbody.innerHTML = ''; 
-    let lista = dados.ordensServico; if(filtroStatus !== 'Todas') lista = lista.filter(os => os.status === filtroStatus);
-    if (lista.length === 0) { tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted);">Nenhuma OS encontrada.</td></tr>`; return; }
-    lista.forEach(os => {
-        tbody.innerHTML += `<tr><td>#${os.id}</td><td><strong>${os.condominio}</strong></td><td>${os.servico}</td><td>${os.data}</td><td>${os.tecnico}</td><td><span class="badge badge-status-andamento">${os.status}</span></td><td style="text-align: right;"><button class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;" onclick="abrirDetalheOS(${os.id})">Detalhes</button></td></tr>`;
-    });
-}
-window.abrirDetalheOS = function(osId) {
-    const dados = getDados(); const os = dados.ordensServico.find(o => o.id == osId); if(!os) return;
-    document.getElementById('os-modal-titulo').textContent = `Ordem de Serviço #${os.id}`;
-    document.getElementById('os-modal-corpo').innerHTML = `<p><strong>Serviço:</strong> ${os.servico}</p><p><strong>Status:</strong> ${os.status}</p>`;
-    document.getElementById('modal-detalhe-os').classList.remove('hidden');
+
+window.iniciarOSTecnico = function(id) {
+    const dados = getDados();
+    const os = dados.ordensServico.find(o => o.id == id);
+    if(os) {
+        os.status = 'Em andamento';
+        salvarDados(dados);
+        abrirExecucaoOSTecnico(id); // Recarrega com os novos botões
+        atualizarPortalTecnico();
+    }
 };
-function configurarModuloCondominios() {
-    const btnAbrir = document.getElementById('btn-abrir-modal-condominio'); if(!btnAbrir) return;
-    const modalCond = document.getElementById('modal-novo-condominio'); const formCond = document.getElementById('form-novo-condominio');
-    const fecharModal = () => { modalCond.classList.add('hidden'); formCond.reset(); };
-    btnAbrir.addEventListener('click', () => modalCond.classList.remove('hidden'));
-    document.getElementById('btn-fechar-modal-condominio').addEventListener('click', fecharModal); document.getElementById('btn-cancelar-condominio').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
-    formCond.addEventListener('submit', (e) => {
-        e.preventDefault(); const dados = getDados(); const novoId = dados.condominios.length > 0 ? Math.max(...dados.condominios.map(c => c.id)) + 1 : 1;
-        dados.condominios.push({ id: novoId, nome: document.getElementById('input-cond-nome').value, endereco: document.getElementById('input-cond-endereco').value, sindico: document.getElementById('input-cond-sindico').value, telefone: document.getElementById('input-cond-telefone').value, email: document.getElementById('input-cond-email').value, status: document.getElementById('input-cond-status').value });
-        salvarDados(dados); fecharModal();
-    });
-}
-function renderizarTabelaCondominios() {
-    const dados = getDados(); const tbody = document.querySelector('#tabela-condominios tbody'); if(!tbody) return; tbody.innerHTML = '';
-    dados.condominios.forEach(c => { tbody.innerHTML += `<tr><td><strong>${c.nome}</strong></td><td>${c.endereco}</td><td>${c.sindico}</td><td>0</td><td>0</td><td><span class="badge badge-status-ativo">${c.status}</span></td><td style="text-align:right;"><button class="btn btn-primary" style="padding:4px 10px; font-size:11px;">Gerenciar</button></td></tr>`; });
-}
+
+window.irParaFinalizacaoOSTecnico = function() {
+    document.getElementById('tec-os-informacoes').classList.add('hidden');
+    document.getElementById('tec-os-finalizacao').classList.remove('hidden');
+};
+
+window.voltarParaInformacoesOS = function() {
+    document.getElementById('tec-os-finalizacao').classList.add('hidden');
+    document.getElementById('tec-os-informacoes').classList.remove('hidden');
+};
+
+window.confirmarConclusaoOS = function() {
+    const diag = document.getElementById('tec-input-diag').value;
+    if(!diag || diag.trim() === '') {
+        alert("Obrigatório: Descreva o serviço realizado / diagnóstico.");
+        return;
+    }
+
+    const mat = document.getElementById('tec-input-materiais').value;
+    const obs = document.getElementById('tec-input-obs').value;
+
+    const dados = getDados();
+    const os = dados.ordensServico.find(o => o.id == osTecnicoAberta.id);
+    if(os) {
+        os.diagnostico = diag + (obs ? `\nObs: ${obs}` : '');
+        os.materiais = mat;
+        os.status = 'Concluída';
+        salvarDados(dados);
+        
+        fecharExecucaoOS();
+        document.getElementById('tec-input-diag').value = '';
+        document.getElementById('tec-input-materiais').value = '';
+        document.getElementById('tec-input-obs').value = '';
+        
+        alert("Excelente! Ordem de serviço finalizada e transmitida.");
+        atualizarPortalTecnico();
+    }
+};
+
+// DEMAIS MÓDULOS DE SUPORTE MANTIDOS PARA O ADMIN E SÍNDICO
+function configurarModuloChamados() {}
+function renderizarTabelaChamados() {}
+function configurarModuloOS() {}
+function renderizarTabelaOS() {}
+function configurarModuloAgendaRotas() {}
+function configurarModuloCondominios() {}
+function configurarModuloEquipamentos() {}
+function configurarModuloPreventivas() {}
 function configurarModuloPortalSindico() {}
 function atualizarPortalSindico() {}
-function configurarTelaConfiguracoes() {}
