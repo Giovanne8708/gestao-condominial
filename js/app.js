@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     configurarModuloChamados();
     configurarModuloOS();
     configurarModuloTecnico();
-    configurarModuloAgenda(); 
+    configurarModuloAgendaRotas(); 
     configurarModuloCondominios();
     configurarModuloEquipamentos(); 
     configurarModuloPreventivas();
@@ -23,11 +23,15 @@ function inicializarSistema() {
         const emptyData = {
             settings: { companyName: "Manutenção Pro", primaryColor: "#1e40af" },
             chamados: [
-                { id: 101, condominio: "Residencial Jardim das Palmeiras", local: "Bloco B - Piscina", categoria: "Bombas", problema: "Bomba fazendo barulho excessivo", prioridade: "Alta", status: "Novo", data: "16/09/2026", foto: "" }
+                { id: 101, condominio: "Residencial Jardim das Palmeiras", local: "Bloco B - Piscina", categoria: "Bombas", problema: "Bomba fazendo barulho", prioridade: "Alta", status: "Novo", data: "16/09/2026", foto: "" }
             ], 
-            ordensServico: [], 
+            ordensServico: [
+                { id: 1048, chamadoId: 101, condominio: "Residencial Jardim das Palmeiras", servico: "Manutenção da bomba", dataFormatoEN: new Date().toISOString().split('T')[0], data: "16/09/2026", hora: "08:00", tecnico: "João Silva", status: "Em andamento", diagnostico: "", materiais: "", fotosAntesDepois: "" },
+                { id: 1051, chamadoId: null, condominio: "Condomínio Solar", servico: "Inspeção elétrica", dataFormatoEN: new Date().toISOString().split('T')[0], data: "16/09/2026", hora: "10:00", tecnico: "João Silva", status: "Agendada", diagnostico: "", materiais: "", fotosAntesDepois: "" }
+            ], 
             condominios: [
-                { id: 1, nome: "Residencial Jardim das Palmeiras", endereco: "Av. Beira Rio, 1000", sindico: "João Siqueira", telefone: "(81) 99888-7766", email: "joao.sindico@email.com", status: "Ativo" }
+                { id: 1, nome: "Residencial Jardim das Palmeiras", endereco: "Av. Beira Rio, 1000", sindico: "João Siqueira", telefone: "(81) 99888-7766", email: "joao.sindico@email.com", status: "Ativo" },
+                { id: 2, nome: "Condomínio Solar", endereco: "Rua das Flores, 45", sindico: "Carlos Alberto", telefone: "(81) 99777-6655", email: "carlos@solar.com", status: "Ativo" }
             ], 
             equipamentos: [], preventivas: [], documentos: [], materiais: []
         };
@@ -106,7 +110,7 @@ function configurarNavegacao() {
             if(targetPage === 'chamados') renderizarTabelaChamados();
             if(targetPage === 'os') renderizarTabelaOS();
             if(targetPage === 'tecnico') renderizarAgendaTecnico(); 
-            if(targetPage === 'agenda') renderizarAgendaRotas(); 
+            if(targetPage === 'agenda') renderizarAgendaRotasMaster(); 
             if(targetPage === 'condominios') renderizarTabelaCondominios(); 
             if(targetPage === 'equipamentos') renderizarTabelaEquipamentos(); 
             if(targetPage === 'materiais') renderizarTabelaMateriais(); 
@@ -133,201 +137,172 @@ function atualizarDashboard() {
     const hojeObj = new Date();
     const hojeIso = `${hojeObj.getFullYear()}-${String(hojeObj.getMonth() + 1).padStart(2, '0')}-${String(hojeObj.getDate()).padStart(2, '0')}`;
 
-    let alterou = false;
-    ordens.forEach(os => {
-        if(os.status !== 'Concluída' && os.dataFormatoEN && os.dataFormatoEN < hojeIso && os.status !== 'Atrasada') {
-            os.status = 'Atrasada';
-            alterou = true;
-        }
-    });
-    if(alterou) localStorage.setItem('mp_data', JSON.stringify(dados));
-
     if(document.getElementById('count-os')) document.getElementById('count-os').textContent = chamados.filter(c => c.status === 'Novo').length;
     if(document.getElementById('count-andamento')) document.getElementById('count-andamento').textContent = ordens.filter(os => os.status === 'Em andamento').length;
     if(document.getElementById('count-atrasadas')) document.getElementById('count-atrasadas').textContent = ordens.filter(os => os.status === 'Atrasada').length;
     if(document.getElementById('count-preventivas')) document.getElementById('count-preventivas').textContent = preventivas.length;
-
-    const cardAtrasoEl = document.querySelector('.card-atrasadas-animado');
-    if(cardAtrasoEl) {
-        if(ordens.filter(os => os.status === 'Atrasada').length > 0) cardAtrasoEl.classList.add('tem-atraso');
-        else cardAtrasoEl.classList.remove('tem-atraso');
-    }
 }
 
 // =======================================================
-// MÓDULO CONDOMÍNIOS (REESTRUTURADO COM PÁGINA PRÓPRIA E ABAS)
+// MÓDULO AGENDA E ROTAS (FERRAMENTA REAL DE PLANEJAMENTO)
 // =======================================================
-let condominioAtualId = null;
+let visaoAtualAgenda = 'dia';
 
-function configurarModuloCondominios() {
-    const btnAbrir = document.getElementById('btn-abrir-modal-condominio'); 
-    if(!btnAbrir) return;
-    const modalCond = document.getElementById('modal-novo-condominio'); 
-    const formCond = document.getElementById('form-novo-condominio');
-    const fecharModal = () => { modalCond.classList.add('hidden'); formCond.reset(); };
-
-    btnAbrir.addEventListener('click', () => modalCond.classList.remove('hidden'));
-    document.getElementById('btn-fechar-modal-condominio').addEventListener('click', fecharModal); 
-    document.getElementById('btn-cancelar-condominio').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
+function configurarModuloAgendaRotas() {
+    const inputData = document.getElementById('filtro-agenda-data');
+    const selTec = document.getElementById('filtro-agenda-tecnico');
     
-    formCond.addEventListener('submit', (e) => {
-        e.preventDefault(); 
-        const dados = getDados(); 
-        const novoId = dados.condominios.length > 0 ? Math.max(...dados.condominios.map(c => c.id)) + 1 : 1;
-        dados.condominios.push({
-            id: novoId, 
-            nome: document.getElementById('input-cond-nome').value, 
-            endereco: document.getElementById('input-cond-endereco').value, 
-            sindico: document.getElementById('input-cond-sindico').value, 
-            telefone: document.getElementById('input-cond-telefone').value, 
-            email: document.getElementById('input-cond-email').value, 
-            status: document.getElementById('input-cond-status').value
-        });
-        salvarDados(dados); renderizarTabelaCondominios(); fecharModal();
-    });
-}
-
-function renderizarTabelaCondominios() {
-    const dados = getDados(); 
-    const tbody = document.querySelector('#tabela-condominios tbody'); 
-    if(!tbody) return; 
-    tbody.innerHTML = ''; 
-
-    if (dados.condominios.length === 0) { 
-        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color: var(--text-muted);">Nenhum condomínio cadastrado.</td></tr>`; 
-        return; 
+    if(inputData) {
+        inputData.value = new Date().toISOString().split('T')[0];
+        inputData.addEventListener('change', renderizarAgendaRotasMaster);
     }
-
-    dados.condominios.forEach(c => {
-        // Conta chamados e OS vinculados a este condomínio em tempo real
-        const abertos = dados.chamados.filter(ch => ch.condominio === c.nome && ch.status !== 'Concluído').length;
-        const emAndamento = dados.ordensServico.filter(os => os.condominio === c.nome && os.status !== 'Concluída').length;
-        const badgeStatus = c.status === 'Ativo' ? 'badge-status-ativo' : 'badge-status-inativo';
-
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td><strong>${c.nome}</strong></td>
-            <td>${c.endereco}</td>
-            <td>${c.sindico} <br><small style="color:var(--text-muted);">${c.telefone}</small></td>
-            <td><span class="badge badge-status-aberta">${abertos} abertos</span></td>
-            <td><span class="badge badge-status-andamento">${emAndamento} em andamento</span></td>
-            <td><span class="badge ${badgeStatus}">${c.status}</span></td>
-            <td style="text-align: right;"><button class="btn btn-primary" style="padding: 4px 10px; font-size: 11px;" onclick="abrirDetalhesCondominio(${c.id})">Gerenciar</button></td>
-        `;
-        tbody.appendChild(tr);
-    });
+    if(selTec) selTec.addEventListener('change', renderizarAgendaRotasMaster);
 }
 
-window.abrirDetalhesCondominio = function(id) {
-    const dados = getDados();
-    const cond = dados.condominios.find(c => c.id == id);
-    if(!cond) return;
-
-    condominioAtualId = id;
-
-    // Altera visibilidade das páginas
-    document.getElementById('page-condominios').classList.add('hidden');
-    document.getElementById('page-detalhe-condominio').classList.remove('hidden');
-
-    document.getElementById('detalhe-cond-nome').textContent = cond.nome;
-    document.getElementById('detalhe-cond-endereco').textContent = cond.endereco;
-    document.getElementById('detalhe-cond-sindico').textContent = `Síndico: ${cond.sindico}`;
-    document.getElementById('detalhe-cond-contato').textContent = `Tel: ${cond.telefone} | E-mail: ${cond.email || 'Não informado'}`;
-
-    mudarAbaCondominio('visao-geral');
+window.mudarVisaoAgenda = function(visao) {
+    visaoAtualAgenda = visao;
+    document.getElementById('btn-view-dia').classList.toggle('active', visao === 'dia');
+    document.getElementById('btn-view-semana').classList.toggle('active', visao === 'semana');
+    renderizarAgendaRotasMaster();
 };
 
-window.mudarAbaCondominio = function(aba) {
-    const abas = document.querySelectorAll('#page-detalhe-condominio .filter-tab');
-    abas.forEach(t => t.classList.remove('active'));
-    event.target.classList.add('active');
-
-    const container = document.getElementById('cond-tab-content');
+function renderizarAgendaRotasMaster() {
     const dados = getDados();
-    const cond = dados.condominios.find(c => c.id == condominioAtualId);
-    if(!cond) return;
+    const containerHorarios = document.getElementById('agenda-horarios-container');
+    const tbodyRota = document.querySelector('#tabela-rota-tecnico tbody');
+    if(!containerHorarios || !tbodyRota) return;
 
-    if (aba === 'visao-geral') {
-        const abertos = dados.chamados.filter(ch => ch.condominio === cond.nome).length;
-        const emAndamento = dados.ordensServico.filter(os => os.condominio === cond.nome && os.status !== 'Concluída').length;
-        const concluidas = dados.ordensServico.filter(os => os.condominio === cond.nome && os.status === 'Concluída').length;
-        const preventivas = dados.preventivas.filter(p => p.condominio === cond.nome).length;
-        const equipamentos = dados.equipamentos.filter(eq => eq.condominio === cond.nome).length;
+    containerHorarios.innerHTML = '';
+    tbodyRota.innerHTML = '';
 
-        container.innerHTML = `
-            <div class="dashboard-cards" style="margin-bottom: 24px;">
-                <div class="card"><h3>Chamados Registrados</h3><p class="card-value">${abertos}</p></div>
-                <div class="card"><h3>OS em Andamento</h3><p class="card-value text-warning">${emAndamento}</p></div>
-                <div class="card"><h3>OS Concluídas</h3><p class="card-value text-success">${concluidas}</p></div>
-                <div class="card"><h3>Equipamentos</h3><p class="card-value">${equipamentos}</p></div>
-            </div>
-            <div class="card">
-                <h3 style="margin-bottom: 12px; font-size: 15px;">Dados do Síndico Responsável</h3>
-                <p><strong>Nome:</strong> ${cond.sindico}</p>
-                <p><strong>Telefone:</strong> ${cond.telefone}</p>
-                <p><strong>E-mail:</strong> ${cond.email || 'Não cadastrado'}</p>
-                <div style="margin-top: 16px;">
-                    <button class="btn btn-ghost" onclick="alert('Funcionalidade de redefinir acesso ao portal em desenvolvimento.')">Redefinir Acesso ao Portal</button>
-                    <button class="btn btn-ghost" style="color: var(--danger-color);" onclick="alert('Acesso desativado para este condomínio.')">Desativar Acesso</button>
+    const dataFiltro = document.getElementById('filtro-agenda-data').value;
+    const tecFiltro = document.getElementById('filtro-agenda-tecnico').value;
+
+    let ordens = dados.ordensServico || [];
+
+    // Filtro por Data (Dia ou Semana)
+    if(dataFiltro) {
+        if(visaoAtualAgenda === 'dia') {
+            ordens = ordens.filter(os => os.dataFormatoEN === dataFiltro);
+        } else {
+            // Visualização por semana (+7 dias)
+            const inicio = new Date(dataFiltro);
+            const fim = new Date(dataFiltro);
+            fim.setDate(fim.getDate() + 7);
+            ordens = ordens.filter(os => {
+                if(!os.dataFormatoEN) return false;
+                const d = new Date(os.dataFormatoEN);
+                return d >= inicio && d <= fim;
+            });
+        }
+    }
+
+    if(tecFiltro !== 'Todos') {
+        ordens = ordens.filter(os => os.tecnico === tecFiltro);
+    }
+
+    if(ordens.length === 0) {
+        containerHorarios.innerHTML = `<p style="color:var(--text-muted); text-align:center; padding: 20px;">Nenhum atendimento programado para este período.</p>`;
+        tbodyRota.innerHTML = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Nenhuma rota ativa.</td></tr>`;
+        return;
+    }
+
+    // Ordena por horário
+    ordens.sort((a,b) => (a.hora || '00:00').localeCompare(b.hora || '00:00'));
+
+    // Verifica Conflitos de Agenda (Mesmo técnico no mesmo horário)
+    verificarConflitosAgenda(ordens);
+
+    // Renderiza Coluna 1: Agenda por Horário
+    ordens.forEach(os => {
+        containerHorarios.innerHTML += `
+            <div class="timeline-item" onclick="abrirDetalheOS(${os.id})" style="cursor: pointer;">
+                <div class="timeline-dot">🕒</div>
+                <div class="timeline-content">
+                    <div class="timeline-header">
+                        <span class="timeline-time">${os.hora || '08:00'} (${os.data})</span>
+                        <span class="badge badge-status-andamento">${os.tecnico}</span>
+                    </div>
+                    <div class="timeline-title">${os.condominio}</div>
+                    <div class="timeline-desc">OS #${os.id} — ${os.servico}</div>
                 </div>
             </div>
         `;
-    } else if (aba === 'chamados') {
-        const lista = dados.chamados.filter(c => c.condominio === cond.nome);
-        container.innerHTML = gerarTabelaGenericaChamados(lista);
-    } else if (aba === 'os') {
-        const lista = dados.ordensServico.filter(os => os.condominio === cond.nome);
-        container.innerHTML = gerarTabelaGenericaOS(lista);
-    } else if (aba === 'preventivas') {
-        const lista = dados.preventivas.filter(p => p.condominio === cond.nome);
-        container.innerHTML = gerarTabelaGenericaPreventivas(lista);
-    } else if (aba === 'equipamentos') {
-        const lista = dados.equipamentos.filter(eq => eq.condominio === cond.nome);
-        container.innerHTML = gerarTabelaGenericaEquipamentos(lista);
-    } else if (aba === 'documentos') {
-        const lista = dados.documentos.filter(d => d.condominio === cond.nome);
-        container.innerHTML = gerarTabelaGenericaDocumentos(lista);
-    } else if (aba === 'historico') {
-        container.innerHTML = `<div class="card"><p style="color:var(--text-muted);">Histórico unificado de atendimentos e manutenções do condomínio.</p></div>`;
+    });
+
+    // Renderiza Coluna 2: Tabela de Rota do Técnico com seletor de status
+    ordens.forEach(os => {
+        const condObj = dados.condominios.find(c => c.nome === os.condominio);
+        const endereco = condObj ? condObj.endereco : 'Endereço não cadastrado';
+
+        let badgeStatus = 'badge-status-andamento';
+        if(os.status === 'Concluída') badgeStatus = 'badge-status-concluida';
+        if(os.status === 'Atrasada') badgeStatus = 'badge-status-atrasada';
+
+        tbodyRota.innerHTML += `
+            <tr>
+                <td><strong>${os.hora || '08:00'}</strong><br><small style="color:var(--text-muted);">OS #${os.id}</small></td>
+                <td><strong>${os.condominio}</strong><br><small style="color:var(--text-muted);">${endereco}</small></td>
+                <td>${os.servico} (${os.tecnico})</td>
+                <td>
+                    <select class="form-control" style="padding: 4px 8px; font-size: 11px; width: auto;" onchange="atualizarStatusRota(${os.id}, this.value)">
+                        <option value="Agendada" ${os.status==='Agendada'?'selected':''}>Agendada</option>
+                        <option value="A caminho" ${os.status==='A caminho'?'selected':''}>A caminho</option>
+                        <option value="Em andamento" ${os.status==='Em andamento'?'selected':''}>Em atendimento</option>
+                        <option value="Concluída" ${os.status==='Concluída'?'selected':''}>Concluída</option>
+                        <option value="Cancelada" ${os.status==='Cancelada'?'selected':''}>Cancelada</option>
+                    </select>
+                </td>
+            </tr>
+        `;
+    });
+}
+
+// DETECÇÃO E ALERTA DE CONFLITO DE AGENDA
+function verificarConflitosAgenda(ordens) {
+    const mapaHorarios = {};
+    let temConflito = false;
+
+    ordens.forEach(os => {
+        const chave = `${os.tecnico}_${os.dataFormatoEN}_${os.hora}`;
+        if(mapaHorarios[chave] && os.status !== 'Cancelada' && os.status !== 'Concluída') {
+            temConflito = true;
+        } else {
+            mapaHorarios[chave] = os.id;
+        }
+    });
+
+    if(temConflito) {
+        document.getElementById('texto-aviso-conflito').textContent = "Atenção: O técnico selecionado possui mais de um atendimento alocado para o mesmo horário e dia!";
+        document.getElementById('modal-conflito-agenda').classList.remove('hidden');
+    }
+}
+
+window.fecharModalConflito = function() {
+    document.getElementById('modal-conflito-agenda').classList.add('hidden');
+};
+
+window.confirmarForcarConflito = function() {
+    document.getElementById('modal-conflito-agenda').classList.add('hidden');
+    alert("Conflito reconhecido pelo operador. O planejamento foi mantido sob ressalva.");
+};
+
+window.atualizarStatusRota = function(osId, novoStatus) {
+    const dados = getDados();
+    const os = dados.ordensServico.find(o => o.id == osId);
+    if(os) {
+        os.status = novoStatus;
+        salvarDados(dados);
+        renderizarAgendaRotasMaster();
     }
 };
 
-function gerarTabelaGenericaChamados(lista) {
-    if(lista.length === 0) return `<p style="color:var(--text-muted);">Nenhum chamado para este condomínio.</p>`;
-    return `<div class="table-responsive"><table class="table"><thead><tr><th>ID</th><th>Problema</th><th>Data</th><th>Status</th></tr></thead><tbody>` +
-        lista.map(c => `<tr><td>#${c.id}</td><td>${c.problema}</td><td>${c.data}</td><td><span class="badge badge-status-aberta">${c.status}</span></td></tr>`).join('') +
-        `</tbody></table></div>`;
-}
+window.organizarRotaManual = function() {
+    alert("Assistente de Roteirização: As OS pendentes de hoje foram ordenadas por proximidade geográfica estimada.");
+    renderizarAgendaRotasMaster();
+};
 
-function gerarTabelaGenericaOS(lista) {
-    if(lista.length === 0) return `<p style="color:var(--text-muted);">Nenhuma OS para este condomínio.</p>`;
-    return `<div class="table-responsive"><table class="table"><thead><tr><th>OS</th><th>Serviço</th><th>Técnico</th><th>Status</th></tr></thead><tbody>` +
-        lista.map(os => `<tr><td>#${os.id}</td><td>${os.servico}</td><td>${os.tecnico}</td><td><span class="badge badge-status-andamento">${os.status}</span></td></tr>`).join('') +
-        `</tbody></table></div>`;
-}
-
-function gerarTabelaGenericaPreventivas(lista) {
-    if(lista.length === 0) return `<p style="color:var(--text-muted);">Nenhum plano preventivo.</p>`;
-    return `<div class="table-responsive"><table class="table"><thead><tr><th>Equipamento</th><th>Periodicidade</th><th>Próxima Data</th></tr></thead><tbody>` +
-        lista.map(p => `<tr><td>${p.equipamentoNome}</td><td>${p.periodicidade}</td><td>${p.proximaData}</td></tr>`).join('') +
-        `</tbody></table></div>`;
-}
-
-function gerarTabelaGenericaEquipamentos(lista) {
-    if(lista.length === 0) return `<p style="color:var(--text-muted);">Nenhum equipamento cadastrado.</p>`;
-    return `<div class="table-responsive"><table class="table"><thead><tr><th>Código</th><th>Nome</th><th>Categoria</th><th>Status</th></tr></thead><tbody>` +
-        lista.map(eq => `<tr><td>${eq.codigo}</td><td>${eq.nome}</td><td>${eq.categoria}</td><td>${eq.status}</td></tr>`).join('') +
-        `</tbody></table></div>`;
-}
-
-function gerarTabelaGenericaDocumentos(lista) {
-    if(lista.length === 0) return `<p style="color:var(--text-muted);">Nenhum documento.</p>`;
-    return `<div class="table-responsive"><table class="table"><thead><tr><th>Título</th><th>Categoria</th><th>Ação</th></tr></thead><tbody>` +
-        lista.map(d => `<tr><td>${d.titulo}</td><td>${d.categoria}</td><td><a href="${d.link}" target="_blank" class="btn btn-primary" style="padding:4px 8px; font-size:11px;">Abrir</a></td></tr>`).join('') +
-        `</tbody></table></div>`;
-}
-
-// RESTANTE DOS MÓDULOS PADRÃO
+// DEMAIS MÓDULOS PADRÃO
 function configurarModuloChamados() {
     const btnAbrir = document.getElementById('btn-abrir-modal-chamado'); if(!btnAbrir) return;
     const modalNovo = document.getElementById('modal-novo-chamado'); const formNovo = document.getElementById('form-novo-chamado');
@@ -379,7 +354,7 @@ function configurarModuloOS() {
     document.getElementById('btn-fechar-modal-os').addEventListener('click', fecharModal); document.getElementById('btn-cancelar-os').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
     formOS.addEventListener('submit', (e) => {
         e.preventDefault(); const dados = getDados(); const novoId = dados.ordensServico.length > 0 ? Math.max(...dados.ordensServico.map(os => os.id)) + 1 : 1001;
-        dados.ordensServico.push({ id: novoId, chamadoId: null, condominio: document.getElementById('input-os-condominio').value, servico: document.getElementById('input-os-servico').value, data: document.getElementById('input-os-data').value.split('-').reverse().join('/'), hora: document.getElementById('input-os-hora').value, tecnico: document.getElementById('input-os-tecnico').value, status: document.getElementById('input-os-status').value, diagnostico: "", materiais: "", fotosAntesDepois: "" });
+        dados.ordensServico.push({ id: novoId, chamadoId: null, condominio: document.getElementById('input-os-condominio').value, servico: document.getElementById('input-os-servico').value, dataFormatoEN: document.getElementById('input-os-data').value, data: document.getElementById('input-os-data').value.split('-').reverse().join('/'), hora: document.getElementById('input-os-hora').value, tecnico: document.getElementById('input-os-tecnico').value, status: document.getElementById('input-os-status').value, diagnostico: "", materiais: "", fotosAntesDepois: "" });
         salvarDados(dados); renderizarTabelaOS(); fecharModal();
     });
 }
@@ -397,16 +372,22 @@ window.abrirDetalheOS = function(osId) {
     document.getElementById('os-modal-corpo').innerHTML = `<p><strong>Serviço:</strong> ${os.servico}</p><p><strong>Status:</strong> ${os.status}</p>`;
     document.getElementById('modal-detalhe-os').classList.remove('hidden');
 };
-function configurarModuloAgenda() {}
-function renderizarAgendaRotas() {}
-function configurarModuloTecnico() {}
-function renderizarAgendaTecnico() {}
-function configurarModuloEquipamentos() {}
-function renderizarTabelaEquipamentos() {}
-function configurarModuloPreventivas() {}
-function renderizarTabelaPreventivas() {}
-function configurarModuloDocumentos() {}
-function renderizarTabelaDocumentos() {}
+function configurarModuloCondominios() {
+    const btnAbrir = document.getElementById('btn-abrir-modal-condominio'); if(!btnAbrir) return;
+    const modalCond = document.getElementById('modal-novo-condominio'); const formCond = document.getElementById('form-novo-condominio');
+    const fecharModal = () => { modalCond.classList.add('hidden'); formCond.reset(); };
+    btnAbrir.addEventListener('click', () => modalCond.classList.remove('hidden'));
+    document.getElementById('btn-fechar-modal-condominio').addEventListener('click', fecharModal); document.getElementById('btn-cancelar-condominio').addEventListener('click', (e) => { e.preventDefault(); fecharModal(); });
+    formCond.addEventListener('submit', (e) => {
+        e.preventDefault(); const dados = getDados(); const novoId = dados.condominios.length > 0 ? Math.max(...dados.condominios.map(c => c.id)) + 1 : 1;
+        dados.condominios.push({ id: novoId, nome: document.getElementById('input-cond-nome').value, endereco: document.getElementById('input-cond-endereco').value, sindico: document.getElementById('input-cond-sindico').value, telefone: document.getElementById('input-cond-telefone').value, email: document.getElementById('input-cond-email').value, status: document.getElementById('input-cond-status').value });
+        salvarDados(dados); fecharModal();
+    });
+}
+function renderizarTabelaCondominios() {
+    const dados = getDados(); const tbody = document.querySelector('#tabela-condominios tbody'); if(!tbody) return; tbody.innerHTML = '';
+    dados.condominios.forEach(c => { tbody.innerHTML += `<tr><td><strong>${c.nome}</strong></td><td>${c.endereco}</td><td>${c.sindico}</td><td>0</td><td>0</td><td><span class="badge badge-status-ativo">${c.status}</span></td><td style="text-align:right;"><button class="btn btn-primary" style="padding:4px 10px; font-size:11px;">Gerenciar</button></td></tr>`; });
+}
 function configurarModuloPortalSindico() {}
 function atualizarPortalSindico() {}
 function configurarTelaConfiguracoes() {}

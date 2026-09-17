@@ -27,8 +27,7 @@
             <a href="#" class="nav-item" data-page="preventivas"><span class="material-symbols-outlined">event_repeat</span> Preventivas</a>
 
             <span class="nav-section">OPERAÇÃO</span>
-            <a href="#" class="nav-item" data-page="agenda"><span class="material-symbols-outlined">calendar_month</span> Agenda</a>
-            <a href="#" class="nav-item" data-page="rotas"><span class="material-symbols-outlined">map</span> Rotas</a>
+            <a href="#" class="nav-item" data-page="agenda"><span class="material-symbols-outlined">calendar_month</span> Agenda e Rotas</a>
             <a href="#" class="nav-item" data-page="tecnico"><span class="material-symbols-outlined">engineering</span> Técnicos</a>
 
             <span class="nav-section">CADASTRO</span>
@@ -119,12 +118,7 @@
                     <button class="filter-tab" onclick="filtrarChamados('Novo')">Novos</button>
                     <button class="filter-tab" onclick="filtrarChamados('Convertido em OS')">Convertidos em OS</button>
                 </div>
-                <div class="table-responsive">
-                    <table class="table" id="tabela-chamados">
-                        <thead><tr><th>ID</th><th>Condomínio</th><th>Problema</th><th>Prioridade</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+                <div class="table-responsive"><table class="table" id="tabela-chamados"><thead><tr><th>ID</th><th>Condomínio</th><th>Problema</th><th>Prioridade</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
 
             <!-- ORDENS DE SERVIÇO -->
@@ -140,36 +134,75 @@
                     <button class="filter-tab" onclick="filtrarOS('Atrasada')">Atrasadas</button>
                     <button class="filter-tab" onclick="filtrarOS('Concluída')">Concluídas</button>
                 </div>
-                <div class="table-responsive">
-                    <table class="table" id="tabela-os">
-                        <thead><tr><th>OS</th><th>Condomínio</th><th>Serviço</th><th>Data/Hora</th><th>Técnico</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead>
-                        <tbody></tbody>
-                    </table>
+                <div class="table-responsive"><table class="table" id="tabela-os"><thead><tr><th>OS</th><th>Condomínio</th><th>Serviço</th><th>Data/Hora</th><th>Técnico</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
+            </section>
+
+            <!-- AGENDA E ROTAS (FERRAMENTA REAL DE PLANEJAMENTO) -->
+            <section id="page-agenda" class="page-view hidden">
+                <div class="section-header">
+                    <div>
+                        <h2>Agenda e Rotas da Equipe</h2>
+                        <p class="text-muted">Planejamento diário, cronograma por horário e roteirização dos técnicos.</p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                        <input type="date" id="filtro-agenda-data" class="form-control" style="background: white; width: auto;">
+                        <select id="filtro-agenda-tecnico" class="form-control" style="background: white; width: auto;">
+                            <option value="Todos">Todos os Técnicos</option>
+                            <option value="João Silva">João Silva</option>
+                            <option value="Carlos Souza">Carlos Souza</option>
+                        </select>
+                        <div class="filter-tabs" style="margin-bottom:0;">
+                            <button class="filter-tab active" id="btn-view-dia" onclick="mudarVisaoAgenda('dia')">Dia</button>
+                            <button class="filter-tab" id="btn-view-semana" onclick="mudarVisaoAgenda('semana')">Semana</button>
+                        </div>
+                        <button class="btn btn-primary btn-icon" onclick="organizarRotaManual()">
+                            <span class="material-symbols-outlined">route</span> Organizar Rota
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Painel Dividido: Agenda Cronológica vs Itinerário do Técnico -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(380px, 1fr)); gap: 24px;">
+                    
+                    <!-- COLUNA 1: AGENDA POR HORÁRIO -->
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">schedule</span> Cronograma por Horário
+                        </h3>
+                        <div id="agenda-horarios-container" class="timeline-container">
+                            <!-- Injetado dinamicamente -->
+                        </div>
+                    </div>
+
+                    <!-- COLUNA 2: ROTA DETALHADA DO TÉCNICO -->
+                    <div class="card">
+                        <h3 style="margin-bottom: 16px; font-size: 15px; color: var(--text-main); display: flex; align-items: center; gap: 6px;">
+                            <span class="material-symbols-outlined" style="font-size: 18px;">map</span> Rota e Status da Equipe
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="table" id="tabela-rota-tecnico">
+                               <thead>
+                                   <tr>
+                                       <th>Horário / Atend.</th>
+                                       <th>Condomínio & Endereço</th>
+                                       <th>Serviço</th>
+                                       <th>Status</th>
+                                   </tr>
+                               </thead>
+                               <tbody>
+                                   <!-- Injetado dinamicamente -->
+                               </tbody>
+                            </table>
+                        </div>
+                    </div>
+
                 </div>
             </section>
 
-            <!-- CONDOMÍNIOS (LISTA PRINCIPAL) -->
+            <!-- CONDOMÍNIOS -->
             <section id="page-condominios" class="page-view hidden">
-                <div class="section-header">
-                    <div><h2>Condomínios Atendidos</h2><p class="text-muted">Carteira de clientes, síndicos e dados operacionais consolidados.</p></div>
-                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-condominio"><span class="material-symbols-outlined">add</span> Novo Condomínio</button>
-                </div>
-                <div class="table-responsive">
-                    <table class="table" id="tabela-condominios">
-                        <thead>
-                            <tr>
-                                <th>Nome do Condomínio</th>
-                                <th>Endereço</th>
-                                <th>Síndico / Contato</th>
-                                <th>Chamados Abertos</th>
-                                <th>OS em Andamento</th>
-                                <th>Status</th>
-                                <th style="text-align: right;">Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
+                <div class="section-header"><div><h2>Condomínios Atendidos</h2><p class="text-muted">Carteira de clientes e dados operacionais.</p></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-condominio"><span class="material-symbols-outlined">add</span> Novo Condomínio</button></div>
+                <div class="table-responsive"><table class="table" id="tabela-condominios"><thead><tr><th>Nome do Condomínio</th><th>Endereço</th><th>Síndico / Contato</th><th>Chamados Abertos</th><th>OS em Andamento</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
             </section>
 
             <!-- PÁGINA DE DETALHES DO CONDOMÍNIO (ABAS) -->
@@ -185,8 +218,6 @@
                         <p style="font-size: 12px; color: var(--text-muted);" id="detalhe-cond-contato">Tel: - | E-mail: -</p>
                     </div>
                 </div>
-
-                <!-- Abas de Navegação Interna -->
                 <div class="filter-tabs" style="border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 20px;">
                     <button class="filter-tab active" onclick="mudarAbaCondominio('visao-geral')">Visão Geral</button>
                     <button class="filter-tab" onclick="mudarAbaCondominio('chamados')">Chamados</button>
@@ -196,11 +227,7 @@
                     <button class="filter-tab" onclick="mudarAbaCondominio('documentos')">Documentos</button>
                     <button class="filter-tab" onclick="mudarAbaCondominio('historico')">Histórico</button>
                 </div>
-
-                <!-- Conteúdo das Abas -->
-                <div id="cond-tab-content">
-                    <!-- Injetado dinamicamente -->
-                </div>
+                <div id="cond-tab-content"></div>
             </section>
 
             <!-- SÍNDICO TELAS -->
@@ -233,8 +260,6 @@
 
             <!-- DEMAIS TELAS ADMIN -->
             <section id="page-preventivas" class="page-view hidden"><div class="section-header"><h2>Preventivas</h2></div><div class="table-responsive"><table class="table" id="tabela-preventivas"><thead><tr><th>Equipamento</th><th>Condomínio</th><th>Periodicidade</th><th>Próxima Manut.</th><th>Status</th></tr></thead><tbody></tbody></table></div></section>
-            <section id="page-agenda" class="page-view hidden"><div class="section-header"><h2>Agenda</h2></div><div class="card"><div id="timeline-rotas" class="timeline-container"></div></div></section>
-            <section id="page-rotas" class="page-view hidden"><div class="section-header"><h2>Rotas</h2></div><div class="card"><div id="lista-rotas-otimizadas" class="timeline-container"></div></div></section>
             <section id="page-tecnico" class="page-view hidden"><div class="section-header"><h2>Técnicos</h2></div><div class="mobile-grid" id="lista-os-tecnico"></div></section>
             <section id="page-equipamentos" class="page-view hidden"><div class="section-header"><h2>Equipamentos</h2></div><div class="table-responsive"><table class="table" id="tabela-equipamentos"><thead><tr><th>ID</th><th>Nome</th><th>Condomínio</th><th>Categoria</th><th>Status</th></tr></thead><tbody></tbody></table></div></section>
             <section id="page-materiais" class="page-view hidden"><div class="section-header"><h2>Materiais</h2></div><div class="table-responsive"><table class="table" id="tabela-materiais"><thead><tr><th>Código</th><th>Peça</th><th>Qtd</th><th>Mínimo</th></tr></thead><tbody></tbody></table></div></section>
@@ -243,6 +268,30 @@
             <section id="page-configuracoes" class="page-view hidden"><div class="section-header"><h2>Configurações</h2></div></section>
 
         </main>
+    </div>
+
+    <!-- MODAL DE ALERTA DE CONFLITO DE AGENDA -->
+    <div class="modal-overlay hidden" id="modal-conflito-agenda">
+        <div class="modal-content" style="max-width: 480px;">
+            <div class="modal-header" style="background: #fef2f2; border-bottom: 1px solid #fecaca;">
+                <h2 style="color: #991b1b; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined">warning</span> Conflito de Agenda Detectado
+                </h2>
+                <button class="btn-close-modal material-symbols-outlined" onclick="fecharModalConflito()">close</button>
+            </div>
+            <div class="modal-body">
+                <p id="texto-aviso-conflito" style="font-size: 14px; color: var(--text-main); margin-bottom: 16px;">
+                    O técnico selecionado já possui um atendimento agendado para este mesmo horário em outro local.
+                </p>
+                <p style="font-size: 13px; color: var(--text-muted);">
+                    Deseja prosseguir e confirmar o agendamento mesmo com o sobreaviso de conflito?
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" onclick="fecharModalConflito()">Cancelar / Ajustar</button>
+                <button class="btn btn-primary" style="background-color: var(--danger-color);" onclick="confirmarForcarConflito()">Reconhecer e Confirmar</button>
+            </div>
+        </div>
     </div>
 
     <!-- MODAIS DE SUPORTE -->
