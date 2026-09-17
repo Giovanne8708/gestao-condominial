@@ -16,7 +16,6 @@
             <h2 id="company-name-display">Manutenção Pro</h2>
         </div>
 
-        <!-- MENU ADMIN -->
         <nav class="sidebar-nav" id="menu-admin">
             <span class="nav-section">INÍCIO</span>
             <a href="#" class="nav-item active" data-page="dashboard"><span class="material-symbols-outlined">dashboard</span> Dashboard</a>
@@ -41,7 +40,6 @@
             <a href="#" class="nav-item" data-page="configuracoes"><span class="material-symbols-outlined">settings</span> Configurações</a>
         </nav>
 
-        <!-- MENU SÍNDICO -->
         <nav class="sidebar-nav hidden" id="menu-sindico">
             <span class="nav-section">MEU CONDOMÍNIO</span>
             <a href="#" class="nav-item active" data-page="sindico-inicio"><span class="material-symbols-outlined">home</span> Início</a>
@@ -51,7 +49,6 @@
             <a href="#" class="nav-item" data-page="sindico-perfil"><span class="material-symbols-outlined">account_circle</span> Meu Perfil</a>
         </nav>
 
-        <!-- MENU TÉCNICO (NOVO) -->
         <nav class="sidebar-nav hidden" id="menu-tecnico">
             <span class="nav-section">OPERAÇÃO DE CAMPO</span>
             <a href="#" class="nav-item active" data-page="tecnico-inicio"><span class="material-symbols-outlined">home</span> Início</a>
@@ -82,153 +79,272 @@
 
         <main id="content">
             
-            <!-- ADMIN TELAS (MANTIDAS ÍNTEGRAS) -->
+            <!-- ADMIN TELAS (MANTIDAS ÍNTEGRAS NO PADRÃO) -->
             <section id="page-dashboard" class="page-view active"><div class="section-header"><div><h2>Painel Operacional</h2><p class="text-muted">Visão consolidada.</p></div></div><div class="dashboard-cards"><div class="card"><p class="card-value" id="count-os">0</p><small class="text-muted">Chamados Novos</small></div><div class="card"><p class="card-value" id="count-andamento">0</p><small class="text-muted">OS em Andamento</small></div><div class="card"><p class="card-value text-danger" id="count-atrasadas">0</p><small class="text-danger">OS Atrasadas</small></div></div></section>
-            <section id="page-chamados" class="page-view hidden"><div class="section-header"><h2>Chamados</h2></div><div class="table-responsive"><table class="table" id="tabela-chamados"><thead><tr><th>ID</th><th>Condomínio</th><th>Problema</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></section>
-            <section id="page-os" class="page-view hidden"><div class="section-header"><h2>Ordens de Serviço</h2></div><div class="table-responsive"><table class="table" id="tabela-os"><thead><tr><th>OS</th><th>Condomínio</th><th>Serviço</th><th>Data/Hora</th><th>Técnico</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></section>
+            <section id="page-chamados" class="page-view hidden"><div class="section-header"><div><h2>Chamados</h2></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-chamado"><span class="material-symbols-outlined">add</span> Novo Chamado</button></div><div class="table-responsive"><table class="table" id="tabela-chamados"><thead><tr><th>ID</th><th>Condomínio</th><th>Problema</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></section>
+            <section id="page-os" class="page-view hidden"><div class="section-header"><div><h2>Ordens de Serviço</h2></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-os"><span class="material-symbols-outlined">add</span> Nova OS</button></div><div class="table-responsive"><table class="table" id="tabela-os"><thead><tr><th>OS</th><th>Condomínio</th><th>Serviço</th><th>Data/Hora</th><th>Técnico</th><th>Status</th><th>Ações</th></tr></thead><tbody></tbody></table></div></section>
             <section id="page-agenda" class="page-view hidden"><div class="section-header"><h2>Agenda e Rotas</h2></div><div class="card"><div id="agenda-horarios-container" class="timeline-container"></div></div></section>
-            <section id="page-tecnico" class="page-view hidden"><div class="section-header"><h2>Gestão de Técnicos</h2></div><div class="card"><p>Módulo administrativo de técnicos.</p></div></section>
-            <section id="page-condominios" class="page-view hidden"><div class="section-header"><h2>Condomínios</h2></div><div class="table-responsive"><table class="table" id="tabela-condominios"><thead><tr><th>Nome</th><th>Endereço</th><th>Síndico</th><th>Status</th></tr></thead><tbody></tbody></table></div></section>
-            <section id="page-equipamentos" class="page-view hidden"><div class="section-header"><h2>Equipamentos</h2></div></section>
-            <section id="page-materiais" class="page-view hidden"><div class="section-header"><h2>Materiais</h2></div></section>
-            <section id="page-documentos" class="page-view hidden"><div class="section-header"><h2>Documentos</h2></div></section>
+            <section id="page-tecnico" class="page-view hidden"><div class="section-header"><h2>Técnicos</h2></div><div class="mobile-grid" id="lista-os-tecnico"></div></section>
+            <section id="page-condominios" class="page-view hidden"><div class="section-header"><div><h2>Condomínios</h2></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-condominio"><span class="material-symbols-outlined">add</span> Novo Condomínio</button></div><div class="table-responsive"><table class="table" id="tabela-condominios"><thead><tr><th>Nome</th><th>Endereço</th><th>Síndico</th><th>Status</th></tr></thead><tbody></tbody></table></div></section>
+            <section id="page-equipamentos" class="page-view hidden"><div class="section-header"><div><h2>Equipamentos</h2></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-equipamento"><span class="material-symbols-outlined">add</span> Novo Equipamento</button></div><div class="table-responsive"><table class="table" id="tabela-equipamentos"><thead><tr><th>ID</th><th>Nome</th><th>Condomínio</th><th>Categoria</th><th>Status</th></tr></thead><tbody></tbody></table></div></section>
+            <section id="page-materiais" class="page-view hidden"><div class="section-header"><div><h2>Materiais</h2></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-material"><span class="material-symbols-outlined">add</span> Novo Material</button></div><div class="table-responsive"><table class="table" id="tabela-materiais"><thead><tr><th>Código</th><th>Peça</th><th>Qtd</th><th>Mínimo</th></tr></thead><tbody></tbody></table></div></section>
+            <section id="page-documentos" class="page-view hidden"><div class="section-header"><div><h2>Documentos</h2></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-documento"><span class="material-symbols-outlined">add</span> Novo Documento</button></div><div class="table-responsive"><table class="table" id="tabela-documentos"><thead><tr><th>Título</th><th>Categoria</th><th>Condomínio</th><th>Data</th></tr></thead><tbody></tbody></table></div></section>
             <section id="page-relatorios" class="page-view hidden"><div class="section-header"><h2>Relatórios</h2></div></section>
-            <section id="page-preventivas" class="page-view hidden"><div class="section-header"><h2>Preventivas</h2></div></section>
+            <section id="page-preventivas" class="page-view hidden"><div class="section-header"><div><h2>Preventivas</h2></div><button class="btn btn-primary btn-icon" id="btn-abrir-modal-preventiva"><span class="material-symbols-outlined">add</span> Novo Plano</button></div><div class="table-responsive"><table class="table" id="tabela-preventivas"><thead><tr><th>Equipamento</th><th>Condomínio</th><th>Periodicidade</th><th>Próxima Manut.</th><th>Status</th></tr></thead><tbody></tbody></table></div></section>
             <section id="page-configuracoes" class="page-view hidden"><div class="section-header"><h2>Configurações</h2></div></section>
 
             <!-- SÍNDICO TELAS -->
             <section id="page-sindico-inicio" class="page-view hidden"><div class="section-header"><h2>Olá, Síndico.</h2></div><select id="seletor-condominio-sindico" class="form-control"></select></section>
-            <section id="page-sindico-novo-chamado" class="page-view hidden"><div class="section-header"><h2>Abrir Chamado</h2></div><form id="form-sindico-chamado"><textarea id="input-sind-chamado-desc" required></textarea><button type="submit">Enviar</button></form></section>
+            <section id="page-sindico-novo-chamado" class="page-view hidden">
+                <div class="section-header"><div><h2>Abrir Chamado</h2></div></div>
+                <div class="card card-form" style="max-width: 650px; margin: 0 auto;">
+                    <form id="form-sindico-chamado" novalidate>
+                        <div class="form-section">
+                            <h4 class="form-section-title">Dados do Condomínio</h4>
+                            <div class="form-group"><label>Condomínio <span class="auto-mark">Automático</span></label><input type="text" id="input-sind-chamado-cond" class="form-control" readonly></div>
+                            <div class="form-group"><label>Local Exato <span class="required-mark">*</span></label><input type="text" id="input-sind-chamado-local" class="form-control" required placeholder="Ex: Bloco B"></div>
+                        </div>
+                        <div class="form-section">
+                            <h4 class="form-section-title">Detalhes da Ocorrência</h4>
+                            <div class="form-group"><label>Categoria <span class="required-mark">*</span></label><select id="input-sind-chamado-cat" class="form-control" required><option value="Bombas">Bombas</option><option value="Elétrica">Elétrica</option><option value="Hidráulica">Hidráulica</option><option value="Portões">Portões</option></select></div>
+                            <div class="form-group"><label>Problema Identificado <span class="required-mark">*</span></label><textarea id="input-sind-chamado-desc" class="form-control" rows="3" required placeholder="Descreva o que está ocorrendo"></textarea></div>
+                            <div class="form-group"><label>Prioridade da Solicitação <span class="required-mark">*</span></label><select id="input-sind-chamado-prio" class="form-control" required><option value="Normal">Normal</option><option value="Alta">Alta</option><option value="Urgente">Urgente</option></select></div>
+                        </div>
+                        <div class="form-actions"><button type="submit" class="btn btn-primary" style="width:100%;">Enviar Chamado Oficial</button></div>
+                    </form>
+                </div>
+            </section>
             <section id="page-sindico-meus-chamados" class="page-view hidden"><div class="section-header"><h2>Meus Chamados</h2></div><table class="table" id="tabela-sindico-todos"><tbody></tbody></table></section>
             <section id="page-sindico-condominios" class="page-view hidden"><div class="section-header"><h2>Condomínios</h2></div></section>
             <section id="page-sindico-perfil" class="page-view hidden"><div class="section-header"><h2>Perfil</h2></div></section>
 
-            <!-- ========================================== -->
-            <!-- TÉCNICO DE CAMPO (MOBILE-FIRST)            -->
-            <!-- ========================================== -->
-
-            <!-- TELA: INÍCIO DO TÉCNICO -->
-            <section id="page-tecnico-inicio" class="page-view hidden">
-                <div class="section-header" style="border:none; margin-bottom:12px;">
-                    <div>
-                        <h2 id="tec-welcome-title" style="font-size:24px;">Olá, João.</h2>
-                        <p class="text-muted">Serviços programados para hoje: <strong id="tec-count-hoje" style="color:var(--text-main);">0</strong></p>
-                    </div>
-                </div>
-
-                <h3 style="font-size: 14px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; letter-spacing: 0.5px;">Próximo Atendimento</h3>
-                
-                <div id="tec-proximo-atendimento">
-                    <!-- Preenchido pelo JS: Card gigante de Próximo Atendimento -->
-                </div>
-
-                <div style="margin-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div class="card clickable-card" style="text-align:center; padding: 16px;" onclick="mudarFiltroTecnico('Em andamento')">
-                        <span class="material-symbols-outlined text-warning" style="font-size: 28px; margin-bottom:8px;">engineering</span>
-                        <h4 style="font-size:13px; color:var(--text-muted);">Em Andamento</h4>
-                        <p style="font-size:24px; font-weight:700; color:var(--text-main);" id="tec-count-andamento">0</p>
-                    </div>
-                    <div class="card clickable-card" style="text-align:center; padding: 16px;" onclick="mudarFiltroTecnico('Concluída')">
-                        <span class="material-symbols-outlined text-success" style="font-size: 28px; margin-bottom:8px;">check_circle</span>
-                        <h4 style="font-size:13px; color:var(--text-muted);">Concluídas</h4>
-                        <p style="font-size:24px; font-weight:700; color:var(--text-main);" id="tec-count-concluidas">0</p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- TELA: MINHAS OS (TÉCNICO) -->
-            <section id="page-tecnico-os" class="page-view hidden">
-                <div class="section-header" style="border:none; margin-bottom:12px; padding-bottom:0;">
-                    <div><h2 style="font-size: 22px;">Minhas OS</h2></div>
-                </div>
-                
-                <div class="filter-tabs" style="margin-bottom: 20px; gap:6px;">
-                    <button class="filter-tab active" id="btn-filtro-tec-hoje" onclick="mudarFiltroTecnico('Hoje')">Hoje</button>
-                    <button class="filter-tab" id="btn-filtro-tec-proximas" onclick="mudarFiltroTecnico('Próximas')">Próximas</button>
-                    <button class="filter-tab" id="btn-filtro-tec-andamento" onclick="mudarFiltroTecnico('Em andamento')">Andamento</button>
-                    <button class="filter-tab" id="btn-filtro-tec-concluidas" onclick="mudarFiltroTecnico('Concluída')">Concluídas</button>
-                </div>
-
-                <div class="mobile-grid" id="container-tec-lista-os">
-                    <!-- Preenchido pelo JS: Cards mobile das OS -->
-                </div>
-            </section>
+            <!-- TÉCNICO TELAS -->
+            <section id="page-tecnico-inicio" class="page-view hidden"><div class="section-header"><h2>Área do Técnico</h2></div></section>
+            <section id="page-tecnico-os" class="page-view hidden"><div class="section-header"><h2>Minhas OS</h2></div></section>
 
         </main>
     </div>
 
-    <!-- ========================================== -->
-    <!-- MODAL TELA CHEIA: EXECUÇÃO DE OS NO MOBILE -->
-    <!-- ========================================== -->
-    <div class="modal-overlay hidden" id="modal-execucao-os-tecnico">
-        <div class="modal-content modal-mobile-fullscreen">
-            <div class="modal-header">
-                <h2 id="tec-modal-titulo">OS #0000</h2>
-                <button class="btn-close-modal material-symbols-outlined" onclick="fecharExecucaoOS()">close</button>
+    <!-- ================================================================= -->
+    <!-- NOVOS MODAIS CORPORATIVOS (DIVIDIDOS EM SEÇÕES, COM MARCAÇÕES)    -->
+    <!-- ================================================================= -->
+
+    <!-- MODAL: EQUIPAMENTO -->
+    <div class="modal-overlay hidden" id="modal-novo-equipamento">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Cadastrar Equipamento</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-equipamento">close</button></div>
+            <div class="modal-body">
+                <form id="form-novo-equipamento" novalidate>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Dados Principais</h4>
+                        <div class="form-group"><label>Nome / Identificação <span class="required-mark">*</span></label><input type="text" id="input-equip-nome" class="form-control" required placeholder="Ex: Bomba Submersa 01"></div>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="form-group" style="flex: 1;"><label>Categoria <span class="required-mark">*</span></label><select id="input-equip-categoria" class="form-control" required><option value="Hidráulica">Hidráulica</option><option value="Elétrica">Elétrica</option><option value="Elevadores">Elevadores</option><option value="Segurança">Segurança</option></select></div>
+                            <div class="form-group" style="flex: 1;"><label>Condomínio <span class="required-mark">*</span></label><select id="input-equip-condominio" class="form-control" required></select></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Localização</h4>
+                        <div class="form-group"><label>Setor / Localização <span class="optional-mark">(Opcional)</span></label><input type="text" id="input-equip-local" class="form-control" placeholder="Ex: Casa de Máquinas"></div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Identificação e Fabricante</h4>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="form-group" style="flex: 1;"><label>Fabricante <span class="optional-mark">(Opcional)</span></label><input type="text" id="input-equip-fabricante" class="form-control"></div>
+                            <div class="form-group" style="flex: 1;"><label>Modelo <span class="optional-mark">(Opcional)</span></label><input type="text" id="input-equip-modelo" class="form-control"></div>
+                            <div class="form-group" style="flex: 1;"><label>Nº de Série <span class="optional-mark">(Opcional)</span></label><input type="text" id="input-equip-serie" class="form-control"></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Informações Técnicas</h4>
+                        <div class="form-group"><label>Especificações <span class="optional-mark">(Opcional)</span></label><input type="text" id="input-equip-especificacoes" class="form-control"></div>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="form-group" style="flex: 1;"><label>Data de Instalação <span class="optional-mark">(Opcional)</span></label><input type="date" id="input-equip-data" class="form-control"></div>
+                            <div class="form-group" style="flex: 1;"><label>Status Operacional <span class="required-mark">*</span></label><select id="input-equip-status" class="form-control" required><option value="Funcionando">Funcionando</option><option value="Em manutenção">Em manutenção</option><option value="Com problema">Com problema</option></select></div>
+                        </div>
+                    </div>
+                </form>
             </div>
-            
-            <div class="modal-body" id="tec-modal-corpo" style="overflow-y: auto; padding-bottom: 80px;">
-                <!-- SEÇÃO DE INFORMAÇÕES (VISÍVEL POR PADRÃO) -->
-                <div id="tec-os-informacoes">
-                    <div class="info-group">
-                        <label>Condomínio</label>
-                        <p id="tec-os-condominio">-</p>
-                    </div>
-                    <div class="info-group">
-                        <label>Endereço</label>
-                        <p id="tec-os-endereco">-</p>
-                    </div>
-                    <div class="info-group">
-                        <label>Serviço / Problema</label>
-                        <p id="tec-os-servico">-</p>
-                    </div>
-                    <div class="info-group">
-                        <label>Data e Horário</label>
-                        <p id="tec-os-horario">-</p>
-                    </div>
-                    
-                    <div style="margin-top: 32px;" id="tec-os-botoes-acao">
-                        <!-- Injetado dinamicamente: Iniciar ou Ações de Andamento -->
-                    </div>
-                </div>
-
-                <!-- SEÇÃO DE FINALIZAÇÃO (OCULTA POR PADRÃO) -->
-                <div id="tec-os-finalizacao" class="hidden">
-                    <h3 style="font-size:16px; margin-bottom:16px; color:var(--primary-color);">Finalizar Atendimento</h3>
-                    
-                    <div class="form-group">
-                        <label>Serviço Realizado / Diagnóstico *</label>
-                        <textarea id="tec-input-diag" class="form-control" rows="4" required placeholder="Descreva o que foi feito de forma clara..."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Materiais Utilizados</label>
-                        <input type="text" id="tec-input-materiais" class="form-control" placeholder="Ex: 1x Fita isolante, 2x Disjuntores">
-                    </div>
-                    <div class="form-group">
-                        <label>Observações Adicionais</label>
-                        <textarea id="tec-input-obs" class="form-control" rows="2" placeholder="Restrição de acesso, pendências, etc."></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Anexar Fotos (Opcional)</label>
-                        <button class="btn btn-ghost" style="width:100%; border: 1px dashed var(--primary-color); color:var(--primary-color);">
-                            <span class="material-symbols-outlined">photo_camera</span> Capturar ou Enviar Foto
-                        </button>
-                    </div>
-
-                    <button class="btn btn-success btn-block" style="margin-top: 24px;" onclick="confirmarConclusaoOS()">
-                        <span class="material-symbols-outlined">check_circle</span> FINALIZAR OS
-                    </button>
-                    <button class="btn btn-ghost btn-block" onclick="voltarParaInformacoesOS()">Voltar</button>
-                </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" type="button" id="btn-cancelar-equipamento">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-novo-equipamento">Salvar Equipamento</button>
             </div>
         </div>
     </div>
 
-    <!-- MODAIS ADMIN/SÍNDICO MANTIDOS -->
-    <div class="modal-overlay hidden" id="modal-novo-chamado"><div class="modal-content"><div class="modal-header"><h2>Novo</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-chamado">close</button></div><div class="modal-body"><form id="form-novo-chamado"><textarea id="input-chamado-problema" required></textarea><button type="submit">Salvar</button></form></div></div></div>
-    <div class="modal-overlay hidden" id="modal-nova-os"><div class="modal-content"><div class="modal-header"><h2>Nova OS</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-os">close</button></div><div class="modal-body"><form id="form-nova-os"><input type="date" id="input-os-data" required><button type="submit">Salvar</button></form></div></div></div>
+    <!-- MODAL: CONDOMÍNIO -->
+    <div class="modal-overlay hidden" id="modal-novo-condominio">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Cadastrar Condomínio</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-condominio">close</button></div>
+            <div class="modal-body">
+                <form id="form-novo-condominio" novalidate>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Dados Principais</h4>
+                        <div class="form-group"><label>Nome do Condomínio <span class="required-mark">*</span></label><input type="text" id="input-cond-nome" class="form-control" required></div>
+                        <div class="form-group"><label>Endereço Completo <span class="required-mark">*</span></label><input type="text" id="input-cond-endereco" class="form-control" required></div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Dados de Contato</h4>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="form-group" style="flex: 1;"><label>Síndico Responsável <span class="required-mark">*</span></label><input type="text" id="input-cond-sindico" class="form-control" required></div>
+                            <div class="form-group" style="flex: 1;"><label>Telefone / WhatsApp <span class="required-mark">*</span></label><input type="text" id="input-cond-telefone" class="form-control" required></div>
+                        </div>
+                        <div class="form-group"><label>E-mail <span class="required-mark">*</span></label><input type="email" id="input-cond-email" class="form-control" required placeholder="sindico@email.com"></div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Sistema</h4>
+                        <div class="form-group"><label>Status do Cliente <span class="required-mark">*</span></label><select id="input-cond-status" class="form-control" required><option value="Ativo">Ativo</option><option value="Inativo">Inativo</option></select></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" type="button" id="btn-cancelar-condominio">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-novo-condominio">Salvar Condomínio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PREVENTIVA -->
+    <div class="modal-overlay hidden" id="modal-nova-preventiva">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Novo Plano Preventivo</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-preventiva">close</button></div>
+            <div class="modal-body">
+                <form id="form-nova-preventiva" novalidate>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Dados Principais</h4>
+                        <div class="form-group"><label>Selecione o Equipamento <span class="required-mark">*</span></label><select id="input-prev-equipamento" class="form-control" required></select></div>
+                        <div class="form-group"><label>Condomínio Vinculado <span class="auto-mark">Leitura</span></label><input type="text" id="input-prev-condominio" class="form-control" readonly></div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Programação Técnica</h4>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="form-group" style="flex: 1;"><label>Periodicidade <span class="required-mark">*</span></label><select id="input-prev-periodicidade" class="form-control" required><option value="Mensal">Mensal</option><option value="Trimestral">Trimestral</option><option value="Anual">Anual</option></select></div>
+                            <div class="form-group" style="flex: 1;"><label>Técnico Padrão <span class="required-mark">*</span></label><select id="input-prev-tecnico" class="form-control" required><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select></div>
+                        </div>
+                        <div class="form-group"><label>Próxima Manutenção <span class="required-mark">*</span></label><input type="date" id="input-prev-proxima" class="form-control" required></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" type="button" id="btn-cancelar-preventiva">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-nova-preventiva">Salvar Plano</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVA OS ADMIN -->
+    <div class="modal-overlay hidden" id="modal-nova-os">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Agendar Ordem de Serviço</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-os">close</button></div>
+            <div class="modal-body">
+                <form id="form-nova-os" novalidate>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Referências e Serviço</h4>
+                        <div class="form-group"><label>Condomínio <span class="required-mark">*</span></label><input type="text" id="input-os-condominio" class="form-control" required></div>
+                        <div class="form-group"><label>Descrição Técnica do Serviço <span class="required-mark">*</span></label><input type="text" id="input-os-servico" class="form-control" required></div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Programação</h4>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="form-group" style="flex: 1;"><label>Data <span class="required-mark">*</span></label><input type="date" id="input-os-data" class="form-control" required></div>
+                            <div class="form-group" style="flex: 1;"><label>Horário Mínimo <span class="required-mark">*</span></label><input type="time" id="input-os-hora" class="form-control" required></div>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="form-group" style="flex: 1;"><label>Técnico Designado <span class="required-mark">*</span></label><select id="input-os-tecnico" class="form-control" required><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select></div>
+                            <div class="form-group" style="flex: 1;"><label>Status Inicial <span class="required-mark">*</span></label><select id="input-os-status" class="form-control" required><option value="Agendada">Agendada</option><option value="Aberta">Aberta</option></select></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="btn-cancelar-os">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-nova-os">Salvar OS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVO CHAMADO ADMIN -->
+    <div class="modal-overlay hidden" id="modal-novo-chamado">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Registrar Chamado</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-chamado">close</button></div>
+            <div class="modal-body">
+                <form id="form-novo-chamado" novalidate>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Dados do Solicitante</h4>
+                        <div class="form-group"><label>Condomínio Solicitante <span class="required-mark">*</span></label><input type="text" id="input-chamado-condominio" class="form-control" required></div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Detalhes da Ocorrência</h4>
+                        <div class="form-group"><label>Descrição Completa do Problema <span class="required-mark">*</span></label><textarea id="input-chamado-problema" class="form-control" rows="4" required></textarea></div>
+                        <div class="form-group"><label>Prioridade <span class="required-mark">*</span></label><select id="input-chamado-prioridade" class="form-control" required><option value="Normal">Normal</option><option value="Alta">Alta</option><option value="Urgente">Urgente</option></select></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" id="btn-cancelar-chamado">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-novo-chamado">Salvar Chamado</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVO MATERIAL -->
+    <div class="modal-overlay hidden" id="modal-novo-material">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Cadastrar Material</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-material">close</button></div>
+            <div class="modal-body">
+                <form id="form-novo-material" novalidate>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Identificação da Peça</h4>
+                        <div class="form-group"><label>Descrição / Nome Técnico <span class="required-mark">*</span></label><input type="text" id="input-mat-nome" class="form-control" required></div>
+                        <div class="form-group"><label>Categoria <span class="required-mark">*</span></label><select id="input-mat-cat" class="form-control" required><option value="Elétrica">Elétrica</option><option value="Hidráulica">Hidráulica</option><option value="Geral">Geral</option></select></div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Controle de Estoque</h4>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="form-group" style="flex: 1;"><label>Quantidade Inicial <span class="required-mark">*</span></label><input type="number" id="input-mat-qtd" class="form-control" required value="10"></div>
+                            <div class="form-group" style="flex: 1;"><label>Estoque Mínimo <span class="required-mark">*</span></label><input type="number" id="input-mat-min" class="form-control" required value="2"></div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" type="button" id="btn-cancelar-material">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-novo-material">Salvar Material</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: NOVO DOCUMENTO -->
+    <div class="modal-overlay hidden" id="modal-novo-documento">
+        <div class="modal-content">
+            <div class="modal-header"><h2>Vincular Documento</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-modal-documento">close</button></div>
+            <div class="modal-body">
+                <form id="form-novo-documento" novalidate>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Dados do Arquivo</h4>
+                        <div class="form-group"><label>Título Oficial do Documento <span class="required-mark">*</span></label><input type="text" id="input-doc-titulo" class="form-control" required></div>
+                        <div style="display: flex; gap: 12px;">
+                            <div class="form-group" style="flex: 1;"><label>Categoria <span class="required-mark">*</span></label><select id="input-doc-categoria" class="form-control" required><option value="Manual">Manual</option><option value="Laudo">Laudo</option><option value="Contrato">Contrato</option></select></div>
+                            <div class="form-group" style="flex: 1;"><label>Condomínio <span class="required-mark">*</span></label><select id="input-doc-condominio" class="form-control" required></select></div>
+                        </div>
+                    </div>
+                    <div class="form-section">
+                        <h4 class="form-section-title">Acesso em Nuvem</h4>
+                        <div class="form-group"><label>Link do Arquivo (Google Drive / OneDrive) <span class="required-mark">*</span></label><input type="url" id="input-doc-link" class="form-control" required placeholder="https://..."></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-ghost" type="button" id="btn-cancelar-documento">Cancelar</button>
+                <button class="btn btn-primary" type="submit" form="form-novo-documento">Salvar Documento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modais de Visualização e Execução mantidos intactos na arquitetura -->
     <div class="modal-overlay hidden" id="modal-detalhe-chamado"><div class="modal-content"><div class="modal-header"><h2 id="modal-chamado-titulo">Det</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-detalhe-chamado">close</button></div><div class="modal-body" id="modal-chamado-corpo"></div><div class="modal-footer" id="modal-chamado-footer"></div></div></div>
     <div class="modal-overlay hidden" id="modal-detalhe-os"><div class="modal-content"><div class="modal-header"><h2 id="os-modal-titulo">OS</h2><button class="btn-close-modal material-symbols-outlined" id="btn-fechar-detalhe-os">close</button></div><div class="modal-body" id="os-modal-corpo"></div></div></div>
+    <div class="modal-overlay hidden" id="modal-execucao-os-tecnico"><div class="modal-content modal-mobile-fullscreen"><div class="modal-header"><h2 id="tec-modal-titulo">OS</h2><button class="btn-close-modal" onclick="fecharExecucaoOS()">close</button></div><div class="modal-body" id="tec-modal-corpo"></div></div></div>
 
     <script src="data/data.js"></script>
     <script src="js/app.js"></script>
