@@ -3,295 +3,3721 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestão</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
+
+    <title>Gestão de Manutenção</title>
+
+    <meta name="description" content="Sistema de gestão de manutenção condominial">
+    <meta name="theme-color" content="#1f4f82">
+
+    <!-- Tipografia -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- Ícones -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,400,0,0"
+        rel="stylesheet"
+    >
+
+    <!-- Estilos do sistema -->
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
 
-    <!-- ========================================== -->
-    <!-- TELA DE LOGIN (NOVO MÓDULO)                -->
-    <!-- ========================================== -->
+    <!-- =========================================================
+         LOGIN
+    ========================================================== -->
+
     <div id="login-wrapper">
+
         <div class="login-card">
-            <img id="login-logo-img" class="login-logo hidden" alt="Logo">
-            <h2 class="login-title" id="login-system-name">Gestão de Manutenção</h2>
-            <p class="login-subtitle">Acesso Restrito ao Sistema</p>
-            
-            <form id="form-login" class="login-form">
+
+            <div class="login-brand">
+
+                <div class="login-logo-wrapper">
+                    <img
+                        id="login-logo-img"
+                        class="login-logo hidden"
+                        alt="Logo da empresa"
+                    >
+
+                    <div
+                        id="login-logo-placeholder"
+                        class="login-logo-placeholder"
+                        aria-hidden="true"
+                    >
+                        <span class="material-symbols-outlined">
+                            apartment
+                        </span>
+                    </div>
+                </div>
+
+                <h1
+                    class="login-title"
+                    id="login-system-name"
+                >
+                    Gestão de Manutenção
+                </h1>
+
+                <p class="login-subtitle">
+                    Plataforma de gestão de manutenção condominial
+                </p>
+
+            </div>
+
+
+            <form
+                id="form-login"
+                class="login-form"
+                novalidate
+            >
+
                 <div class="form-group">
-                    <label>E-mail Institucional</label>
-                    <input type="email" id="login-email" class="form-control" required placeholder="seu@email.com">
+
+                    <label for="login-email">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        id="login-email"
+                        class="form-control"
+                        autocomplete="username"
+                        required
+                        placeholder="seu@email.com"
+                    >
+
                 </div>
-                <div class="form-group" style="margin-bottom: 24px;">
-                    <label>Senha</label>
-                    <input type="password" id="login-senha" class="form-control" required placeholder="••••••••">
+
+
+                <div class="form-group">
+
+                    <label for="login-senha">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        id="login-senha"
+                        class="form-control"
+                        autocomplete="current-password"
+                        required
+                        placeholder="Digite sua senha"
+                    >
+
                 </div>
-                <button type="submit" class="btn btn-primary btn-block" style="height: 48px;">Acessar Plataforma</button>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary btn-block"
+                    style="height:48px;"
+                >
+                    Acessar sistema
+                </button>
+
             </form>
 
+
             <div class="demo-credentials">
-                <p style="margin-bottom: 4px;"><strong>Credenciais de Teste:</strong> (A senha é sempre 123)</p>
-                <p><strong>Admin:</strong> admin@empresa.com</p>
-                <p><strong>Técnico:</strong> tecnico@empresa.com</p>
-                <p><strong>Síndico:</strong> sindico@condominio.com</p>
+
+                <div class="demo-title">
+                    Ambiente de demonstração
+                </div>
+
+                <div class="demo-item">
+                    <strong>Administrador</strong>
+                    <span>admin@empresa.com</span>
+                </div>
+
+                <div class="demo-item">
+                    <strong>Técnico</strong>
+                    <span>tecnico@empresa.com</span>
+                </div>
+
+                <div class="demo-item">
+                    <strong>Síndico</strong>
+                    <span>sindico@condominio.com</span>
+                </div>
+
+                <small>
+                    Senha de demonstração: 123
+                </small>
+
             </div>
+
         </div>
+
     </div>
 
-    <!-- ========================================== -->
-    <!-- SISTEMA (LATERAL E TOPO)                   -->
-    <!-- ========================================== -->
-    <aside id="sidebar" class="hidden">
+
+    <!-- =========================================================
+         SIDEBAR
+    ========================================================== -->
+
+    <aside
+        id="sidebar"
+        class="hidden"
+        aria-label="Menu principal"
+    >
+
         <div class="sidebar-header">
-            <img id="company-logo-img" class="hidden" alt="Logo da Empresa">
-            <div id="company-logo-placeholder" class="discreet-placeholder"></div>
-            <div style="display: flex; flex-direction: column; overflow: hidden; justify-content: center;">
-                <span id="system-name-display">Gestão de Manutenção</span>
-                <h2 id="company-name-display">Sua Empresa</h2>
+
+            <div class="sidebar-brand-logo">
+
+                <img
+                    id="company-logo-img"
+                    class="hidden"
+                    alt="Logo da empresa"
+                >
+
+                <div
+                    id="company-logo-placeholder"
+                    class="discreet-placeholder"
+                >
+                    <span class="material-symbols-outlined">
+                        apartment
+                    </span>
+                </div>
+
             </div>
+
+
+            <div class="sidebar-brand-text">
+
+                <span id="system-name-display">
+                    Gestão de Manutenção
+                </span>
+
+                <h2 id="company-name-display">
+                    Sua Empresa
+                </h2>
+
+            </div>
+
         </div>
 
-        <nav class="sidebar-nav hidden" id="menu-admin">
-            <span class="nav-section">INÍCIO</span>
-            <a href="#" class="nav-item active" data-page="dashboard"><span class="material-symbols-outlined">dashboard</span> Dashboard</a>
-            <span class="nav-section">MANUTENÇÃO</span>
-            <a href="#" class="nav-item" data-page="chamados"><span class="material-symbols-outlined">confirmation_number</span> Chamados</a>
-            <a href="#" class="nav-item" data-page="os"><span class="material-symbols-outlined">build</span> Ordens de Serviço</a>
-            <span class="nav-section">OPERAÇÃO</span>
-            <a href="#" class="nav-item" data-page="agenda"><span class="material-symbols-outlined">calendar_month</span> Agenda e Rotas</a>
-            <span class="nav-section">CADASTRO</span>
-            <a href="#" class="nav-item" data-page="condominios"><span class="material-symbols-outlined">apartment</span> Condomínios</a>
-            <a href="#" class="nav-item" data-page="equipamentos"><span class="material-symbols-outlined">precision_manufacturing</span> Equipamentos</a>
-            <a href="#" class="nav-item" data-page="configuracoes"><span class="material-symbols-outlined">settings</span> Configurações</a>
+
+        <!-- =====================================================
+             MENU ADMINISTRADOR
+        ====================================================== -->
+
+        <nav
+            class="sidebar-nav hidden"
+            id="menu-admin"
+            aria-label="Menu administrativo"
+        >
+
+            <span class="nav-section">
+                INÍCIO
+            </span>
+
+            <a
+                href="#"
+                class="nav-item active"
+                data-page="dashboard"
+            >
+                <span class="material-symbols-outlined">
+                    dashboard
+                </span>
+
+                <span>Dashboard</span>
+            </a>
+
+
+            <span class="nav-section">
+                MANUTENÇÃO
+            </span>
+
+            <a
+                href="#"
+                class="nav-item"
+                data-page="chamados"
+            >
+                <span class="material-symbols-outlined">
+                    confirmation_number
+                </span>
+
+                <span>Chamados</span>
+
+                <span
+                    class="nav-badge hidden"
+                    id="badge-chamados"
+                >
+                    0
+                </span>
+            </a>
+
+
+            <a
+                href="#"
+                class="nav-item"
+                data-page="os"
+            >
+                <span class="material-symbols-outlined">
+                    build
+                </span>
+
+                <span>Ordens de Serviço</span>
+
+                <span
+                    class="nav-badge hidden"
+                    id="badge-os"
+                >
+                    0
+                </span>
+            </a>
+
+
+            <span class="nav-section">
+                OPERAÇÃO
+            </span>
+
+            <a
+                href="#"
+                class="nav-item"
+                data-page="agenda"
+            >
+                <span class="material-symbols-outlined">
+                    calendar_month
+                </span>
+
+                <span>Agenda e Rotas</span>
+            </a>
+
+
+            <span class="nav-section">
+                CADASTRO
+            </span>
+
+            <a
+                href="#"
+                class="nav-item"
+                data-page="condominios"
+            >
+                <span class="material-symbols-outlined">
+                    apartment
+                </span>
+
+                <span>Condomínios</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="nav-item"
+                data-page="equipamentos"
+            >
+                <span class="material-symbols-outlined">
+                    precision_manufacturing
+                </span>
+
+                <span>Equipamentos</span>
+            </a>
+
+
+            <span class="nav-section">
+                SISTEMA
+            </span>
+
+            <a
+                href="#"
+                class="nav-item"
+                data-page="configuracoes"
+            >
+                <span class="material-symbols-outlined">
+                    settings
+                </span>
+
+                <span>Configurações</span>
+            </a>
+
         </nav>
 
-        <nav class="sidebar-nav hidden" id="menu-sindico">
-            <span class="nav-section">MEU CONDOMÍNIO</span>
-            <a href="#" class="nav-item active" data-page="sindico-inicio"><span class="material-symbols-outlined">home</span> Início</a>
-            <a href="#" class="nav-item" data-page="sindico-novo-chamado"><span class="material-symbols-outlined">add_circle</span> Abrir Chamado</a>
-            <a href="#" class="nav-item" data-page="sindico-meus-chamados"><span class="material-symbols-outlined">list_alt</span> Meus Chamados</a>
+
+        <!-- =====================================================
+             MENU SÍNDICO
+        ====================================================== -->
+
+        <nav
+            class="sidebar-nav hidden"
+            id="menu-sindico"
+            aria-label="Menu do síndico"
+        >
+
+            <span class="nav-section">
+                MEU CONDOMÍNIO
+            </span>
+
+
+            <a
+                href="#"
+                class="nav-item active"
+                data-page="sindico-inicio"
+            >
+                <span class="material-symbols-outlined">
+                    home
+                </span>
+
+                <span>Início</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="nav-item"
+                data-page="sindico-novo-chamado"
+            >
+                <span class="material-symbols-outlined">
+                    add_circle
+                </span>
+
+                <span>Abrir Chamado</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="nav-item"
+                data-page="sindico-meus-chamados"
+            >
+                <span class="material-symbols-outlined">
+                    list_alt
+                </span>
+
+                <span>Meus Chamados</span>
+            </a>
+
         </nav>
 
-        <nav class="sidebar-nav hidden" id="menu-tecnico">
-            <span class="nav-section">OPERAÇÃO DE CAMPO</span>
-            <a href="#" class="nav-item active" data-page="tecnico-inicio"><span class="material-symbols-outlined">home</span> Início</a>
-            <a href="#" class="nav-item" data-page="tecnico-os"><span class="material-symbols-outlined">build</span> Minhas OS</a>
+
+        <!-- =====================================================
+             MENU TÉCNICO
+        ====================================================== -->
+
+        <nav
+            class="sidebar-nav hidden"
+            id="menu-tecnico"
+            aria-label="Menu do técnico"
+        >
+
+            <span class="nav-section">
+                OPERAÇÃO DE CAMPO
+            </span>
+
+
+            <a
+                href="#"
+                class="nav-item active"
+                data-page="tecnico-inicio"
+            >
+                <span class="material-symbols-outlined">
+                    home
+                </span>
+
+                <span>Início</span>
+            </a>
+
+
+            <a
+                href="#"
+                class="nav-item"
+                data-page="tecnico-os"
+            >
+                <span class="material-symbols-outlined">
+                    build
+                </span>
+
+                <span>Minhas OS</span>
+            </a>
+
         </nav>
+
+
+        <!-- =====================================================
+             RODAPÉ SIDEBAR
+        ====================================================== -->
+
+        <div class="sidebar-footer">
+
+            <div class="sidebar-system-status">
+
+                <span class="status-dot"></span>
+
+                <span>
+                    Sistema operacional
+                </span>
+
+            </div>
+
+        </div>
+
     </aside>
 
-    <div class="main-wrapper hidden" id="main-app">
+
+    <!-- =========================================================
+         APLICAÇÃO
+    ========================================================== -->
+
+    <div
+        class="main-wrapper hidden"
+        id="main-app"
+    >
+
+        <!-- =====================================================
+             HEADER
+        ====================================================== -->
+
         <header id="top-header">
+
             <div class="header-left">
-                <button id="mobile-menu-btn" class="material-symbols-outlined">menu</button>
-            </div>
-            <div class="header-right">
-                <div class="user-profile" style="display: flex; align-items: center; gap: 12px;">
-                    <div style="text-align: right;">
-                        <p id="header-user-name" style="font-size: 13px; font-weight: 600; color: var(--text-main); margin-bottom: 2px;">Usuário</p>
-                        <p id="header-user-role" style="font-size: 11px; color: var(--text-muted);">Cargo</p>
-                    </div>
-                    <div class="avatar" id="header-user-avatar">U</div>
-                    <button class="icon-btn" onclick="realizarLogout()" title="Sair do Sistema" style="margin-left: 8px;">
-                        <span class="material-symbols-outlined" style="color: var(--danger-color);">logout</span>
-                    </button>
+
+                <button
+                    id="mobile-menu-btn"
+                    class="material-symbols-outlined"
+                    type="button"
+                    aria-label="Abrir menu"
+                >
+                    menu
+                </button>
+
+
+                <div class="breadcrumb-area">
+
+                    <span
+                        id="header-context"
+                        class="header-context"
+                    >
+                        Gestão de Manutenção
+                    </span>
+
                 </div>
+
             </div>
+
+
+            <div class="header-center">
+
+                <div
+                    class="global-search"
+                    id="global-search"
+                >
+
+                    <span class="material-symbols-outlined">
+                        search
+                    </span>
+
+                    <input
+                        type="search"
+                        id="input-global-search"
+                        placeholder="Pesquisar no sistema..."
+                        autocomplete="off"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <div class="header-right">
+
+                <button
+                    class="icon-btn"
+                    id="header-notifications"
+                    type="button"
+                    title="Notificações"
+                    aria-label="Notificações"
+                >
+                    <span class="material-symbols-outlined">
+                        notifications
+                    </span>
+
+                    <span
+                        class="notification-indicator hidden"
+                        id="notification-indicator"
+                    ></span>
+                </button>
+
+
+                <div
+                    class="user-profile"
+                    id="header-user-profile"
+                >
+
+                    <div class="user-profile-info">
+
+                        <p
+                            id="header-user-name"
+                            class="user-name"
+                        >
+                            Usuário
+                        </p>
+
+                        <p
+                            id="header-user-role"
+                            class="user-role"
+                        >
+                            Cargo
+                        </p>
+
+                    </div>
+
+
+                    <div
+                        class="avatar"
+                        id="header-user-avatar"
+                    >
+                        U
+                    </div>
+
+
+                    <button
+                        class="icon-btn logout-btn"
+                        onclick="realizarLogout()"
+                        type="button"
+                        title="Sair do sistema"
+                        aria-label="Sair do sistema"
+                    >
+                        <span class="material-symbols-outlined">
+                            logout
+                        </span>
+                    </button>
+
+                </div>
+
+            </div>
+
         </header>
 
+
+        <!-- =====================================================
+             CONTEÚDO PRINCIPAL
+        ====================================================== -->
+
         <main id="content">
-            
-            <!-- ADMIN TELAS PADRÃO -->
-            <section id="page-dashboard" class="page-view active"><div class="section-header"><div><h2>Painel Operacional</h2><p class="text-muted">Visão consolidada.</p></div></div><div class="dashboard-cards"><div class="card"><p class="card-value" id="count-os">0</p><small class="text-muted">Chamados Novos</small></div><div class="card"><p class="card-value" id="count-andamento">0</p><small class="text-muted">OS em Andamento</small></div><div class="card"><p class="card-value text-danger" id="count-atrasadas">0</p><small class="text-danger">OS Atrasadas</small></div></div></section>
-            
-            <!-- CHAMADOS ADMIN -->
-            <section id="page-chamados" class="page-view hidden">
-                <div class="section-header">
-                    <div><h2>Chamados Solicitados</h2><p class="text-muted">Caixa de entrada das solicitações dos síndicos.</p></div>
-                </div>
-                <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filtrarChamados('Todos')">Todos</button>
-                    <button class="filter-tab" onclick="filtrarChamados('Novo')">Novos</button>
-                    <button class="filter-tab" onclick="filtrarChamados('Agendado')">Agendados</button>
-                    <button class="filter-tab" onclick="filtrarChamados('Em atendimento')">Em Atendimento</button>
-                    <button class="filter-tab" onclick="filtrarChamados('Concluído')">Concluídos</button>
-                </div>
-                <div class="table-responsive"><table class="table" id="tabela-chamados"><thead><tr><th>ID</th><th>Condomínio / Local</th><th>Problema</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
-            </section>
-            
-            <!-- ORDENS DE SERVIÇO ADMIN -->
-            <section id="page-os" class="page-view hidden">
-                <div class="section-header">
-                    <div><h2>Ordens de Serviço (OS)</h2><p class="text-muted">Execução técnica e diagnósticos.</p></div>
-                    <button class="btn btn-primary btn-icon" id="btn-abrir-modal-os-avulsa"><span class="material-symbols-outlined">add</span> OS Avulsa</button>
-                </div>
-                <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filtrarOS('Todas')">Todas</button>
-                    <button class="filter-tab" onclick="filtrarOS('Agendada')">Agendadas</button>
-                    <button class="filter-tab" onclick="filtrarOS('Em andamento')">Em Andamento</button>
-                    <button class="filter-tab" onclick="filtrarOS('Concluída')">Concluídas</button>
-                </div>
-                <div class="table-responsive"><table class="table" id="tabela-os"><thead><tr><th>OS #</th><th>Condomínio</th><th>Problema Relatado</th><th>Data/Hora</th><th>Técnico</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
-            </section>
 
-            <section id="page-agenda" class="page-view hidden"><div class="section-header"><h2>Agenda e Rotas</h2></div><div class="card"><div id="agenda-horarios-container" class="timeline-container"></div></div></section>
-            <section id="page-condominios" class="page-view hidden"><div class="section-header"><div><h2>Condomínios</h2></div></div><div class="table-responsive"><table class="table" id="tabela-condominios"><thead><tr><th>Nome</th><th>Endereço</th><th>Síndico</th><th>Status</th></tr></thead><tbody></tbody></table></div></section>
-            <section id="page-equipamentos" class="page-view hidden"><div class="section-header"><div><h2>Equipamentos</h2></div></div><div class="table-responsive"><table class="table" id="tabela-equipamentos"><thead><tr><th>ID</th><th>Nome</th><th>Condomínio</th><th>Categoria</th><th>Status</th></tr></thead><tbody></tbody></table></div></section>
-            
-            <!-- SÍNDICO TELAS -->
-            <section id="page-sindico-inicio" class="page-view hidden"><div class="section-header"><h2 id="sindico-welcome-text">Olá, Síndico.</h2></div><select id="seletor-condominio-sindico" class="form-control" style="font-weight:bold; max-width:400px; margin-bottom:24px;"></select>
+
+            <!-- =================================================
+                 DASHBOARD ADMIN
+            ================================================== -->
+
+            <section
+                id="page-dashboard"
+                class="page-view active"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            VISÃO GERAL
+                        </span>
+
+                        <h2>
+                            Painel Operacional
+                        </h2>
+
+                        <p class="text-muted">
+                            Acompanhe os principais atendimentos e atividades da sua equipe.
+                        </p>
+
+                    </div>
+
+
+                    <div class="section-actions">
+
+                        <button
+                            class="btn btn-ghost"
+                            type="button"
+                            onclick="navegarParaPagina && navegarParaPagina('chamados')"
+                        >
+                            <span class="material-symbols-outlined">
+                                confirmation_number
+                            </span>
+
+                            Ver chamados
+                        </button>
+
+
+                        <button
+                            class="btn btn-primary"
+                            type="button"
+                            onclick="document.getElementById('btn-abrir-modal-os-avulsa')?.click()"
+                        >
+                            <span class="material-symbols-outlined">
+                                add
+                            </span>
+
+                            Nova OS
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Indicadores -->
+
                 <div class="dashboard-cards">
-                    <div class="card"><p style="font-size:12px; color:var(--text-muted)">Total</p><p class="card-value" id="sind-card-total">0</p></div>
-                    <div class="card"><p style="font-size:12px; color:var(--text-muted)">Em Atendimento</p><p class="card-value text-warning" id="sind-card-andamento">0</p></div>
-                    <div class="card"><p style="font-size:12px; color:var(--text-muted)">Concluídos</p><p class="card-value text-success" id="sind-card-concluidos">0</p></div>
-                </div>
-            </section>
-            
-            <section id="page-sindico-novo-chamado" class="page-view hidden">
-                <div class="section-header"><div><h2>Abrir Chamado</h2><p class="text-muted">Relate a ocorrência na infraestrutura.</p></div></div>
-                <div class="card card-form" style="max-width: 650px; margin: 0 auto;">
-                    <form id="form-sindico-chamado" novalidate>
-                        <div class="form-section">
-                            <h4 class="form-section-title">Onde aconteceu?</h4>
-                            <div class="form-group"><label>Condomínio <span class="auto-mark">Automático</span></label><input type="text" id="input-sind-chamado-cond" class="form-control" readonly></div>
-                            <div class="form-group"><label>Local Exato <span class="required-mark">*</span></label><input type="text" id="input-sind-chamado-local" class="form-control" required placeholder="Ex: Bloco B - Elevador Social"></div>
-                        </div>
-                        <div class="form-section">
-                            <h4 class="form-section-title">Detalhes do Problema</h4>
-                            <div class="form-group"><label>Categoria <span class="required-mark">*</span></label><select id="input-sind-chamado-cat" class="form-control" required><option value="Bombas">Bombas</option><option value="Elétrica">Elétrica</option><option value="Hidráulica">Hidráulica</option><option value="Portões">Portões</option><option value="Elevadores">Elevadores</option><option value="Outros">Outros</option></select></div>
-                            <div class="form-group"><label>Descrição do Problema <span class="required-mark">*</span></label><textarea id="input-sind-chamado-desc" class="form-control" rows="4" required placeholder="Descreva de forma clara o que está ocorrendo..."></textarea></div>
-                        </div>
-                        <div class="form-actions"><button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-size:15px;">Enviar Chamado Oficial</button></div>
-                    </form>
-                </div>
-            </section>
 
-            <section id="page-sindico-meus-chamados" class="page-view hidden">
-                <div class="section-header"><div><h2>Meus Chamados</h2><p class="text-muted">Acompanhe o andamento das suas solicitações.</p></div></div>
-                <div class="table-responsive"><table class="table" id="tabela-sindico-todos"><thead><tr><th>ID</th><th>Local</th><th>Problema</th><th>Data</th><th>Status</th><th style="text-align: right;">Ações</th></tr></thead><tbody></tbody></table></div>
-            </section>
-            
-            <!-- TÉCNICO TELAS (MOBILE-FIRST) -->
-            <section id="page-tecnico-inicio" class="page-view hidden">
-                <div class="section-header" style="border:none; margin-bottom:12px;"><h2 id="tec-welcome-text" style="font-size:24px;">Olá, Técnico.</h2></div>
-                <h3 style="font-size: 13px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 12px; font-weight: 700;">Sua Próxima Rota</h3>
-                <div id="tec-proximo-atendimento"></div>
-            </section>
+                    <div class="card dashboard-kpi">
 
-            <section id="page-tecnico-os" class="page-view hidden">
-                <div class="section-header" style="border:none; margin-bottom:12px; padding-bottom:0;"><div><h2 style="font-size: 22px;">Minhas OS</h2></div></div>
-                <div class="filter-tabs" style="margin-bottom: 20px; gap:6px;">
-                    <button class="filter-tab active" onclick="mudarFiltroTecnico('Pendentes')">Pendentes</button>
-                    <button class="filter-tab" onclick="mudarFiltroTecnico('Concluídas')">Concluídas</button>
-                </div>
-                <div class="mobile-grid" id="container-tec-lista-os"></div>
-            </section>
+                        <div class="kpi-header">
 
-            <!-- TELA DE CONFIGURAÇÕES WHITE-LABEL -->
-            <section id="page-configuracoes" class="page-view hidden">
-                <div class="section-header"><div><h2>Configurações do Sistema</h2><p class="text-muted">Personalize a identidade visual.</p></div></div>
-                <form id="form-configuracoes" class="card card-form" novalidate>
-                    <div class="form-section"><h4 class="form-section-title">Identidade Visual da Empresa</h4>
-                        <div class="form-group"><label>Logotipo da Empresa</label><input type="file" id="input-config-logo" accept="image/*" class="form-control" style="padding-top: 7px;"></div>
-                        <div class="form-group"><label>Cor Principal do Sistema <span class="required-mark">*</span></label>
-                            <div class="color-picker-wrapper"><input type="color" id="input-config-color" class="form-control color-input" required></div>
+                            <span class="kpi-label">
+                                Chamados novos
+                            </span>
+
+                            <span class="kpi-icon">
+                                <span class="material-symbols-outlined">
+                                    confirmation_number
+                                </span>
+                            </span>
+
                         </div>
+
+                        <p
+                            class="card-value"
+                            id="count-os"
+                        >
+                            0
+                        </p>
+
+                        <p class="kpi-description">
+                            Solicitações aguardando análise
+                        </p>
+
                     </div>
-                    <div class="form-section"><h4 class="form-section-title">Dados da Empresa</h4>
-                        <div style="display: flex; gap: 16px;">
-                            <div class="form-group" style="flex: 1;"><label>Nome do Sistema <span class="required-mark">*</span></label><input type="text" id="input-config-system" class="form-control" required></div>
-                            <div class="form-group" style="flex: 1;"><label>Razão Social <span class="required-mark">*</span></label><input type="text" id="input-config-empresa" class="form-control" required></div>
+
+
+                    <div class="card dashboard-kpi">
+
+                        <div class="kpi-header">
+
+                            <span class="kpi-label">
+                                OS em andamento
+                            </span>
+
+                            <span class="kpi-icon">
+                                <span class="material-symbols-outlined">
+                                    engineering
+                                </span>
+                            </span>
+
                         </div>
+
+                        <p
+                            class="card-value"
+                            id="count-andamento"
+                        >
+                            0
+                        </p>
+
+                        <p class="kpi-description">
+                            Serviços atualmente em execução
+                        </p>
+
                     </div>
-                    <div class="form-actions"><button type="submit" class="btn btn-primary">Salvar Personalização</button></div>
+
+
+                    <div class="card dashboard-kpi">
+
+                        <div class="kpi-header">
+
+                            <span class="kpi-label">
+                                OS atrasadas
+                            </span>
+
+                            <span class="kpi-icon danger">
+                                <span class="material-symbols-outlined">
+                                    schedule
+                                </span>
+                            </span>
+
+                        </div>
+
+                        <p
+                            class="card-value text-danger"
+                            id="count-atrasadas"
+                        >
+                            0
+                        </p>
+
+                        <p class="kpi-description">
+                            Atendimentos que exigem atenção
+                        </p>
+
+                    </div>
+
+
+                    <div class="card dashboard-kpi">
+
+                        <div class="kpi-header">
+
+                            <span class="kpi-label">
+                                Serviços hoje
+                            </span>
+
+                            <span class="kpi-icon">
+                                <span class="material-symbols-outlined">
+                                    today
+                                </span>
+                            </span>
+
+                        </div>
+
+                        <p
+                            class="card-value"
+                            id="count-servicos-hoje"
+                        >
+                            0
+                        </p>
+
+                        <p class="kpi-description">
+                            Atendimentos programados
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Linha principal -->
+
+                <div class="dashboard-layout">
+
+                    <!-- Atenção -->
+
+                    <div class="card dashboard-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <h3>
+                                    Requer atenção
+                                </h3>
+
+                                <p>
+                                    Atividades que precisam de acompanhamento.
+                                </p>
+
+                            </div>
+
+                            <span class="material-symbols-outlined panel-header-icon">
+                                priority_high
+                            </span>
+
+                        </div>
+
+
+                        <div
+                            id="dashboard-atencao"
+                            class="attention-list"
+                        >
+
+                            <div class="empty-state compact">
+
+                                <span class="material-symbols-outlined">
+                                    task_alt
+                                </span>
+
+                                <div>
+
+                                    <strong>
+                                        Nenhuma pendência
+                                    </strong>
+
+                                    <p>
+                                        Não existem atividades exigindo atenção no momento.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Agenda -->
+
+                    <div class="card dashboard-panel">
+
+                        <div class="panel-header">
+
+                            <div>
+
+                                <h3>
+                                    Agenda de hoje
+                                </h3>
+
+                                <p>
+                                    Próximos atendimentos da equipe.
+                                </p>
+
+                            </div>
+
+                            <button
+                                class="btn btn-ghost btn-sm"
+                                type="button"
+                            >
+                                Ver agenda
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="dashboard-agenda"
+                            class="dashboard-agenda"
+                        >
+
+                            <div class="empty-state compact">
+
+                                <span class="material-symbols-outlined">
+                                    event_available
+                                </span>
+
+                                <div>
+
+                                    <strong>
+                                        Nenhum atendimento programado
+                                    </strong>
+
+                                    <p>
+                                        Os serviços agendados aparecerão aqui.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Equipe -->
+
+                <div class="card dashboard-panel">
+
+                    <div class="panel-header">
+
+                        <div>
+
+                            <h3>
+                                Equipe em operação
+                            </h3>
+
+                            <p>
+                                Acompanhamento dos técnicos em campo.
+                            </p>
+
+                        </div>
+
+                        <span class="material-symbols-outlined panel-header-icon">
+                            groups
+                        </span>
+
+                    </div>
+
+
+                    <div class="table-responsive">
+
+                        <table class="table dashboard-team-table">
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Técnico
+                                    </th>
+
+                                    <th>
+                                        Condomínio
+                                    </th>
+
+                                    <th>
+                                        Serviço
+                                    </th>
+
+                                    <th>
+                                        Horário
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="dashboard-equipe">
+
+                                <tr>
+
+                                    <td colspan="5">
+
+                                        <div class="empty-state compact">
+
+                                            <span class="material-symbols-outlined">
+                                                groups
+                                            </span>
+
+                                            <div>
+
+                                                <strong>
+                                                    Nenhum técnico em atendimento
+                                                </strong>
+
+                                                <p>
+                                                    Os serviços em execução aparecerão aqui.
+                                                </p>
+
+                                            </div>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Ações rápidas -->
+
+                <div class="quick-actions-section">
+
+                    <div class="panel-title">
+
+                        <h3>
+                            Ações rápidas
+                        </h3>
+
+                        <p>
+                            Acesse rapidamente as principais funções.
+                        </p>
+
+                    </div>
+
+
+                    <div class="quick-actions-grid">
+
+                        <button
+                            class="quick-action"
+                            type="button"
+                            data-page-action="chamados"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                confirmation_number
+                            </span>
+
+                            <strong>
+                                Chamados
+                            </strong>
+
+                            <small>
+                                Solicitações recebidas
+                            </small>
+
+                        </button>
+
+
+                        <button
+                            class="quick-action"
+                            type="button"
+                            data-page-action="os"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                build
+                            </span>
+
+                            <strong>
+                                Ordens de Serviço
+                            </strong>
+
+                            <small>
+                                Gerenciar atendimentos
+                            </small>
+
+                        </button>
+
+
+                        <button
+                            class="quick-action"
+                            type="button"
+                            data-page-action="agenda"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                calendar_month
+                            </span>
+
+                            <strong>
+                                Agenda
+                            </strong>
+
+                            <small>
+                                Planejar serviços
+                            </small>
+
+                        </button>
+
+
+                        <button
+                            class="quick-action"
+                            type="button"
+                            data-page-action="condominios"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                apartment
+                            </span>
+
+                            <strong>
+                                Condomínios
+                            </strong>
+
+                            <small>
+                                Clientes e locais atendidos
+                            </small>
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CHAMADOS ADMIN
+            ================================================== -->
+
+            <section
+                id="page-chamados"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            MANUTENÇÃO
+                        </span>
+
+                        <h2>
+                            Chamados
+                        </h2>
+
+                        <p class="text-muted">
+                            Centralize as solicitações recebidas dos síndicos.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="page-toolbar">
+
+                    <div class="filter-tabs">
+
+                        <button
+                            class="filter-tab active"
+                            onclick="filtrarChamados('Todos')"
+                            type="button"
+                        >
+                            Todos
+                        </button>
+
+                        <button
+                            class="filter-tab"
+                            onclick="filtrarChamados('Novo')"
+                            type="button"
+                        >
+                            Novos
+                        </button>
+
+                        <button
+                            class="filter-tab"
+                            onclick="filtrarChamados('Agendado')"
+                            type="button"
+                        >
+                            Agendados
+                        </button>
+
+                        <button
+                            class="filter-tab"
+                            onclick="filtrarChamados('Em atendimento')"
+                            type="button"
+                        >
+                            Em atendimento
+                        </button>
+
+                        <button
+                            class="filter-tab"
+                            onclick="filtrarChamados('Concluído')"
+                            type="button"
+                        >
+                            Concluídos
+                        </button>
+
+                    </div>
+
+
+                    <div class="toolbar-info">
+                        <span class="material-symbols-outlined">
+                            info
+                        </span>
+
+                        <span>
+                            Os chamados enviados pelos síndicos aparecem aqui.
+                        </span>
+                    </div>
+
+                </div>
+
+
+                <div class="card table-card">
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table"
+                            id="tabela-chamados"
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Chamado
+                                    </th>
+
+                                    <th>
+                                        Condomínio / Local
+                                    </th>
+
+                                    <th>
+                                        Problema
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th style="text-align:right;">
+                                        Ações
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 ORDENS DE SERVIÇO
+            ================================================== -->
+
+            <section
+                id="page-os"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            MANUTENÇÃO
+                        </span>
+
+                        <h2>
+                            Ordens de Serviço
+                        </h2>
+
+                        <p class="text-muted">
+                            Organize, acompanhe e finalize os serviços técnicos.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-primary btn-icon"
+                        id="btn-abrir-modal-os-avulsa"
+                        type="button"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            add
+                        </span>
+
+                        Nova OS
+
+                    </button>
+
+                </div>
+
+
+                <div class="page-toolbar">
+
+                    <div class="filter-tabs">
+
+                        <button
+                            class="filter-tab active"
+                            onclick="filtrarOS('Todas')"
+                            type="button"
+                        >
+                            Todas
+                        </button>
+
+                        <button
+                            class="filter-tab"
+                            onclick="filtrarOS('Agendada')"
+                            type="button"
+                        >
+                            Agendadas
+                        </button>
+
+                        <button
+                            class="filter-tab"
+                            onclick="filtrarOS('Em andamento')"
+                            type="button"
+                        >
+                            Em andamento
+                        </button>
+
+                        <button
+                            class="filter-tab"
+                            onclick="filtrarOS('Concluída')"
+                            type="button"
+                        >
+                            Concluídas
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card table-card">
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table"
+                            id="tabela-os"
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        OS
+                                    </th>
+
+                                    <th>
+                                        Condomínio
+                                    </th>
+
+                                    <th>
+                                        Problema relatado
+                                    </th>
+
+                                    <th>
+                                        Data / Hora
+                                    </th>
+
+                                    <th>
+                                        Técnico
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th style="text-align:right;">
+                                        Ações
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 AGENDA
+            ================================================== -->
+
+            <section
+                id="page-agenda"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            OPERAÇÃO
+                        </span>
+
+                        <h2>
+                            Agenda e Rotas
+                        </h2>
+
+                        <p class="text-muted">
+                            Organize os atendimentos e a rotina dos técnicos.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="agenda-toolbar card">
+
+                    <div class="agenda-date-selector">
+
+                        <button
+                            class="icon-btn"
+                            type="button"
+                            title="Dia anterior"
+                        >
+                            <span class="material-symbols-outlined">
+                                chevron_left
+                            </span>
+                        </button>
+
+
+                        <div>
+
+                            <span class="agenda-date-label">
+                                Agenda
+                            </span>
+
+                            <strong id="agenda-data-atual">
+                                Hoje
+                            </strong>
+
+                        </div>
+
+
+                        <button
+                            class="icon-btn"
+                            type="button"
+                            title="Próximo dia"
+                        >
+                            <span class="material-symbols-outlined">
+                                chevron_right
+                            </span>
+                        </button>
+
+                    </div>
+
+
+                    <div class="agenda-view-options">
+
+                        <button
+                            class="filter-tab active"
+                            type="button"
+                        >
+                            Dia
+                        </button>
+
+                        <button
+                            class="filter-tab"
+                            type="button"
+                        >
+                            Semana
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card">
+
+                    <div
+                        id="agenda-horarios-container"
+                        class="timeline-container"
+                    ></div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CONDOMÍNIOS
+            ================================================== -->
+
+            <section
+                id="page-condominios"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            CADASTRO
+                        </span>
+
+                        <h2>
+                            Condomínios
+                        </h2>
+
+                        <p class="text-muted">
+                            Gerencie os condomínios atendidos pela empresa.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-primary"
+                        type="button"
+                        id="btn-novo-condominio"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            add
+                        </span>
+
+                        Novo condomínio
+
+                    </button>
+
+                </div>
+
+
+                <div class="card table-card">
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table"
+                            id="tabela-condominios"
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Condomínio
+                                    </th>
+
+                                    <th>
+                                        Endereço
+                                    </th>
+
+                                    <th>
+                                        Síndico
+                                    </th>
+
+                                    <th>
+                                        Chamados
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 EQUIPAMENTOS
+            ================================================== -->
+
+            <section
+                id="page-equipamentos"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            CADASTRO
+                        </span>
+
+                        <h2>
+                            Equipamentos
+                        </h2>
+
+                        <p class="text-muted">
+                            Controle os equipamentos e o histórico de manutenção.
+                        </p>
+
+                    </div>
+
+
+                    <button
+                        class="btn btn-primary"
+                        type="button"
+                        id="btn-novo-equipamento"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            add
+                        </span>
+
+                        Novo equipamento
+
+                    </button>
+
+                </div>
+
+
+                <div class="card table-card">
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table"
+                            id="tabela-equipamentos"
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Código
+                                    </th>
+
+                                    <th>
+                                        Equipamento
+                                    </th>
+
+                                    <th>
+                                        Condomínio
+                                    </th>
+
+                                    <th>
+                                        Categoria
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 PORTAL DO SÍNDICO
+            ================================================== -->
+
+            <section
+                id="page-sindico-inicio"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            ÁREA DO SÍNDICO
+                        </span>
+
+                        <h2 id="sindico-welcome-text">
+                            Olá, Síndico.
+                        </h2>
+
+                        <p class="text-muted">
+                            Acompanhe as solicitações e os serviços do seu condomínio.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="condominio-selector-card card">
+
+                    <div class="selector-icon">
+
+                        <span class="material-symbols-outlined">
+                            apartment
+                        </span>
+
+                    </div>
+
+
+                    <div class="selector-content">
+
+                        <span>
+                            Condomínio
+                        </span>
+
+                        <strong>
+                            Selecione o condomínio
+                        </strong>
+
+                    </div>
+
+
+                    <select
+                        id="seletor-condominio-sindico"
+                        class="form-control"
+                    ></select>
+
+                </div>
+
+
+                <div class="dashboard-cards">
+
+                    <div class="card dashboard-kpi">
+
+                        <div class="kpi-header">
+
+                            <span class="kpi-label">
+                                Meus chamados
+                            </span>
+
+                            <span class="kpi-icon">
+                                <span class="material-symbols-outlined">
+                                    confirmation_number
+                                </span>
+                            </span>
+
+                        </div>
+
+                        <p
+                            class="card-value"
+                            id="sind-card-total"
+                        >
+                            0
+                        </p>
+
+                        <p class="kpi-description">
+                            Solicitações registradas
+                        </p>
+
+                    </div>
+
+
+                    <div class="card dashboard-kpi">
+
+                        <div class="kpi-header">
+
+                            <span class="kpi-label">
+                                Em atendimento
+                            </span>
+
+                            <span class="kpi-icon warning">
+                                <span class="material-symbols-outlined">
+                                    engineering
+                                </span>
+                            </span>
+
+                        </div>
+
+                        <p
+                            class="card-value text-warning"
+                            id="sind-card-andamento"
+                        >
+                            0
+                        </p>
+
+                        <p class="kpi-description">
+                            Serviços sendo tratados
+                        </p>
+
+                    </div>
+
+
+                    <div class="card dashboard-kpi">
+
+                        <div class="kpi-header">
+
+                            <span class="kpi-label">
+                                Concluídos
+                            </span>
+
+                            <span class="kpi-icon success">
+                                <span class="material-symbols-outlined">
+                                    task_alt
+                                </span>
+                            </span>
+
+                        </div>
+
+                        <p
+                            class="card-value text-success"
+                            id="sind-card-concluidos"
+                        >
+                            0
+                        </p>
+
+                        <p class="kpi-description">
+                            Serviços finalizados
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="card info-banner">
+
+                    <span class="material-symbols-outlined">
+                        info
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Precisa solicitar uma manutenção?
+                        </strong>
+
+                        <p>
+                            Abra um chamado informando o local e o problema. A empresa responsável receberá sua solicitação.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="#"
+                        class="btn btn-primary"
+                        data-page="sindico-novo-chamado"
+                    >
+                        Abrir chamado
+                    </a>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 NOVO CHAMADO SÍNDICO
+            ================================================== -->
+
+            <section
+                id="page-sindico-novo-chamado"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            SOLICITAÇÃO
+                        </span>
+
+                        <h2>
+                            Abrir chamado
+                        </h2>
+
+                        <p class="text-muted">
+                            Informe o problema para que a empresa possa analisar e programar o atendimento.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-layout">
+
+                    <div class="card card-form">
+
+                        <form
+                            id="form-sindico-chamado"
+                            novalidate
+                        >
+
+                            <!-- Etapa 1 -->
+
+                            <div class="form-section">
+
+                                <div class="form-step">
+
+                                    <span class="form-step-number">
+                                        1
+                                    </span>
+
+                                    <div>
+
+                                        <h4 class="form-section-title">
+                                            Onde aconteceu?
+                                        </h4>
+
+                                        <p class="form-section-description">
+                                            Informe o condomínio e o local exato.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="input-sind-chamado-cond">
+                                        Condomínio
+                                    </label>
+
+                                    <div class="input-with-status">
+
+                                        <input
+                                            type="text"
+                                            id="input-sind-chamado-cond"
+                                            class="form-control"
+                                            readonly
+                                        >
+
+                                        <span class="material-symbols-outlined">
+                                            lock
+                                        </span>
+
+                                    </div>
+
+                                    <small class="form-help">
+                                        Condomínio vinculado à sua conta.
+                                    </small>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="input-sind-chamado-local">
+                                        Local exato
+                                        <span class="required-mark">*</span>
+                                    </label>
+
+                                    <input
+                                        type="text"
+                                        id="input-sind-chamado-local"
+                                        class="form-control"
+                                        required
+                                        placeholder="Ex.: Bloco B, casa de máquinas"
+                                    >
+
+                                    <small class="form-help">
+                                        Quanto mais específico o local, mais fácil será localizar o problema.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Etapa 2 -->
+
+                            <div class="form-section">
+
+                                <div class="form-step">
+
+                                    <span class="form-step-number">
+                                        2
+                                    </span>
+
+                                    <div>
+
+                                        <h4 class="form-section-title">
+                                            Sobre o problema
+                                        </h4>
+
+                                        <p class="form-section-description">
+                                            Explique o que está acontecendo.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="input-sind-chamado-cat">
+                                        Categoria
+                                        <span class="required-mark">*</span>
+                                    </label>
+
+                                    <select
+                                        id="input-sind-chamado-cat"
+                                        class="form-control"
+                                        required
+                                    >
+
+                                        <option value="Bombas">
+                                            Bombas
+                                        </option>
+
+                                        <option value="Elétrica">
+                                            Elétrica
+                                        </option>
+
+                                        <option value="Hidráulica">
+                                            Hidráulica
+                                        </option>
+
+                                        <option value="Portões">
+                                            Portões
+                                        </option>
+
+                                        <option value="Elevadores">
+                                            Elevadores
+                                        </option>
+
+                                        <option value="Iluminação">
+                                            Iluminação
+                                        </option>
+
+                                        <option value="Ar-condicionado">
+                                            Ar-condicionado
+                                        </option>
+
+                                        <option value="Outros">
+                                            Outros
+                                        </option>
+
+                                    </select>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label for="input-sind-chamado-desc">
+                                        Descrição do problema
+                                        <span class="required-mark">*</span>
+                                    </label>
+
+                                    <textarea
+                                        id="input-sind-chamado-desc"
+                                        class="form-control"
+                                        rows="5"
+                                        required
+                                        placeholder="Descreva de forma clara o que está acontecendo..."
+                                    ></textarea>
+
+                                </div>
+
+
+                                <div class="form-group">
+
+                                    <label>
+                                        Fotos do problema
+                                    </label>
+
+                                    <div
+                                        class="upload-area"
+                                        id="sindico-upload-area"
+                                    >
+
+                                        <span class="material-symbols-outlined">
+                                            photo_camera
+                                        </span>
+
+                                        <strong>
+                                            Adicionar fotos
+                                        </strong>
+
+                                        <small>
+                                            Fotos ajudam a equipe a entender o problema antes do atendimento.
+                                        </small>
+
+                                        <input
+                                            type="file"
+                                            id="input-sindico-fotos"
+                                            accept="image/*"
+                                            multiple
+                                            hidden
+                                        >
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <!-- Etapa 3 -->
+
+                            <div class="form-section">
+
+                                <div class="form-step">
+
+                                    <span class="form-step-number">
+                                        3
+                                    </span>
+
+                                    <div>
+
+                                        <h4 class="form-section-title">
+                                            Prioridade
+                                        </h4>
+
+                                        <p class="form-section-description">
+                                            Informe a urgência percebida do problema.
+                                        </p>
+
+                                    </div>
+
+                                </div>
+
+
+                                <div class="priority-options">
+
+                                    <label class="priority-option">
+
+                                        <input
+                                            type="radio"
+                                            name="prioridade"
+                                            value="Normal"
+                                            checked
+                                        >
+
+                                        <span>
+
+                                            <strong>
+                                                Normal
+                                            </strong>
+
+                                            <small>
+                                                Pode ser programado normalmente.
+                                            </small>
+
+                                        </span>
+
+                                    </label>
+
+
+                                    <label class="priority-option">
+
+                                        <input
+                                            type="radio"
+                                            name="prioridade"
+                                            value="Alta"
+                                        >
+
+                                        <span>
+
+                                            <strong>
+                                                Alta
+                                            </strong>
+
+                                            <small>
+                                                Precisa de atendimento em breve.
+                                            </small>
+
+                                        </span>
+
+                                    </label>
+
+
+                                    <label class="priority-option">
+
+                                        <input
+                                            type="radio"
+                                            name="prioridade"
+                                            value="Urgente"
+                                        >
+
+                                        <span>
+
+                                            <strong>
+                                                Urgente
+                                            </strong>
+
+                                            <small>
+                                                Problema que pode causar risco ou interrupção importante.
+                                            </small>
+
+                                        </span>
+
+                                    </label>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-actions">
+
+                                <button
+                                    type="reset"
+                                    class="btn btn-ghost"
+                                >
+                                    Limpar
+                                </button>
+
+
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary"
+                                >
+
+                                    <span class="material-symbols-outlined">
+                                        send
+                                    </span>
+
+                                    Enviar chamado
+
+                                </button>
+
+                            </div>
+
+                        </form>
+
+                    </div>
+
+
+                    <!-- Ajuda lateral -->
+
+                    <aside class="form-help-panel">
+
+                        <div class="card">
+
+                            <span class="material-symbols-outlined help-icon">
+                                help
+                            </span>
+
+                            <h3>
+                                Como funciona?
+                            </h3>
+
+                            <ol class="process-list">
+
+                                <li>
+                                    <span>1</span>
+                                    <div>
+                                        <strong>
+                                            Você envia o chamado
+                                        </strong>
+                                        <p>
+                                            Informe o problema e o local.
+                                        </p>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <span>2</span>
+                                    <div>
+                                        <strong>
+                                            A empresa recebe
+                                        </strong>
+                                        <p>
+                                            A equipe analisa a solicitação.
+                                        </p>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <span>3</span>
+                                    <div>
+                                        <strong>
+                                            O atendimento é programado
+                                        </strong>
+                                        <p>
+                                            Um técnico será designado quando necessário.
+                                        </p>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <span>4</span>
+                                    <div>
+                                        <strong>
+                                            Você acompanha
+                                        </strong>
+                                        <p>
+                                            O status e a conclusão ficam registrados.
+                                        </p>
+                                    </div>
+                                </li>
+
+                            </ol>
+
+                        </div>
+
+                    </aside>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 MEUS CHAMADOS SÍNDICO
+            ================================================== -->
+
+            <section
+                id="page-sindico-meus-chamados"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            ACOMPANHAMENTO
+                        </span>
+
+                        <h2>
+                            Meus chamados
+                        </h2>
+
+                        <p class="text-muted">
+                            Acompanhe o andamento das solicitações enviadas à empresa.
+                        </p>
+
+                    </div>
+
+
+                    <a
+                        href="#"
+                        class="btn btn-primary"
+                        data-page="sindico-novo-chamado"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            add
+                        </span>
+
+                        Novo chamado
+
+                    </a>
+
+                </div>
+
+
+                <div class="card table-card">
+
+                    <div class="table-responsive">
+
+                        <table
+                            class="table"
+                            id="tabela-sindico-todos"
+                        >
+
+                            <thead>
+
+                                <tr>
+
+                                    <th>
+                                        Chamado
+                                    </th>
+
+                                    <th>
+                                        Local
+                                    </th>
+
+                                    <th>
+                                        Problema
+                                    </th>
+
+                                    <th>
+                                        Data
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th style="text-align:right;">
+                                        Ações
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody></tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 INÍCIO TÉCNICO
+            ================================================== -->
+
+            <section
+                id="page-tecnico-inicio"
+                class="page-view hidden"
+            >
+
+                <div class="section-header technician-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            OPERAÇÃO DE CAMPO
+                        </span>
+
+                        <h2
+                            id="tec-welcome-text"
+                        >
+                            Olá, Técnico.
+                        </h2>
+
+                        <p class="text-muted">
+                            Aqui estão seus próximos atendimentos.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="technician-summary">
+
+                    <div class="card">
+
+                        <span class="summary-label">
+                            Serviços hoje
+                        </span>
+
+                        <strong id="tec-total-hoje">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <span class="summary-label">
+                            Em andamento
+                        </span>
+
+                        <strong id="tec-em-andamento">
+                            0
+                        </strong>
+
+                    </div>
+
+
+                    <div class="card">
+
+                        <span class="summary-label">
+                            Concluídos
+                        </span>
+
+                        <strong id="tec-concluidos">
+                            0
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="technician-next-section">
+
+                    <div class="panel-title">
+
+                        <div>
+
+                            <span class="page-eyebrow">
+                                PRÓXIMO ATENDIMENTO
+                            </span>
+
+                            <h3>
+                                Sua próxima rota
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+
+                    <div id="tec-proximo-atendimento">
+
+                        <div class="empty-state">
+
+                            <span class="material-symbols-outlined">
+                                event_available
+                            </span>
+
+                            <strong>
+                                Nenhum atendimento programado
+                            </strong>
+
+                            <p>
+                                Suas próximas OS aparecerão aqui.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =================================================
+                 OS DO TÉCNICO
+            ================================================== -->
+
+            <section
+                id="page-tecnico-os"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            OPERAÇÃO DE CAMPO
+                        </span>
+
+                        <h2>
+                            Minhas OS
+                        </h2>
+
+                        <p class="text-muted">
+                            Consulte e execute os serviços atribuídos a você.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="filter-tabs technician-filters">
+
+                    <button
+                        class="filter-tab active"
+                        onclick="mudarFiltroTecnico('Pendentes')"
+                        type="button"
+                    >
+                        Pendentes
+                    </button>
+
+                    <button
+                        class="filter-tab"
+                        onclick="mudarFiltroTecnico('Concluídas')"
+                        type="button"
+                    >
+                        Concluídas
+                    </button>
+
+                </div>
+
+
+                <div
+                    class="mobile-grid"
+                    id="container-tec-lista-os"
+                ></div>
+
+            </section>
+
+
+            <!-- =================================================
+                 CONFIGURAÇÕES
+            ================================================== -->
+
+            <section
+                id="page-configuracoes"
+                class="page-view hidden"
+            >
+
+                <div class="section-header">
+
+                    <div>
+
+                        <span class="page-eyebrow">
+                            SISTEMA
+                        </span>
+
+                        <h2>
+                            Configurações
+                        </h2>
+
+                        <p class="text-muted">
+                            Personalize a identidade e os dados da empresa.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <form
+                    id="form-configuracoes"
+                    class="card card-form settings-form"
+                    novalidate
+                >
+
+                    <div class="form-section">
+
+                        <h4 class="form-section-title">
+                            Identidade visual
+                        </h4>
+
+                        <p class="form-section-description">
+                            Personalize o sistema com a identidade da sua empresa.
+                        </p>
+
+
+                        <div class="form-group">
+
+                            <label for="input-config-logo">
+                                Logotipo da empresa
+                            </label>
+
+                            <input
+                                type="file"
+                                id="input-config-logo"
+                                accept="image/*"
+                                class="form-control"
+                            >
+
+                            <small class="form-help">
+                                Utilize a logo oficial da empresa. Formatos de imagem são aceitos.
+                            </small>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="input-config-color">
+                                Cor principal
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <div class="color-picker-wrapper">
+
+                                <input
+                                    type="color"
+                                    id="input-config-color"
+                                    class="form-control color-input"
+                                    required
+                                >
+
+                                <span>
+                                    Esta cor será utilizada de forma discreta nos principais elementos do sistema.
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-section">
+
+                        <h4 class="form-section-title">
+                            Dados da empresa
+                        </h4>
+
+                        <p class="form-section-description">
+                            Informações exibidas no sistema e nos registros.
+                        </p>
+
+
+                        <div class="settings-grid">
+
+                            <div class="form-group">
+
+                                <label for="input-config-system">
+                                    Nome do sistema
+                                    <span class="required-mark">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="input-config-system"
+                                    class="form-control"
+                                    required
+                                    placeholder="Ex.: Gestão de Manutenção"
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="input-config-empresa">
+                                    Nome da empresa
+                                    <span class="required-mark">*</span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="input-config-empresa"
+                                    class="form-control"
+                                    required
+                                    placeholder="Nome da empresa"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                save
+                            </span>
+
+                            Salvar alterações
+
+                        </button>
+
+                    </div>
+
                 </form>
+
             </section>
 
         </main>
+
     </div>
 
-    <!-- MODAIS DE OPERAÇÃO COM RASTREABILIDADE (CHAMADO -> OS) -->
 
-    <!-- MODAL ADMIN: DETALHES E CONVERSÃO DO CHAMADO PARA OS -->
-    <div class="modal-overlay hidden" id="modal-detalhe-chamado">
-        <div class="modal-content" style="max-width: 650px;">
-            <div class="modal-header"><h2 id="modal-chamado-titulo">Detalhes do Chamado</h2><button class="btn-close-modal material-symbols-outlined" onclick="document.getElementById('modal-detalhe-chamado').classList.add('hidden')">close</button></div>
-            <div class="modal-body">
-                <div class="form-section">
-                    <h4 class="form-section-title">Problema Original (Informado pelo Síndico)</h4>
-                    <div class="info-group"><label>Local Exato</label><p id="modal-chamado-local">-</p></div>
-                    <div class="info-group"><label>Descrição do Problema</label><p id="modal-chamado-problema" style="font-weight: 600;">-</p></div>
+    <!-- =========================================================
+         MODAL — DETALHES DO CHAMADO
+    ========================================================== -->
+
+    <div
+        class="modal-overlay hidden"
+        id="modal-detalhe-chamado"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="modal-chamado-titulo"
+    >
+
+        <div
+            class="modal-content"
+            style="max-width:700px;"
+        >
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        CHAMADO
+                    </span>
+
+                    <h2 id="modal-chamado-titulo">
+                        Detalhes do chamado
+                    </h2>
+
                 </div>
-                <div id="bloco-conversao-os" class="form-section" style="background:#f8fafc; padding: 16px; border-radius: var(--radius); border: 1px solid var(--border-color);">
-                    <h4 class="form-section-title" style="margin-bottom: 10px;">Programação Técnica (Gerar OS)</h4>
-                    <div style="display: flex; gap: 12px; margin-bottom: 12px;">
-                        <div class="form-group" style="flex: 1; margin:0;"><label>Técnico <span class="required-mark">*</span></label><select id="conv-os-tecnico" class="form-control"><option value="João Silva">João Silva</option><option value="Carlos Souza">Carlos Souza</option></select></div>
-                        <div class="form-group" style="flex: 1; margin:0;"><label>Data <span class="required-mark">*</span></label><input type="date" id="conv-os-data" class="form-control"></div>
-                        <div class="form-group" style="flex: 1; margin:0;"><label>Hora <span class="required-mark">*</span></label><input type="time" id="conv-os-hora" class="form-control" value="09:00"></div>
-                    </div>
-                </div>
+
+
+                <button
+                    class="btn-close-modal material-symbols-outlined"
+                    type="button"
+                    onclick="document.getElementById('modal-detalhe-chamado').classList.add('hidden')"
+                    aria-label="Fechar"
+                >
+                    close
+                </button>
+
             </div>
-            <div class="modal-footer" id="modal-chamado-footer"></div>
+
+
+            <div class="modal-body">
+
+                <div class="form-section">
+
+                    <h4 class="form-section-title">
+                        Solicitação original
+                    </h4>
+
+                    <p class="form-section-description">
+                        Informações enviadas pelo síndico.
+                    </p>
+
+
+                    <div class="details-grid">
+
+                        <div class="info-group">
+
+                            <label>
+                                Condomínio
+                            </label>
+
+                            <p id="modal-chamado-condominio">
+                                -
+                            </p>
+
+                        </div>
+
+
+                        <div class="info-group">
+
+                            <label>
+                                Local exato
+                            </label>
+
+                            <p id="modal-chamado-local">
+                                -
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-group">
+
+                        <label>
+                            Descrição do problema
+                        </label>
+
+                        <p
+                            id="modal-chamado-problema"
+                            style="font-weight:600;"
+                        >
+                            -
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    id="bloco-conversao-os"
+                    class="form-section conversion-section"
+                >
+
+                    <div class="form-step">
+
+                        <span class="form-step-number">
+                            2
+                        </span>
+
+                        <div>
+
+                            <h4 class="form-section-title">
+                                Programação técnica
+                            </h4>
+
+                            <p class="form-section-description">
+                                Gere uma OS para transformar esta solicitação em atendimento.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="settings-grid">
+
+                        <div class="form-group">
+
+                            <label for="conv-os-tecnico">
+                                Técnico
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <select
+                                id="conv-os-tecnico"
+                                class="form-control"
+                            >
+
+                                <option value="João Silva">
+                                    João Silva
+                                </option>
+
+                                <option value="Carlos Souza">
+                                    Carlos Souza
+                                </option>
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="conv-os-data">
+                                Data
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="date"
+                                id="conv-os-data"
+                                class="form-control"
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="conv-os-hora">
+                                Horário
+                                <span class="required-mark">*</span>
+                            </label>
+
+                            <input
+                                type="time"
+                                id="conv-os-hora"
+                                class="form-control"
+                                value="09:00"
+                            >
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div
+                class="modal-footer"
+                id="modal-chamado-footer"
+            ></div>
+
         </div>
+
     </div>
 
-    <!-- MODAL TÉCNICO E ADMIN: TELA DE EXECUÇÃO DA OS -->
-    <div class="modal-overlay hidden" id="modal-execucao-os">
+
+    <!-- =========================================================
+         MODAL — EXECUÇÃO DA OS
+    ========================================================== -->
+
+    <div
+        class="modal-overlay hidden"
+        id="modal-execucao-os"
+        role="dialog"
+        aria-modal="true"
+    >
+
         <div class="modal-content modal-mobile-fullscreen">
-            <div class="modal-header"><h2 id="exec-os-titulo">OS #0000</h2><button class="btn-close-modal material-symbols-outlined" onclick="document.getElementById('modal-execucao-os').classList.add('hidden')">close</button></div>
-            <div class="modal-body" style="overflow-y: auto; padding-bottom: 80px;">
-                <div class="form-section" style="background: #f8fafc; padding: 16px; border-radius: var(--radius); border: 1px solid var(--border-color);">
-                    <h4 class="form-section-title">1. Problema Original Relatado</h4>
-                    <div class="info-group"><label>Condomínio</label><p id="exec-os-condominio">-</p></div>
-                    <div class="info-group"><label>Local</label><p id="exec-os-local">-</p></div>
-                    <div class="info-group" style="margin-bottom:0;"><label>Problema</label><p id="exec-os-problema" style="font-weight: 600;">-</p></div>
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        ORDEM DE SERVIÇO
+                    </span>
+
+                    <h2 id="exec-os-titulo">
+                        OS #0000
+                    </h2>
+
                 </div>
+
+
+                <button
+                    class="btn-close-modal material-symbols-outlined"
+                    type="button"
+                    onclick="document.getElementById('modal-execucao-os').classList.add('hidden')"
+                    aria-label="Fechar"
+                >
+                    close
+                </button>
+
+            </div>
+
+
+            <div
+                class="modal-body"
+                style="overflow-y:auto; padding-bottom:80px;"
+            >
+
+                <!-- Problema original -->
+
+                <div class="form-section original-problem-section">
+
+                    <div class="form-step">
+
+                        <span class="form-step-number">
+                            1
+                        </span>
+
+                        <div>
+
+                            <h4 class="form-section-title">
+                                Problema original
+                            </h4>
+
+                            <p class="form-section-description">
+                                Informação enviada pelo síndico.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="details-grid">
+
+                        <div class="info-group">
+
+                            <label>
+                                Condomínio
+                            </label>
+
+                            <p id="exec-os-condominio">
+                                -
+                            </p>
+
+                        </div>
+
+
+                        <div class="info-group">
+
+                            <label>
+                                Local
+                            </label>
+
+                            <p id="exec-os-local">
+                                -
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="info-group">
+
+                        <label>
+                            Problema
+                        </label>
+
+                        <p
+                            id="exec-os-problema"
+                            style="font-weight:600;"
+                        >
+                            -
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Execução -->
 
                 <div id="bloco-tecnico-acoes">
-                    <button class="btn btn-primary btn-block" id="btn-iniciar-os" style="height: 54px; font-weight:700;">INICIAR ATENDIMENTO</button>
-                    <div id="bloco-tecnico-formulario" class="hidden">
+
+                    <button
+                        class="btn btn-primary btn-block"
+                        id="btn-iniciar-os"
+                        type="button"
+                        style="height:54px;font-weight:700;"
+                    >
+
+                        <span class="material-symbols-outlined">
+                            play_arrow
+                        </span>
+
+                        Iniciar atendimento
+
+                    </button>
+
+
+                    <div
+                        id="bloco-tecnico-formulario"
+                        class="hidden"
+                    >
+
                         <div class="form-section">
-                            <h4 class="form-section-title">2. Execução e Diagnóstico</h4>
-                            <div class="form-group"><label>Serviço Realizado / Laudo <span class="required-mark">*</span></label><textarea id="exec-input-diag" class="form-control" rows="4" placeholder="Descreva exatamente a solução aplicada..."></textarea></div>
-                            <div class="form-group"><label>Materiais Utilizados <span class="optional-mark">(Opcional)</span></label><input type="text" id="exec-input-materiais" class="form-control" placeholder="Ex: 1x Disjuntor 40A"></div>
+
+                            <div class="form-step">
+
+                                <span class="form-step-number">
+                                    2
+                                </span>
+
+                                <div>
+
+                                    <h4 class="form-section-title">
+                                        Execução e diagnóstico
+                                    </h4>
+
+                                    <p class="form-section-description">
+                                        Registre o que foi encontrado e o serviço realizado.
+                                    </p>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="exec-input-diag">
+                                    Serviço realizado / laudo
+                                    <span class="required-mark">*</span>
+                                </label>
+
+                                <textarea
+                                    id="exec-input-diag"
+                                    class="form-control"
+                                    rows="5"
+                                    placeholder="Descreva o diagnóstico, procedimento realizado e solução aplicada..."
+                                ></textarea>
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label for="exec-input-materiais">
+                                    Materiais utilizados
+                                    <span class="optional-mark">
+                                        Opcional
+                                    </span>
+                                </label>
+
+                                <input
+                                    type="text"
+                                    id="exec-input-materiais"
+                                    class="form-control"
+                                    placeholder="Ex.: 1 disjuntor 40A, 2 metros de cabo..."
+                                >
+
+                            </div>
+
+
+                            <div class="form-group">
+
+                                <label>
+                                    Registro fotográfico
+                                </label>
+
+                                <div class="upload-area">
+
+                                    <span class="material-symbols-outlined">
+                                        add_a_photo
+                                    </span>
+
+                                    <strong>
+                                        Adicionar fotos
+                                    </strong>
+
+                                    <small>
+                                        Registre o serviço executado sempre que necessário.
+                                    </small>
+
+                                </div>
+
+                            </div>
+
                         </div>
-                        <button class="btn btn-success btn-block" id="btn-finalizar-os" style="height: 54px; font-weight:700;">FINALIZAR OS</button>
+
+
+                        <button
+                            class="btn btn-success btn-block"
+                            id="btn-finalizar-os"
+                            type="button"
+                            style="height:54px;font-weight:700;"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                task_alt
+                            </span>
+
+                            Finalizar OS
+
+                        </button>
+
                     </div>
+
                 </div>
-                
-                <div id="bloco-laudo-final" class="hidden" style="margin-top:20px;">
-                    <div class="form-section" style="background: #f0fdf4; padding: 16px; border-radius: var(--radius); border: 1px solid #bbf7d0;">
-                        <h4 class="form-section-title" style="color: #166534;">Laudo de Conclusão</h4>
-                        <div class="info-group"><label>Serviço Executado</label><p id="laudo-os-diag">-</p></div>
-                        <div class="info-group" style="margin-bottom:0;"><label>Materiais</label><p id="laudo-os-mat">-</p></div>
+
+
+                <!-- Laudo -->
+
+                <div
+                    id="bloco-laudo-final"
+                    class="hidden"
+                    style="margin-top:20px;"
+                >
+
+                    <div class="form-section completion-section">
+
+                        <div class="form-step">
+
+                            <span class="form-step-number">
+                                3
+                            </span>
+
+                            <div>
+
+                                <h4 class="form-section-title">
+                                    Laudo de conclusão
+                                </h4>
+
+                                <p class="form-section-description">
+                                    Registro final do atendimento.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="info-group">
+
+                            <label>
+                                Serviço executado
+                            </label>
+
+                            <p id="laudo-os-diag">
+                                -
+                            </p>
+
+                        </div>
+
+
+                        <div class="info-group">
+
+                            <label>
+                                Materiais
+                            </label>
+
+                            <p id="laudo-os-mat">
+                                -
+                            </p>
+
+                        </div>
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
+
     </div>
 
-    <!-- MODAL SÍNDICO: ACOMPANHAMENTO DO CHAMADO E LAUDO -->
-    <div class="modal-overlay hidden" id="modal-sindico-acompanhamento">
+
+    <!-- =========================================================
+         MODAL — ACOMPANHAMENTO DO SÍNDICO
+    ========================================================== -->
+
+    <div
+        class="modal-overlay hidden"
+        id="modal-sindico-acompanhamento"
+        role="dialog"
+        aria-modal="true"
+    >
+
         <div class="modal-content">
-            <div class="modal-header"><h2 id="sind-acomp-titulo">Acompanhamento</h2><button class="btn-close-modal material-symbols-outlined" onclick="document.getElementById('modal-sindico-acompanhamento').classList.add('hidden')">close</button></div>
-            <div class="modal-body">
-                <div class="form-section"><h4 class="form-section-title">Seu Chamado</h4><p style="font-size:14px; font-weight:600;" id="sind-acomp-problema">-</p><p style="font-size:12px; color:var(--text-muted);" id="sind-acomp-local">-</p></div>
-                <div class="form-section"><h4 class="form-section-title">Linha do Tempo</h4><div id="sind-acomp-timeline" style="display: flex; flex-direction: column; gap: 12px; font-size: 13px;"></div></div>
-                <div id="sind-acomp-laudo-box" class="hidden form-section" style="background: #f0fdf4; padding: 16px; border-radius: var(--radius); border: 1px solid #bbf7d0;">
-                    <h4 class="form-section-title" style="color: #166534; margin-bottom: 8px;">Relatório do Serviço</h4>
-                    <p style="font-size: 13px; margin-bottom: 4px;"><strong style="color:#166534;">Solução:</strong> <span id="sind-acomp-laudo-txt"></span></p>
-                    <p style="font-size: 13px;"><strong style="color:#166534;">Materiais:</strong> <span id="sind-acomp-laudo-mat"></span></p>
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        ACOMPANHAMENTO
+                    </span>
+
+                    <h2 id="sind-acomp-titulo">
+                        Acompanhamento do chamado
+                    </h2>
+
                 </div>
+
+
+                <button
+                    class="btn-close-modal material-symbols-outlined"
+                    type="button"
+                    onclick="document.getElementById('modal-sindico-acompanhamento').classList.add('hidden')"
+                    aria-label="Fechar"
+                >
+                    close
+                </button>
+
             </div>
-            <div class="modal-footer"><button class="btn btn-ghost" onclick="document.getElementById('modal-sindico-acompanhamento').classList.add('hidden')">Fechar</button></div>
+
+
+            <div class="modal-body">
+
+                <div class="form-section">
+
+                    <h4 class="form-section-title">
+                        Seu chamado
+                    </h4>
+
+
+                    <div class="info-group">
+
+                        <label>
+                            Problema
+                        </label>
+
+                        <p
+                            id="sind-acomp-problema"
+                            style="font-weight:600;"
+                        >
+                            -
+                        </p>
+
+                    </div>
+
+
+                    <div class="info-group">
+
+                        <label>
+                            Local
+                        </label>
+
+                        <p id="sind-acomp-local">
+                            -
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-section">
+
+                    <h4 class="form-section-title">
+                        Linha do tempo
+                    </h4>
+
+                    <div
+                        id="sind-acomp-timeline"
+                        class="status-timeline"
+                    ></div>
+
+                </div>
+
+
+                <div
+                    id="sind-acomp-laudo-box"
+                    class="hidden form-section completion-section"
+                >
+
+                    <h4 class="form-section-title">
+                        Relatório do serviço
+                    </h4>
+
+
+                    <div class="info-group">
+
+                        <label>
+                            Solução aplicada
+                        </label>
+
+                        <p id="sind-acomp-laudo-txt">
+                            -
+                        </p>
+
+                    </div>
+
+
+                    <div class="info-group">
+
+                        <label>
+                            Materiais utilizados
+                        </label>
+
+                        <p id="sind-acomp-laudo-mat">
+                            -
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    class="btn btn-ghost"
+                    type="button"
+                    onclick="document.getElementById('modal-sindico-acompanhamento').classList.add('hidden')"
+                >
+                    Fechar
+                </button>
+
+            </div>
+
         </div>
+
     </div>
 
-    <!-- Modais Avulsos de Cadastro -->
-    <div class="modal-overlay hidden" id="modal-nova-os-avulsa"><div class="modal-content"><div class="modal-header"><h2>Nova OS Avulsa</h2><button class="btn-close-modal" id="btn-fechar-modal-os-avulsa">close</button></div><div class="modal-body"><form id="form-nova-os-avulsa"><div class="form-group"><label>Condomínio</label><input type="text" id="input-os-av-cond" class="form-control" required></div><div class="form-group"><label>Serviço</label><input type="text" id="input-os-av-servico" class="form-control" required></div><div class="form-group"><label>Técnico</label><input type="text" id="input-os-av-tec" class="form-control" required value="João Silva"></div><div class="form-actions"><button type="button" class="btn btn-ghost" id="btn-canc-os-av">Cancelar</button><button type="submit" class="btn btn-primary">Salvar OS</button></div></form></div></div></div>
+
+    <!-- =========================================================
+         MODAL — NOVA OS AVULSA
+    ========================================================== -->
+
+    <div
+        class="modal-overlay hidden"
+        id="modal-nova-os-avulsa"
+        role="dialog"
+        aria-modal="true"
+    >
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <div>
+
+                    <span class="modal-eyebrow">
+                        MANUTENÇÃO
+                    </span>
+
+                    <h2>
+                        Nova OS avulsa
+                    </h2>
+
+                </div>
+
+
+                <button
+                    class="btn-close-modal material-symbols-outlined"
+                    id="btn-fechar-modal-os-avulsa"
+                    type="button"
+                    aria-label="Fechar"
+                >
+                    close
+                </button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <form id="form-nova-os-avulsa">
+
+                    <div class="form-group">
+
+                        <label for="input-os-av-cond">
+                            Condomínio
+                            <span class="required-mark">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="input-os-av-cond"
+                            class="form-control"
+                            required
+                            placeholder="Nome do condomínio"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="input-os-av-servico">
+                            Serviço
+                            <span class="required-mark">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="input-os-av-servico"
+                            class="form-control"
+                            required
+                            placeholder="Ex.: Manutenção da bomba"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="input-os-av-tec">
+                            Técnico
+                            <span class="required-mark">*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="input-os-av-tec"
+                            class="form-control"
+                            required
+                            value="João Silva"
+                        >
+
+                    </div>
+
+
+                    <div class="form-actions">
+
+                        <button
+                            type="button"
+                            class="btn btn-ghost"
+                            id="btn-canc-os-av"
+                        >
+                            Cancelar
+                        </button>
+
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+
+                            <span class="material-symbols-outlined">
+                                save
+                            </span>
+
+                            Criar OS
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =========================================================
+         SCRIPTS
+    ========================================================== -->
 
     <script src="data/data.js"></script>
     <script src="js/app.js"></script>
+
+
+    <!-- =========================================================
+         PEQUENAS INTERAÇÕES DE NAVEGAÇÃO
+         Não substituem o app.js.
+    ========================================================== -->
+
+    <script>
+
+        document.addEventListener("DOMContentLoaded", function () {
+
+            /*
+             * Ações rápidas do dashboard.
+             * Só executa se existir uma função de navegação
+             * compatível no app.js.
+             */
+
+            document.querySelectorAll("[data-page-action]").forEach(function (button) {
+
+                button.addEventListener("click", function () {
+
+                    const page = button.getAttribute("data-page-action");
+
+                    const navItem = document.querySelector(
+                        '.nav-item[data-page="' + page + '"]'
+                    );
+
+                    if (navItem) {
+                        navItem.click();
+                    }
+
+                });
+
+            });
+
+
+            /*
+             * Links internos que utilizam data-page.
+             */
+
+            document.querySelectorAll("[data-page]").forEach(function (element) {
+
+                element.addEventListener("click", function (event) {
+
+                    const page = element.getAttribute("data-page");
+
+                    if (!page) {
+                        return;
+                    }
+
+                    const navItem = document.querySelector(
+                        '.nav-item[data-page="' + page + '"]'
+                    );
+
+                    if (
+                        navItem &&
+                        element.classList.contains("nav-item") === false
+                    ) {
+
+                        event.preventDefault();
+
+                        navItem.click();
+
+                    }
+
+                });
+
+            });
+
+
+            /*
+             * Área de upload do síndico.
+             */
+
+            const uploadArea = document.getElementById(
+                "sindico-upload-area"
+            );
+
+            const uploadInput = document.getElementById(
+                "input-sindico-fotos"
+            );
+
+            if (uploadArea && uploadInput) {
+
+                uploadArea.addEventListener("click", function () {
+                    uploadInput.click();
+                });
+
+                uploadInput.addEventListener("change", function () {
+
+                    if (uploadInput.files.length > 0) {
+
+                        const quantidade = uploadInput.files.length;
+
+                        const texto = uploadArea.querySelector("strong");
+
+                        if (texto) {
+
+                            texto.textContent =
+                                quantidade +
+                                (quantidade === 1
+                                    ? " foto selecionada"
+                                    : " fotos selecionadas");
+
+                        }
+
+                    }
+
+                });
+
+            }
+
+
+            /*
+             * Atalho ESC para fechar modais.
+             */
+
+            document.addEventListener("keydown", function (event) {
+
+                if (event.key !== "Escape") {
+                    return;
+                }
+
+                document
+                    .querySelectorAll(".modal-overlay:not(.hidden)")
+                    .forEach(function (modal) {
+
+                        modal.classList.add("hidden");
+
+                    });
+
+            });
+
+        });
+
+    </script>
+
 </body>
 </html>
