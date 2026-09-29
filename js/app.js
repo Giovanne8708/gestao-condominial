@@ -7,6 +7,60 @@
 "use strict";
 
 /* ==========================================================
+   AVISOS NA TELA
+   Substitui as caixas de alerta do navegador por avisos
+   discretos que somem sozinhos.
+   ========================================================== */
+
+function mostrarAviso(mensagem, tipo) {
+
+    let area = document.getElementById("area-avisos");
+
+    if (!area) {
+        area = document.createElement("div");
+        area.id = "area-avisos";
+        area.setAttribute("role", "status");
+        area.setAttribute("aria-live", "polite");
+        document.body.appendChild(area);
+    }
+
+    const texto = String(mensagem ?? "").trim();
+
+    if (!tipo) {
+        tipo = /sucesso|salv|criad|enviad|finalizad|atualizad/i.test(texto)
+            ? "sucesso"
+            : "atencao";
+    }
+
+    const aviso = document.createElement("div");
+    aviso.className = "aviso aviso-" + tipo;
+
+    const conteudo = document.createElement("p");
+    conteudo.textContent = texto;
+
+    const fechar = document.createElement("button");
+    fechar.type = "button";
+    fechar.setAttribute("aria-label", "Fechar aviso");
+    fechar.textContent = "\u00d7";
+
+    const remover = () => aviso.remove();
+
+    fechar.addEventListener("click", remover);
+
+    aviso.appendChild(conteudo);
+    aviso.appendChild(fechar);
+    area.appendChild(aviso);
+
+    setTimeout(remover, tipo === "sucesso" ? 4500 : 7000);
+}
+
+window.alert = function (mensagem) {
+    mostrarAviso(mensagem);
+};
+
+
+
+/* ==========================================================
    01. CONFIGURAÇÕES GERAIS
    ========================================================== */
 
@@ -4346,3 +4400,250 @@ window.abrirAcompanhamentoSindico =
 /* ==========================================================
    FIM DO APP.JS
    ========================================================== */
+
+
+/* ==========================================================
+   ICONES.JS
+   Ícones embutidos (SVG). Substituem a fonte externa
+   "Material Symbols", então o sistema não depende de internet
+   para exibir os ícones.
+
+   Como usar no HTML:
+     <span class="material-symbols-outlined">build</span>
+   O nome dentro do span escolhe o ícone. Ícones criados depois
+   (por exemplo, dentro de tabelas geradas pelo app.js) também
+   são convertidos automaticamente.
+   ========================================================== */
+
+(function () {
+
+    const CALENDARIO =
+        '<rect x="3" y="5" width="18" height="16" rx="2"/>' +
+        '<path d="M16 3v4M8 3v4M3 11h18"/>';
+
+    const CAMERA =
+        '<path d="M4 8h3l2-3h6l2 3h3v11H4z"/>' +
+        '<circle cx="12" cy="13" r="3.5"/>';
+
+    const PRANCHETA =
+        '<rect x="5" y="4" width="14" height="17" rx="2"/>' +
+        '<path d="M9 4h6v3H9z"/>';
+
+    const ICONES = {
+
+        add: '<path d="M12 5v14M5 12h14"/>',
+
+        add_circle:
+            '<circle cx="12" cy="12" r="9"/>' +
+            '<path d="M12 8v8M8 12h8"/>',
+
+        add_a_photo: CAMERA + '<path d="M12 11.5v3M10.5 13h3"/>',
+
+        photo_camera: CAMERA,
+
+        apartment:
+            '<path d="M4 21V5l8-2v18"/>' +
+            '<path d="M12 8h8v13"/>' +
+            '<path d="M8 9h.01M8 13h.01M8 17h.01M16 12h.01M16 16h.01"/>' +
+            '<path d="M3 21h18"/>',
+
+        assignment:
+            PRANCHETA + '<path d="M9 12h6M9 16h6"/>',
+
+        assignment_turned_in:
+            PRANCHETA + '<path d="M9 14l2 2 4-4"/>',
+
+        build:
+            '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+
+        calendar_month: CALENDARIO,
+
+        today: CALENDARIO + '<path d="M8 15h3v3H8z"/>',
+
+        event: CALENDARIO,
+
+        event_available: CALENDARIO + '<path d="M9 16l2 2 4-4"/>',
+
+        chevron_left: '<path d="M15 6l-6 6 6 6"/>',
+
+        chevron_right: '<path d="M9 6l6 6-6 6"/>',
+
+        close: '<path d="M6 6l12 12M18 6L6 18"/>',
+
+        confirmation_number:
+            '<path d="M3 6h18v3a2 2 0 0 0 0 6v3H3v-3a2 2 0 0 0 0-6z"/>' +
+            '<path d="M13 8v1.5M13 11.25v1.5M13 14.5V16"/>',
+
+        construction:
+            '<path d="M4 20h16"/>' +
+            '<path d="M6 20l2-9h8l2 9"/>' +
+            '<path d="M9 11l1-6h4l1 6"/>',
+
+        dashboard:
+            '<rect x="3" y="3" width="7" height="9" rx="1"/>' +
+            '<rect x="14" y="3" width="7" height="5" rx="1"/>' +
+            '<rect x="14" y="12" width="7" height="9" rx="1"/>' +
+            '<rect x="3" y="16" width="7" height="5" rx="1"/>',
+
+        engineering:
+            '<circle cx="12" cy="9" r="3"/>' +
+            '<path d="M6 20a6 6 0 0 1 12 0"/>' +
+            '<path d="M8.5 6.5h7"/>',
+
+        groups:
+            '<circle cx="9" cy="8" r="3"/>' +
+            '<path d="M3 20a6 6 0 0 1 12 0"/>' +
+            '<circle cx="17" cy="9" r="2.5"/>' +
+            '<path d="M17 14a4.5 4.5 0 0 1 4.5 4.5"/>',
+
+        help:
+            '<circle cx="12" cy="12" r="9"/>' +
+            '<path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.4-1 .9-1 1.7"/>' +
+            '<path d="M12 17h.01"/>',
+
+        home:
+            '<path d="M3 11l9-8 9 8"/>' +
+            '<path d="M5 10v10h5v-6h4v6h5V10"/>',
+
+        inbox:
+            '<path d="M3 13l3-8h12l3 8v6H3z"/>' +
+            '<path d="M3 13h5l1 3h6l1-3h5"/>',
+
+        info:
+            '<circle cx="12" cy="12" r="9"/>' +
+            '<path d="M12 11v6M12 7.5h.01"/>',
+
+        list_alt:
+            '<rect x="3" y="4" width="18" height="16" rx="2"/>' +
+            '<path d="M8 9h8M8 13h8M8 17h5"/>',
+
+        lock:
+            '<rect x="5" y="11" width="14" height="10" rx="2"/>' +
+            '<path d="M8 11V8a4 4 0 0 1 8 0v3"/>',
+
+        logout:
+            '<path d="M9 21H5V3h4"/>' +
+            '<path d="M16 17l5-5-5-5M21 12H9"/>',
+
+        menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+
+        notifications:
+            '<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/>' +
+            '<path d="M10 21h4"/>',
+
+        play_arrow: '<path d="M7 4l13 8-13 8z"/>',
+
+        precision_manufacturing:
+            '<circle cx="12" cy="12" r="4"/>' +
+            '<path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9L7 7M17 17l2.1 2.1M19.1 4.9L17 7M7 17l-2.1 2.1"/>',
+
+        priority_high: '<path d="M12 4v10M12 19h.01"/>',
+
+        save:
+            '<path d="M5 3h11l4 4v14H5z"/>' +
+            '<path d="M8 3v5h7V3M8 21v-7h8v7"/>',
+
+        schedule:
+            '<circle cx="12" cy="12" r="9"/>' +
+            '<path d="M12 7v5l3 2"/>',
+
+        search:
+            '<circle cx="11" cy="11" r="7"/>' +
+            '<path d="M20 20l-4-4"/>',
+
+        send:
+            '<path d="M22 2L11 13"/>' +
+            '<path d="M22 2l-7 20-4-9-9-4z"/>',
+
+        settings:
+            '<path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/>' +
+            '<circle cx="16" cy="6" r="2"/>' +
+            '<circle cx="10" cy="12" r="2"/>' +
+            '<circle cx="18" cy="18" r="2"/>',
+
+        task_alt:
+            '<circle cx="12" cy="12" r="9"/>' +
+            '<path d="M8 12l3 3 5-6"/>'
+    };
+
+    const ICONE_PADRAO = '<circle cx="12" cy="12" r="9"/>';
+
+
+    function montarSVG(conteudo) {
+        return (
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" ' +
+            'width="1em" height="1em" fill="none" stroke="currentColor" ' +
+            'stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" ' +
+            'aria-hidden="true" focusable="false">' + conteudo + '</svg>'
+        );
+    }
+
+
+    function converterIcone(elemento) {
+
+        if (elemento.querySelector("svg")) {
+            return;
+        }
+
+        const nome = elemento.textContent.trim();
+
+        if (!nome) {
+            return;
+        }
+
+        elemento.setAttribute("data-icone", nome);
+        elemento.setAttribute("aria-hidden", "true");
+        elemento.innerHTML = montarSVG(ICONES[nome] || ICONE_PADRAO);
+    }
+
+
+    function converterTodos(raiz) {
+
+        const base = raiz && raiz.querySelectorAll ? raiz : document;
+
+        if (
+            base.matches &&
+            base.matches(".material-symbols-outlined")
+        ) {
+            converterIcone(base);
+        }
+
+        base
+            .querySelectorAll(".material-symbols-outlined")
+            .forEach(converterIcone);
+    }
+
+
+    document.addEventListener("DOMContentLoaded", () => {
+
+        converterTodos(document);
+
+        /* Ícones criados depois pelo app.js (tabelas, cards, modais) */
+        const observador = new MutationObserver(mutacoes => {
+
+            mutacoes.forEach(mutacao => {
+
+                mutacao.addedNodes.forEach(no => {
+                    if (no.nodeType === 1) {
+                        converterTodos(no);
+                    }
+                });
+
+                /* Caso o app.js troque o texto de um ícone existente */
+                if (
+                    mutacao.type === "childList" &&
+                    mutacao.target.nodeType === 1 &&
+                    mutacao.target.classList.contains("material-symbols-outlined")
+                ) {
+                    converterIcone(mutacao.target);
+                }
+            });
+        });
+
+        observador.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    });
+
+})();
